@@ -1,0 +1,446 @@
+/* CSS Variables  */
+:root {
+    --accent: #f5f5f5;
+    --accent-2: #e3f2fd;
+    --white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    padding: 20px;
+    color: #333;
+}
+/* full screen*/
+.form-container.full-screen {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding: 40px;
+  overflow-y: auto;
+  z-index: 1000;
+  background: white;
+}
+
+/* Date input with calendar toggle */
+.date-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-display {
+    flex: 1;
+    background: #fafafa;
+}
+
+.calendar-toggle {
+    background: var(--accent);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.calendar-toggle:hover {
+    background: #0033cc;
+}
+
+/* MUI Calendar Container */
+.calendar-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 9999;
+    margin-top: 8px;
+    width: 320px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    padding: 16px;
+}
+
+/* MUI Calendar styling */
+.mui-calendar {
+    background: white !important;
+    border-radius: 8px !important;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+    padding: 8px;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+/* Employee Selection */
+.employee-selection {
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.employee-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-top: 8px;
+    background: #fafafa;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.employee-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.employee-info p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Form */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #1a1a1a;
+}
+
+.form-input, .form-select, .form-textarea {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+/* Attachments */
+.attachments {
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.attachments:hover {
+    border-color: #007bff;
+    background: #f8f9ff;
+}
+
+.attachments.dragover {
+    border-color: #007bff;
+    background: #e3f2fd;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-draft {
+    background: #f8f9fa;
+    color: #666;
+}
+
+.btn-draft:hover {
+    background: #e9ecef;
+}
+
+.btn-submit {
+    background: #007bff;
+    color: white;
+}
+
+.btn-submit:hover {
+    background: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+/* Employee Selection Styles */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.suggestion-item:hover {
+  background: #f8f9fa;
+}
+
+.avatar-suggestion {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.suggestion-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.suggestion-id {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.no-results {
+  padding: 16px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.employee-card.selected {
+  border-color: #007bff;
+  background: #f0f8ff;
+}
+
+.employee-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+.department {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.clear-btn {
+  background: none;
+  border: 1px solid #999;
+  color: #666;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.employee-status {
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.no-selection {
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+.form-input[readonly] {
+  background: #f8f9fa;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.form-input[readonly]:focus {
+  border-color: #e0e0e0;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-summary {
+  margin-top: 24px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.form-summary pre {
+  margin: 0;
+  font-size: 11px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.employee-info-section,
+.mission-info-section {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input.readonly {
+  background: #f8f9fa !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  border-color: #dee2e6 !important;
+}
+
+.form-input.readonly:focus {
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+
+

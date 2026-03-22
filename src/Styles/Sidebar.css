@@ -1,0 +1,144 @@
+/* ===== SIDEBAR WRAPPER ===== */
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: #c8e4f8;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  position: fixed;        /* ← fixed overlay */
+  top: 0;
+  left: -240px;           /* ← hidden off screen by default */
+  z-index: 1000;
+  transition: left 0.3s ease;
+  overflow: hidden;
+}
+
+/* Sidebar visible when open */
+.sidebar.open {
+  left: 0;                /* ← slides in */
+}
+
+/* ===== GLOW CIRCLES ===== */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: #0099ff;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.25;
+  top: -60px;
+  left: -60px;
+  pointer-events: none;
+  z-index: 0;          /* ← behind everything */
+}
+
+.sidebar::after {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: #60b8ff;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.25;
+  bottom: -40px;
+  right: -40px;
+  pointer-events: none;
+  z-index: 0;          /* ← behind everything */
+}
+
+/* ===== HEADER ===== */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 2;          /* ← above glow */
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0a2a4a;
+  letter-spacing: 0.3px;
+}
+
+.close-btn {
+  display: block;        /* ← was hidden, now visible */
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #1a5080;
+}
+
+/* ===== NAV ITEMS ===== */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  position: relative;
+  z-index: 2;          /* ← above glow circles */
+}
+
+/* Each menu item — pill shaped button */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 50px;
+  cursor: pointer;
+  color: #1a5080;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  position: relative;  /* ← needed for z-index to work */
+  z-index: 2;          /* ← above glow circles */
+}
+
+/* Hover state */
+.nav-item:hover {
+  background: rgba(0, 119, 204, 0.12);
+  color: #0055aa;
+}
+
+/* Active state — blue gradient pill */
+.nav-item.active {
+  background: linear-gradient(135deg, #0077cc, #00aaff);
+  color: white;
+  font-weight: 500;
+}
+
+.nav-icon {
+  font-size: 16px;
+}
+
+/* ===== FOOTER ===== */
+.sidebar-footer {
+  position: relative;
+  z-index: 2;          /* ← above glow circles */
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 100, 200, 0.2);
+  margin-top: 16px;
+}
+
+/* Logout button — red color */
+.help-item {
+  color: #e24b4a !important;
+}
+
+.help-item:hover {
+  background: rgba(226, 75, 74, 0.08) !important;
+  color: #e24b4a !important;
+}

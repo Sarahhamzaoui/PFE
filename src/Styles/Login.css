@@ -1,0 +1,177 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== PAGE WRAPPER ===== */
+/* Full screen centered layout with light blue background */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e8f4ff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== GLOW CIRCLES ===== */
+/* Blurred circles in background for depth effect */
+.glow-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+
+/* Top left — blue glow */
+.gc1 {
+  width: 400px;
+  height: 400px;
+  background: #60b8ff;
+  top: -100px;
+  left: -100px;
+}
+
+/* Bottom right — light blue glow */
+.gc2 {
+  width: 300px;
+  height: 300px;
+  background: #a8d8ff;
+  bottom: -80px;
+  right: -80px;
+}
+
+/* ===== FORM WRAPPER ===== */
+/* No card — form floats directly on the background */
+.login-container {
+  width: 400px;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.login-container h2 {
+  color: #1a3a5c;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 10px 0 6px;
+}
+
+/* Subtitle under the title */
+.login-container p {
+  color: #8a9ab8;
+  font-size: 14px;
+  margin: 0 0 32px;
+}
+
+/* ===== INPUT FIELDS ===== */
+/* Underline style inputs — no box border */
+.input-group {
+  margin-bottom: 24px;
+  text-align: left;
+  border-bottom: 1.5px solid #b0cfe8;
+  padding-bottom: 8px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 12px;
+  color: #8a9ab8;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 6px 0;
+  background: transparent;
+  border: none;
+  color: #1a3a5c;
+  font-size: 15px;
+  outline: none;
+}
+
+/* Highlight underline on focus */
+.input-group:focus-within {
+  border-bottom-color: #0099ff;
+}
+
+.input-group input::placeholder {
+  color: #b0cfe8;
+}
+
+/* ===== REMEMBER ME ROW ===== */
+.remember-me {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 28px;
+  color: #8a9ab8;
+}
+
+.remember-me a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.remember-me a:hover {
+  text-decoration: underline;
+}
+
+/* ===== LOGIN BUTTON ===== */
+/* Pill shaped gradient button */
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #0077cc, #00aaff);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s;
+}
+
+.login-btn:hover {
+  opacity: 0.88;
+}
+
+/* ===== SIGNUP LINK ===== */
+.signup {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #8a9ab8;
+}
+
+.signup a {
+  color: #0077cc;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.signup a:hover {
+  text-decoration: underline;
+}
+
+/* ===== FOOTER ===== */
+.footer-text {
+  margin-top: 24px;
+  font-size: 11px;
+  color: #b0cfe8;
+}
+
+/* ===== SUCCESS MESSAGE ===== */
+/* Shown after successful login */
+.message {
+  color: #0077cc;
+  font-size: 14px;
+  margin-bottom: 10px;
+}

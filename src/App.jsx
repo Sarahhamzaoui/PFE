@@ -3,16 +3,32 @@ import Login from "./pages/Login";
 import Mission from "./pages/Missions";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
-import MissionDetails from "./pages/MissionDetails";  
+import MissionDetails from "./pages/MissionDetails";
+import CreateMissionPage from "./pages/CreateMissionPage";
+import Dashboard from "./pages/Dashboard";
+import MyMissions from "./pages/MyMissions";
+import MainLayout from "./layouts/MainLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+         {/* No sidebar */}
         <Route path="/" element={<Login />} />
-        <Route path="/Missions" element={<Mission />} />
-        <Route path="/Profile" element={<Profile />} /> 
         <Route path="/EditProfile" element={<EditProfile />} />
+        <Route path="/mission/:id" element={<MissionDetails />} />
+
+       {/* With sidebar — all through MainLayout */}
+       <Route path="/dashboard"      element={<MainLayout activePage="dashboard" />} />
+        <Route path="/missions"       element={<MainLayout activePage="missions" />} />
+        <Route path="/my-missions"    element={<MainLayout activePage="my-missions" />} />
+        <Route path="/create-mission" element={<MainLayout activePage="create-mission" />} />
+        <Route path="/profile"        element={<MainLayout activePage="profile" />} />
+        <Route path="/booking"        element={<MainLayout activePage="booking" />} />
+        <Route path="/reports"        element={<MainLayout activePage="reports" />} />
+        <Route path="/notifications"  element={<MainLayout activePage="notifications" />} />
+        
+        <Route path="/settings"       element={<MainLayout activePage="settings" />} />
       </Routes>
     </BrowserRouter>
   );

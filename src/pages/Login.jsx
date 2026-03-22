@@ -1,30 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
-import "./Login.css";
+import "../Styles/Login.css";
 
 function Login() {
-
+// the variables 
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // tool that let's you jump to another page
   const [message,setMessage] = useState("");
 
   const handleLogin = (e) => {
 
-    e.preventDefault();
-
+    e.preventDefault(); // stops the page from refreshing default browser behavior
+  // checking fields
     if(email === "" || password === ""){
       alert("Please fill all fields");
       return;
     }
-
+// sending data to the backend 
 fetch("http://localhost/PFE_backend/login.php",{
   method:"POST",
   headers:{
     "Content-Type":"application/json"
   },
-  body:JSON.stringify({email,password})
+  body:JSON.stringify({email,password}) // the email and the pass packed as JSON 
 })
+
+//Reading the response from the backend 
 .then(async res => {
 
   const text = await res.text();
@@ -33,14 +35,15 @@ fetch("http://localhost/PFE_backend/login.php",{
   return JSON.parse(text);
 
 })
+
 .then(data => {
 
-  if(data.message === "Login successful"){
+  if(data.message === "Login successful"){ 
 
     setMessage("Welcome " + data.user.first_name);
 
     setTimeout(()=>{
-      navigate("/missions");
+      navigate("/Dashboard");
     },1000);
 
   }else{
@@ -58,6 +61,10 @@ fetch("http://localhost/PFE_backend/login.php",{
   return(
 
     <div className="login-page">
+      {/* Glow background circles */}
+  <div className="glow-circle gc1"></div>
+  <div className="glow-circle gc2"></div>
+  
 
       <div className="particles">
         <span></span>
@@ -70,15 +77,16 @@ fetch("http://localhost/PFE_backend/login.php",{
 
       <div className="quote">
         <h1>
-          Efficiency begins<br/>
-          with digital<br/>
-          transformation!
+         <br/>
+        <br/>
+          
         </h1>
       </div>
 
       <div className="login-container">
 
-        <img src="/logo.png" width="150" alt="logo"/>
+        <img src="/logo.jpg"
+         width="150" alt="logo"/>
 
         <h2>Welcome</h2>
         <p>Sign in to your account</p>

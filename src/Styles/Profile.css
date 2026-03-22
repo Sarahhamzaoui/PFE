@@ -1,0 +1,100 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== PAGE ===== */
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f0f7ff;
+}
+
+/* ===== PROFILE CARD ===== */
+.profile-container {
+  background: linear-gradient(#1d1f69, #00407f);
+  color: white;
+  width: 420px;
+  padding: 35px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile-image {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  margin: auto;
+  margin-bottom: 15px;
+  background: url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover;
+}
+
+.profile-container h2 {
+  margin-bottom: 5px;
+  color: white;
+}
+
+.role {
+  color: rgba(255,255,255,0.75);
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.info {
+  text-align: left;
+  margin-top: 10px;
+}
+
+.info p {
+  margin: 10px 0;
+  font-size: 14px;
+  color: rgba(255,255,255,0.9);
+}
+
+.label {
+  font-weight: 600;
+  color: #a8d8ff;
+}
+
+/* ===== BUTTONS ===== */
+.buttons {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.edit-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #0077cc, #00aaff);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.edit-btn:hover {
+  opacity: 0.88;
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  background: #FCEBEB;
+  color: #A32D2D;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.logout-btn:hover {
+  opacity: 0.88;
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./MissionDetails.css";
+import "../Styles/MissionDetails.css";
 
 const initialMission = {
   mission_id: 3,

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Profile.css";
+import Sidebar from "../components/Sidebar";
+import  "../Styles/Profile.css";
 
 function Profile() {
 
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+ 
 
   const user = JSON.parse(localStorage.getItem("users") || "{}");
 
@@ -16,19 +17,7 @@ function Profile() {
 
   return (
     <>
-      {/* Sidebar */}
-      <div className={`sidebar ${sidebarOpen ? "active" : ""}`}>
-        <button className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
-        <a href="#" onClick={() => navigate("/dashboard")}><span className="icon">⎙</span><span className="text">Dashboard</span></a>
-        <a href="#" onClick={() => navigate("/profile")}><span className="icon">👤</span><span className="text">Profile</span></a>
-        <a href="#" onClick={() => navigate("/notifications")}><span className="icon">💬</span><span className="text">Notification</span></a>
-        <a href="#" onClick={() => navigate("/files")}><span className="icon">🗁</span><span className="text">Files</span></a>
-        <a href="#" onClick={() => navigate("/booking")}><span className="icon">📅</span><span className="text">Booking</span></a>
-        <a href="#" onClick={() => navigate("/settings")}><span className="icon">⚙</span><span className="text">Settings</span></a>
-        <div className="logout-link">
-          <a href="#" onClick={handleLogout}><span className="icon">☚</span><span className="text">Logout</span></a>
-        </div>
-      </div>
+      
 
       {/* Profile Card */}
       <div className="page-wrapper">
