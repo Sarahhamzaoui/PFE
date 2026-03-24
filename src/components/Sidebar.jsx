@@ -52,7 +52,8 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
               onClick={() => {
                 setActivePage(item.id);
                 navigate(item.path);
-                setSidebarOpen(false);
+                // this will close the sidebar when clickong on a page 
+             //   setSidebarOpen(false);
               }}
             >
               <span className="nav-icon">{item.icon}</span>
