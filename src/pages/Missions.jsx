@@ -1,9 +1,10 @@
 import { useState } from "react";
-import "./Mission.css";
+import "../Styles/Mission.css";
+
 
 function Mission() {
 
-  const [sidebarActive, setSidebarActive] = useState(false);
+  
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
 
@@ -27,7 +28,7 @@ function Mission() {
       start: "2026-01-05",
       end: "2026-01-15",
       status: "Pending"
-    },
+   },
     {
       id: 1,
       name: "Roumane Lydia",
@@ -55,35 +56,14 @@ function Mission() {
 
     <div className="layout">                      {/* ← ADDED layout class */}
 
-      {/* SIDEBAR */}
-      <div className={sidebarActive ? "sidebar active" : "sidebar"}>
-
-        <button
-          className="menu-btn"
-          onClick={() => setSidebarActive(!sidebarActive)}
-        >
-          ☰
-        </button>
-
-        <a href="/dashboard"><span className="icon">⎙</span><span className="text">Dashboard</span></a>
-        <a href="/profile"><span className="icon">👤</span><span className="text">Profile</span></a>
-        <a href="/notification"><span className="icon">💬</span><span className="text">Notification</span></a>
-        <a href="/Files"><span className="icon">🗁</span><span className="text">Mission</span></a>
-        <a href="/booking"><span className="icon"></span><span className="text">Booking</span></a>
-        <a href="/settings"><span className="icon">⚙</span><span className="text">Settings</span></a>
-
-        <div className="logout">
-          <a href="/"><span className="icon">☚</span><span className="text">Logout</span></a>
-        </div>
-
-      </div>
 
       {/* MAIN */}
-      <div className={sidebarActive ? "main-content shifted" : "main-content"}>   {/* ← ADDED shifted */}
+      
 
         <div className="topbar">
 
-          <img src="/logo.png" width="150" alt="logo" />
+          <img src="/logo.jpg"
+           width="150" alt="logo" />
 
           <div className="search-bar">
             <input
@@ -160,7 +140,7 @@ function Mission() {
 
       </div>
 
-    </div>
+   
 
   );
 
