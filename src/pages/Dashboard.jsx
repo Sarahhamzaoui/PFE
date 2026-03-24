@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import "../Styles/Dashboard.css";
 
+// static mission data -replace with API call later 
 const missions = [
   { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active"   },
   { id: 2, name: "Zeraouti Lyna",   destination: "Spain",   start: "2026-01-05", status: "Pending"  },
@@ -9,94 +10,16 @@ const missions = [
   { id: 5, name: "Fatima Zohra",    destination: "Dubai",   start: "2026-03-10", status: "Pending"  },
 ];
 
-const barData = [
-  { label: "Jan", value: 30 },
-  { label: "Feb", value: 52 },
-  { label: "Mar", value: 41 }, 
-  { label: "Apr", value: 67 },
-  { label: "May", value: 55 },
-  { label: "Jun", value: 78 },
-  { label: "Jul", value: 90 },
-  { label: "Aug", value: 72 },
-];
-
-function BarChart({ data }) {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const W = canvas.width;
-    const H = canvas.height;
-    const maxVal = Math.max(...data.map(d => d.value));
-    const padLeft = 40, padBottom = 28, padTop = 16, padRight = 10;
-    const chartW = W - padLeft - padRight;
-    const chartH = H - padBottom - padTop;
-    const barCount = data.length;
-    const barW = (chartW / barCount) * 0.5;
-    const gap = chartW / barCount;
-
-    ctx.clearRect(0, 0, W, H);
-
-    // Grid lines
-    for (let i = 0; i <= 4; i++) {
-      const y = padTop + (chartH / 4) * i;
-      ctx.beginPath();
-      ctx.moveTo(padLeft, y);
-      ctx.lineTo(W - padRight, y);
-      ctx.strokeStyle = "#f0f0f5";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      const label = Math.round(maxVal - (maxVal / 4) * i);
-      ctx.fillStyle = "#aab0c0";
-      ctx.font = "10px sans-serif";
-      ctx.textAlign = "right";
-      ctx.fillText(label, padLeft - 6, y + 4);
-    }
-
-    // Bars
-    data.forEach((d, i) => {
-      const x = padLeft + gap * i + gap / 2 - barW / 2;
-      const barH = (d.value / maxVal) * chartH;
-      const y = padTop + chartH - barH;
-
-      // Rounded top bar
-      const r = 5;
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + barW - r, y);
-      ctx.quadraticCurveTo(x + barW, y, x + barW, y + r);
-      ctx.lineTo(x + barW, y + barH);
-      ctx.lineTo(x, y + barH);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
-
-      // Gradient fill
-      const grad = ctx.createLinearGradient(0, y, 0, y + barH);
-      grad.addColorStop(0, "#5B8DEF");
-      grad.addColorStop(1, "#3B6CF8");
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // X label
-      ctx.fillStyle = "#aab0c0";
-      ctx.font = "10px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(d.label, x + barW / 2, H - 8);
-    });
-  }, [data]);
-
-  return <canvas ref={canvasRef} width={380} height={180} style={{ width: "100%", height: "180px" }} />;
-}
-
+// draws a donut chart on an HTML canvas using th canvas D API 
 function DonutChart({ approved, pending, urgent }) {
   const canvasRef = useRef(null);
+  // redraws the chart whenever the state change 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     const total = approved + pending + urgent;
+    // Each slice has a value and a color 
     const slices = [
       { value: approved, color: "#4CAF82" },
       { value: pending,  color: "#F5A623" },
@@ -104,12 +27,12 @@ function DonutChart({ approved, pending, urgent }) {
     ];
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
-    const outerR = 68;
-    const innerR = 42;
-    let startAngle = -Math.PI / 2;
+    const outerR = 68; // outer radius of the donut 
+    const innerR = 42; // inner radius- creates the hole
+    let startAngle = -Math.PI / 2; // start from top 12 oclock
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+ // draw each colored slice 
     slices.forEach(slice => {
       const angle = (slice.value / total) * 2 * Math.PI;
       ctx.beginPath();
@@ -120,12 +43,12 @@ function DonutChart({ approved, pending, urgent }) {
       ctx.fill();
       startAngle += angle;
     });
-
+// draw white circle in the center to create the donut hole 
     ctx.beginPath();
     ctx.arc(cx, cy, innerR, 0, 2 * Math.PI);
     ctx.fillStyle = "#fff";
     ctx.fill();
-
+// Draw total number and label inside the donut 
     ctx.fillStyle = "#1a2340";
     ctx.font = "bold 18px sans-serif";
     ctx.textAlign = "center";
@@ -138,7 +61,7 @@ function DonutChart({ approved, pending, urgent }) {
 
   return <canvas ref={canvasRef} width={160} height={160} />;
 }
-
+// count missions by status -drives both stat cards and the donut chart
 function Dashboard() {
   const total    = missions.length;
   const approved = missions.filter(m => m.status === "Active").length;
@@ -151,7 +74,7 @@ function Dashboard() {
       {/* Header */}
       <div className="db-header">
         <div>
-          <h1 className="db-greeting">Dashboard Overview 👋</h1>
+          <h1 className="db-greeting">Dashboard Overview </h1>
           <p className="db-sub">Here's what's happening with your missions.</p>
         </div>
         <div className="db-header-right">
@@ -200,18 +123,7 @@ function Dashboard() {
 
       </div>
 
-      {/* Charts row */}
-      <div className="db-charts-grid">
-
-        {/* Bar chart */}
-        <div className="db-section db-section--wide">
-          <div className="db-section__header">
-            <p className="db-section__title">Missions over time</p>
-            <span className="db-date-badge">This year ▾</span>
-          </div>
-          <BarChart data={barData} />
-        </div>
-
+        
         {/* Donut */}
         <div className="db-section">
           <div className="db-section__header">
@@ -239,8 +151,6 @@ function Dashboard() {
           </div>
         </div>
 
-      </div>
-
       {/* Recent missions table */}
       <div className="db-section" style={{ marginTop: "1rem" }}>
         <div className="db-section__header">
@@ -255,6 +165,7 @@ function Dashboard() {
               <th>Destination</th>
               <th>Start date</th>
               <th>Status</th>
+              <th> Action</th>
             </tr>
           </thead>
           <tbody>
@@ -269,6 +180,10 @@ function Dashboard() {
                     {m.status}
                   </span>
                 </td>
+                <td>
+                  <button className="mm-action-btn">View ›</button>
+                </td>
+                
               </tr>
             ))}
           </tbody>

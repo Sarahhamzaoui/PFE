@@ -5,6 +5,7 @@ import '../styles/Sidebar.css';
 const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => {
   
   const navigate = useNavigate();
+  // Navigation menu items - id , display label, and route path 
 
   const menuItems = [
     { id: 'dashboard',      label: 'Dashboard',       path: '/dashboard' },
@@ -19,7 +20,7 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
 { id: 'settings',      label: 'Settings',      path: '/settings' },
  
   ];
-
+// clears user session and redirects to login page 
   const handleLogout = () => {
     localStorage.removeItem("users");
     navigate("/");
@@ -35,6 +36,7 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
       )}
 
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+        { /*Sidebar header with app name and close button */}
         <div className="sidebar-header">
           <div className="logo">
             <span className="logo-text">Mission System</span>
@@ -43,7 +45,7 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
             ×
           </button>
         </div>
-
+         {/* Main navigation links */}
         <nav className="sidebar-nav">
           {menuItems.map((item) => (
             <button
@@ -52,7 +54,8 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
               onClick={() => {
                 setActivePage(item.id);
                 navigate(item.path);
-                setSidebarOpen(false);
+                // this is what closes the sidebar
+               // setSidebarOpen(false);
               }}
             >
               <span className="nav-icon">{item.icon}</span>
@@ -60,7 +63,7 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
             </button>
           ))}
         </nav>
-
+            {/*Footer with logiyt button */}
         <div className="sidebar-footer">
           <button className="nav-item help-item" onClick={handleLogout}>
             <span className="nav-label">Log out</span>
