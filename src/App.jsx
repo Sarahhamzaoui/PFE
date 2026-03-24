@@ -22,7 +22,7 @@ function App() {
        <Route path="/dashboard"      element={<MainLayout activePage="dashboard" />} />
         <Route path="/missions"       element={<MainLayout activePage="missions" />} />
         <Route path="/my-missions"    element={<MainLayout activePage="my-missions" />} />
-        <Route path="/create-mission" element={<MainLayout activePage="create-mission" />} />
+        <Route path="/create-mission-page" element={<MainLayout activePage="create-mission-page" />} />
         <Route path="/profile"        element={<MainLayout activePage="profile" />} />
         <Route path="/booking"        element={<MainLayout activePage="booking" />} />
         <Route path="/reports"        element={<MainLayout activePage="reports" />} />

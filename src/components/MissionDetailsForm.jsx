@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MissionCalendar from './MissionCalendar';
+import '../Styles/MissionDeatilsForm.css';
 
 function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
   const [formData, setFormData] = useState({
@@ -9,9 +10,16 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
     destination: '',
     missionTitle: '',
     missionDescription: '',
-    duration: '',
-    startDate: ''
+    startDate: '',
+    endDate: '',
+    accommodation: '',
+    transport: '',
+    needsDriver: false
   });
+
+  const [accommodation, setAccommodation] = useState('');
+  const [transport, setTransport] = useState('');
+  const [needsDriver, setNeedsDriver] = useState(false);
 
   // auto fill 
   useEffect(() => {
@@ -38,33 +46,33 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
       ...prev,
       [name]: value
     }));
-    onFormDataChange?.(formData); 
+    onFormDataChange?.(formData);
   };
 
-  // CANCEL BUTTON - RESET ALL FIELDS TO EMPTY
   const HandleCancel = () => {
-    setFormData ({
+    setFormData({
       employeeId: '',
-      employeeName:'',
-      employeeDepartment:'',
-      destination:'',
-      missionTitle:'',
-      missionDescription:'',
-      startDate:'',
-      duration:'',
-      startDate:''
+      employeeName: '',
+      employeeDepartment: '',
+      destination: '',
+      missionTitle: '',
+      missionDescription: '',
+      startDate: '',
+      endDate: '',
+      accommodation: '',
+      transport: '',
+      needsDriver: false
     });
-  }
-  // Clear the selected employee
-  if (selectedEmployee) {
-    console.log('Form cancelled - all fields cleared');
-  }
+    setAccommodation('');
+    setTransport('');
+    setNeedsDriver(false);
+  };
 
   return (
     <>
       <div className="section-title">Mission Details</div>
-      
-      {/* EMPLOYEE INFO - TOP SECTION */}
+
+      {/* EMPLOYEE INFO */}
       <div className="employee-info-section">
         <div className="section-subtitle">Assigned Employee</div>
         <div className="form-row">
@@ -103,7 +111,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
         </div>
       </div>
 
-      {/* MISSION INFO - BOTTOM SECTION */}
+      {/* MISSION INFO */}
       <div className="mission-info-section">
         <div className="section-subtitle">Mission Information</div>
         <div className="form-row">
@@ -145,31 +153,92 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
           <div className="form-group full-width">
             <MissionCalendar />
           </div>
-
-          <div className="form-group">
-            <label>Duration (days)</label>
-            <input
-              type="number"
-              name="duration"
-              className="form-input"
-              placeholder="15"
-              min="1"
-              value={formData.duration}
-              onChange={handleInputChange}
-            />
-          </div>
         </div>
       </div>
-      {/*Buttons Cancel + Submit  */}
+
+      {/* ACCOMMODATION & TRANSPORT */}
+      <div className="accommodation-transport-section">
+        <div className="section-subtitle">Accommodation & Transport</div>
+        <div className="form-row">
+
+          {/* ACCOMMODATION */}
+          <div className="form-group">
+            <label>Accommodation</label>
+            <div className="checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="accommodation"
+                  value="hotel"
+                  checked={accommodation === 'hotel'}
+                  onChange={(e) => setAccommodation(e.target.value)}
+                />
+                Hotel
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="accommodation"
+                  value="residence"
+                  checked={accommodation === 'residence'}
+                  onChange={(e) => setAccommodation(e.target.value)}
+                />
+                Residence
+              </label>
+            </div>
+          </div>
+
+          {/* TRANSPORT */}
+          <div className="form-group">
+            <label>Transport</label>
+            <div className="checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="transport"
+                  value="company"
+                  checked={transport === 'company'}
+                  onChange={(e) => { setTransport(e.target.value); setNeedsDriver(false); }}
+                />
+                Company Car
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="radio"
+                  name="transport"
+                  value="personal"
+                  checked={transport === 'personal'}
+                  onChange={(e) => { setTransport(e.target.value); setNeedsDriver(false); }}
+                />
+                Personal Car
+              </label>
+            </div>
+
+            {transport === 'company' && (
+              <div className="checkbox-group" style={{ marginTop: '8px' }}>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={needsDriver}
+                    onChange={(e) => setNeedsDriver(e.target.checked)}
+                  />
+                  Needs a Driver
+                </label>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </div>
+
+      {/* BUTTONS */}
       <div className='btn-group'>
         <button type='button' className='btn btn-cancel' onClick={HandleCancel}>
           Cancel
         </button>
-        <button type='submit' className='btn btn-submit' >
+        <button type='submit' className='btn btn-submit'>
           Submit Missions
         </button>
-        
-
       </div>
     </>
   );

@@ -10,7 +10,7 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
     { id: 'dashboard',      label: 'Dashboard',       path: '/dashboard' },
     { id: 'my-missions',    label: 'My Missions',      path: '/my-missions' },
     { id: 'reports',        label: 'Reports',          path: '/reports' },
-    { id: 'create-mission', label: 'Create Mission',   path: '/create-mission' },
+    { id: 'create-mission-page', label: 'Create Mission ',   path: '/create-mission-page' },
     { id: 'profile',        label: 'Profile',          path: '/profile' },
 
     { id: 'missions',  label:' Missions',    path: '/missions'},

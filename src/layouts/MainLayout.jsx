@@ -22,8 +22,8 @@ function MainLayout({ activePage: initialPage }) {
       case 'dashboard':      return <Dashboard />;
       case 'notifications': return <div><h1>notif  soon</h1></div>;
       case 'settings': return <div><h1>settingscoming soon</h1></div>;
-      case 'my-missions':    return <MyMissions />;
-      case 'create-mission': return <CreateMissionPage />;
+      case 'my-missions':    return <MyMissions setActivePage={setActivePage} />;
+      case 'create-mission-page': return <CreateMissionPage />;
       case 'missions':       return <Mission />;
       case 'profile':        return <Profile />;
       case 'booking':        return <BookingPage />;
