@@ -7,6 +7,7 @@ export const MOCK_EMPLOYEES = [
     employeeId: "EMP001", 
     name: "Lyna Lyna", 
     email: "lynalyna@gmail.com", 
+    phoneNumber:'2030',
     department: "HR",
     initials: "LL"
   },
@@ -15,6 +16,8 @@ export const MOCK_EMPLOYEES = [
     employeeId: "EMP002", 
     name: "Amir Sali", 
     email: "amir.sali@gmail.com", 
+        phoneNumber:'4060',
+
     department: "IT", 
     initials: "AS"
   },
@@ -23,6 +26,8 @@ export const MOCK_EMPLOYEES = [
     employeeId: "EMP003", 
     name: "Fatima Zohra", 
     email: "fatima.zohra@gmail.com", 
+        phoneNumber:'45678998765',
+
     department: "Finance", 
     initials: "FZ"
   }

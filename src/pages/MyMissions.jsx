@@ -6,23 +6,23 @@ import "../Styles/MyMissions.css";
 const allMissions = [
   { id: "MSN001", name: "Hamzaoui Sarah",  destination: "Paris",   date: "2026-02-20", status: "Active",   payment: "Approved" },
   { id: "MSN002", name: "Zeraouti Lyna",   destination: "Spain",   date: "2026-01-05", status: "Pending",  payment: "Pending"  },
-  { id: "MSN003", name: "Roumane Lydia",   destination: "Italy",   date: "2025-12-04", status: "Rejected", payment: "Rejected" },
+  { id: "MSN003", name: "Roumane Lydia",   destination: "Italy",   date: "2025-12-04", status: "Urgent", payment: "Urgent" },
   { id: "MSN004", name: "Amir Sali",       destination: "Germany", date: "2026-03-01", status: "Active",   payment: "Approved" },
   { id: "MSN005", name: "Fatima Zohra",    destination: "Dubai",   date: "2026-03-10", status: "Pending",  payment: "Pending"  },
   { id: "MSN006", name: "Karim Benali",    destination: "London",  date: "2026-03-15", status: "Active",   payment: "Approved" },
   { id: "MSN007", name: "Nadia Oukaci",    destination: "Paris",   date: "2026-03-18", status: "Pending",  payment: "Pending"  },
 ];
 
-const TABS = ["All missions", "Pending", "Active", "Rejected"];
+const TABS = ["All missions", "Pending", "Active", "Urgent"];
 
 export default function MyMissions({setActivePage}) {
   const [activeTab, setActiveTab] = useState("All missions");
   const [search, setSearch] = useState("");
 
-  const newCount      = allMissions.filter(m => m.status === "Pending").length;
-  const activeCount   = allMissions.filter(m => m.status === "Active").length;
-  const rejectedCount = allMissions.filter(m => m.status === "Rejected").length;
-  const totalCount    = allMissions.length;
+  const pending   = allMissions.filter(m => m.status === "Pending").length;
+  const approved   = allMissions.filter(m => m.status === "Active").length;
+  const urgent= allMissions.filter(m => m.status === "Urgent").length;
+  const total = allMissions.length;
 
   const filtered = allMissions.filter(m => {
     const matchTab    = activeTab === "All missions" || m.status === activeTab;
@@ -30,6 +30,7 @@ export default function MyMissions({setActivePage}) {
                         m.destination.toLowerCase().includes(search.toLowerCase()) ||
                         m.id.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
+    
   });
 
   return (
@@ -42,26 +43,41 @@ export default function MyMissions({setActivePage}) {
       </div>
 
       {/* Summary cards */}
-      <div className="mm-summary-grid">
-        <div className="mm-summary-card mm-summary-card--blue">
-          <p className="mm-summary__label">New missions</p>
-          <p className="mm-summary__value">{newCount}</p>
-          <p className="mm-summary__sub">↑ Than last week</p>
+      <div className="db-cards-grid">
+        <div className="db-card db-card--blue">
+          <div className="db-card__top">
+            <span className="db-card__label">Total Missions</span>
+            <span className="db-card__arrow">↗</span>
+          </div>
+          <p className="db-card__value">{total}</p>
+          <p className="db-card__sub">All time</p>
         </div>
-        <div className="mm-summary-card mm-summary-card--green">
-          <p className="mm-summary__label">Active</p>
-          <p className="mm-summary__value">{activeCount}</p>
-          <p className="mm-summary__sub">↑ Than last week</p>
+
+        <div className="db-card">
+          <div className="db-card__top">
+            <span className="db-card__label">Approved</span>
+            <span className="db-card__arrow">↗</span>
+          </div>
+          <p className="db-card__value">{approved}</p>
+          <p className="db-card__sub db-card__sub--green">↑ Currently ongoing</p>
         </div>
-        <div className="mm-summary-card mm-summary-card--red">
-          <p className="mm-summary__label">Rejected</p>
-          <p className="mm-summary__value">{rejectedCount}</p>
-          <p className="mm-summary__sub">↓ Than last week</p>
+
+        <div className="db-card">
+          <div className="db-card__top">
+            <span className="db-card__label">Pending</span>
+            <span className="db-card__arrow">↗</span>
+          </div>
+          <p className="db-card__value">{pending}</p>
+          <p className="db-card__sub db-card__sub--amber">↑ Awaiting approval</p>
         </div>
-        <div className="mm-summary-card mm-summary-card--amber">
-          <p className="mm-summary__label">Total</p>
-          <p className="mm-summary__value">{totalCount}</p>
-          <p className="mm-summary__sub">All time</p>
+
+        <div className="db-card">
+          <div className="db-card__top">
+            <span className="db-card__label">Urgent</span>
+            <span className="db-card__arrow">↗</span>
+          </div>
+          <p className="db-card__value">{urgent}</p>
+          <p className="db-card__sub db-card__sub--red">↑ Needs attention</p>
         </div>
       </div>
 

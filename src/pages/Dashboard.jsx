@@ -5,7 +5,7 @@ import "../Styles/Dashboard.css";
 const missions = [
   { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active"   },
   { id: 2, name: "Zeraouti Lyna",   destination: "Spain",   start: "2026-01-05", status: "Pending"  },
-  { id: 3, name: "Roumane Lydia",   destination: "Italy",   start: "2025-12-04", status: "Rejected" },
+  { id: 3, name: "Roumane Lydia",   destination: "Italy",   start: "2025-12-04", status: "Urgent" },
   { id: 4, name: "Amir Sali",       destination: "Germany", start: "2026-03-01", status: "Active"   },
   { id: 5, name: "Fatima Zohra",    destination: "Dubai",   start: "2026-03-10", status: "Pending"  },
 ];
@@ -73,7 +73,7 @@ function Dashboard() {
   const total    = missions.length;
   const approved = missions.filter(m => m.status === "Active").length;
   const pending  = missions.filter(m => m.status === "Pending").length;
-  const urgent   = missions.filter(m => m.status === "Rejected").length;
+  const urgent   = missions.filter(m => m.status === "Urgent").length;
 
   return (
     <div className="db-page">
@@ -81,7 +81,7 @@ function Dashboard() {
       {/* Page header */}
       <div className="db-header">
         <div>
-          <h1 className="db-greeting">Dashboard Overview 👋</h1>
+          <h1 className="db-greeting">Dashboard Overview </h1>
           <p className="db-sub">Here's what's happening with your missions.</p>
         </div>
         <div className="db-header-right">

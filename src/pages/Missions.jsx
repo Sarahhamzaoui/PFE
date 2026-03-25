@@ -36,7 +36,7 @@ function Mission() {
       destination: "Italy",
       start: "2025-12-04",
       end: "2025-12-13",
-      status: "Rejected"
+      status: "Urgent"
     }
   ];
 
@@ -108,7 +108,7 @@ function Mission() {
                 let statusClass = "badge";
                 if (m.status === "Active")   statusClass += " active-status";
                 if (m.status === "Pending")  statusClass += " pending";
-                if (m.status === "Rejected") statusClass += " rejected";
+                if (m.status === "Urgent") statusClass += " Urgent";
 
                 return (
                   <tr key={m.id} onClick={() => openMission(m.id)}>

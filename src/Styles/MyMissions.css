@@ -215,7 +215,7 @@
 
 .mm-badge--active   { background: #e8f8f1; color: #2a9b6a; }
 .mm-badge--pending  { background: #fff5e6; color: #c07b10; }
-.mm-badge--rejected { background: #fdeaea; color: #c03030; }
+.mm-badge--urgent { background: #fdeaea; color: #c03030; }
 
 /* ── Action button ──────────────────────────────────── */
 .mm-action-btn {

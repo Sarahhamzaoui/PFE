@@ -6,6 +6,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
   const [formData, setFormData] = useState({
     employeeId: '',
     employeeName: '',
+    phoneNumber:'',
     employeeDepartment: '',
     destination: '',
     missionTitle: '',
@@ -28,14 +29,16 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
         ...prev,
         employeeId: selectedEmployee.employeeId,
         employeeName: selectedEmployee.name,
-        employeeDepartment: selectedEmployee.department
+        employeeDepartment: selectedEmployee.department,
+        phoneNumber:selectedEmployee.phoneNumber
       }));
     } else {
       setFormData(prev => ({
         ...prev,
         employeeId: '',
         employeeName: '',
-        employeeDepartment: ''
+        employeeDepartment: '',
+        phoneNumber:''
       }));
     }
   }, [selectedEmployee]);
@@ -53,6 +56,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
     setFormData({
       employeeId: '',
       employeeName: '',
+      phoneNumber:'',
       employeeDepartment: '',
       destination: '',
       missionTitle: '',
@@ -96,6 +100,17 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
               value={formData.employeeName}
               readOnly
             />
+          </div>
+
+          <div className='form-goup'>
+            <label> Phone Number</label>
+            <input
+            type='tel'
+            name='phoneNumber'
+            className='form-input readonly'
+            value={formData.phoneNumber}
+            readOnly
+            /> 
           </div>
 
           <div className="form-group">

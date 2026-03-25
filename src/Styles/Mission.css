@@ -97,7 +97,7 @@ tbody tr:last-child td {
   color: #856404;
 }
 
-.rejected {
+.Urgent {
   background: #f8d7da;
   color: #721c24;
 }
