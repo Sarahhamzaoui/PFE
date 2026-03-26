@@ -1,44 +1,72 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import  "../Styles/Profile.css";
+import "../Styles/Profile.css";
 
 function Profile() {
-
   const navigate = useNavigate();
- 
-
   const user = JSON.parse(localStorage.getItem("users") || "{}");
+
+  const initials =
+    (user.first_name?.slice(0, 1) || "?").toUpperCase() +
+    (user.last_name?.slice(0, 1) || "").toUpperCase();
 
   const handleLogout = () => {
     localStorage.removeItem("users");
     navigate("/");
   };
 
-  return (
-    <>
-      
+  const fields = [
+    { label: "User ID",    value: user.id,                      icon: "" },
+    { label: "Email",      value: user.email,                   icon: "" },
+    { label: "First Name", value: user.first_name,              icon: "" },
+    { label: "Role",       value: user.role,                    icon: "" },
+    { label: "Phone",      value: user.phone || "Not provided", icon: "" },
+  ];
 
-      {/* Profile Card */}
-      <div className="page-wrapper">
-        <div className="profile-container">
-          <div className="profile-image"></div>
-          <h2>{user.first_name}</h2>
-          <p className="role">{user.role}</p>
-          <div className="info">
-            <p><span className="label">User ID:</span> {user.id}</p>
-            <p><span className="label">Email:</span> {user.email}</p>
-            <p><span className="label">First Name:</span> {user.first_name}</p>
-            <p><span className="label">Role:</span> {user.role}</p>
-            <p><span className="label">Phone:</span> {user.phone || "Not provided"}</p>
-          </div>
-          <div className="buttons">
-            <button className="edit-btn" onClick={() => navigate("/EditProfile")}>Edit Profile</button>
-            <button className="logout-btn" onClick={handleLogout}>Logout</button>
-          </div>
+  return (
+    <div className="pf-wrap">
+
+      {/* Banner */}
+      <div className="pf-banner">
+        <div className="pf-banner__overlay" />
+        <div className="pf-avatar">{initials}</div>
+      </div>
+
+      {/* Identity */}
+      <div className="pf-identity">
+        <h1 className="pf-name">{user.first_name || "—"} {user.last_name || ""}</h1>
+        <span className="pf-role-badge">{user.role || "Employee"}</span>
+      </div>
+
+      {/* Card */}
+      <div className="pf-card">
+        <div className="pf-card-head">
+          <span className="pf-card-title">Account Information</span>
+          <span className="pf-card-tag">Personal</span>
+        </div>
+        <div className="pf-fields">
+          {fields.map((f) => (
+            <div className="pf-field" key={f.label}>
+              <div className="pf-field-icon">{f.icon}</div>
+              <div className="pf-field-body">
+                <span className="pf-field-label">{f.label}</span>
+                <span className="pf-field-value">{f.value || "—"}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </>
+
+      {/* Actions */}
+      <div className="pf-actions">
+        <button className="pf-btn-primary" onClick={() => navigate("/EditProfile")}>
+           Edit Profile
+        </button>
+        <button className="pf-btn-danger" onClick={handleLogout}>
+          ⎋ Logout
+        </button>
+      </div>
+
+    </div>
   );
 }
 

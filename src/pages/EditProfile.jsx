@@ -9,7 +9,8 @@ export default function EditProfile() {
     phone: "",
     password: "",
   });
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({ text: "", type: "" });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/user/profile")
@@ -17,78 +18,112 @@ export default function EditProfile() {
       .then((data) => {
         setForm({
           first_name: data.first_name || "",
-          last_name: data.last_name || "",
-          email: data.email || "",
-          phone: data.phone || "",
-          password: "",
+          last_name:  data.last_name  || "",
+          email:      data.email      || "",
+          phone:      data.phone      || "",
+          password:   "",
         });
       })
-      .catch(() => setMessage("Failed to load user data."));
+      .catch(() => setMessage({ text: "Failed to load user data.", type: "error" }));
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const res = await fetch("/api/user/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
       if (res.ok) {
         window.location.href = "/profile";
       } else {
-        setMessage("Update failed. Please try again.");
+        setMessage({ text: "Update failed. Please try again.", type: "error" });
       }
     } catch {
-      setMessage("Something went wrong.");
+      setMessage({ text: "Something went wrong.", type: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCancel = () => {
-    window.location.href = "/profile";
-  };
+  const fields = [
+    { label: "First Name",   name: "first_name", type: "text",     icon: "", placeholder: "e.g. Lyna" },
+    { label: "Last Name",    name: "last_name",  type: "text",     icon: "", placeholder: "e.g. Smith" },
+    { label: "Email",        name: "email",      type: "email",    icon: "", placeholder: "your@email.com" },
+    { label: "Phone Number", name: "phone",      type: "text",     icon: "", placeholder: "+213 xx xx xx xx" },
+    { label: "New Password", name: "password",   type: "password", icon: "", placeholder: "Leave blank to keep current" },
+  ];
 
   return (
-    <div className="page-wrapper">
-      <div className="container">
-        <h2>Edit Profile</h2>
+    <div className="ep-wrap">
 
-        {message && <p className="message">{message}</p>}
+      {/* ── Banner ── */}
+      <div className="ep-banner">
+        <div className="ep-banner__overlay" />
+        <div className="ep-avatar"></div>
+      </div>
 
-        <div className="input-group">
-          <label>First Name</label>
-          <input type="text" name="first_name" value={form.first_name} onChange={handleChange} required />
+      {/* ── Title ── */}
+      <div className="ep-identity">
+        <h1 className="ep-title">Edit Profile</h1>
+        <span className="ep-subtitle">Update your account information</span>
+      </div>
+
+      {/* ── Message ── */}
+      {message.text && (
+        <div className={`ep-message ep-message--${message.type}`}>
+          {message.text}
+        </div>
+      )}
+
+      {/* ── Form Card ── */}
+      <div className="ep-card">
+        <div className="ep-card-head">
+          <span className="ep-card-title">Personal Details</span>
+          <span className="ep-card-tag">Editable</span>
         </div>
 
-        <div className="input-group">
-          <label>Last Name</label>
-          <input type="text" name="last_name" value={form.last_name} onChange={handleChange} required />
-        </div>
-
-        <div className="input-group">
-          <label>Email</label>
-          <input type="email" name="email" value={form.email} onChange={handleChange} required />
-        </div>
-
-        <div className="input-group">
-          <label>Phone Number</label>
-          <input type="text" name="phone" value={form.phone} onChange={handleChange} required />
-        </div>
-
-        <div className="input-group">
-          <label>Password</label>
-          <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Enter new password" />
-        </div>
-
-        <div className="buttons">
-          <button className="update-btn" onClick={handleSubmit}>Save Changes</button>
-          <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
+        <div className="ep-fields">
+          {fields.map((f) => (
+            <div className="ep-field" key={f.name}>
+              <div className="ep-field-icon">{f.icon}</div>
+              <div className="ep-field-body">
+                <label className="ep-field-label">{f.label}</label>
+                <input
+                  className="ep-field-input"
+                  type={f.type}
+                  name={f.name}
+                  value={form[f.name]}
+                  onChange={handleChange}
+                  placeholder={f.placeholder}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
+
+      {/* ── Actions ── */}
+      <div className="ep-actions">
+        <button
+          className="ep-btn-primary"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "Saving…" : "✓ Save Changes"}
+        </button>
+        <button
+          className="ep-btn-ghost"
+          onClick={() => window.location.href = "/profile"}
+        >
+          Cancel
+        </button>
+      </div>
+
     </div>
   );
 }
