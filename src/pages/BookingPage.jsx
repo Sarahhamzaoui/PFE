@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../Styles/BookingPage.css";
+import AddAccommodationPage from "./AddAccommodationPage";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const ACCOMMODATIONS = [
@@ -10,7 +11,6 @@ const ACCOMMODATIONS = [
     desc: "Premium company-approved housing with workspace.",
     price: 220,
     unit: "/ night",
-    emoji: "🏢",
   },
   {
     id: "h2",
@@ -19,7 +19,6 @@ const ACCOMMODATIONS = [
     desc: "Comfortable apartment for assignments.",
     price: 140,
     unit: "/ night",
-    emoji: "🏬",
   },
 ];
 
@@ -31,7 +30,6 @@ const MEALS = [
     desc: "All meals included daily.",
     price: 40,
     unit: "/ day",
-    emoji: "🍽️",
   },
   {
     id: "r2",
@@ -40,7 +38,6 @@ const MEALS = [
     desc: "Daily allowance.",
     price: 15,
     unit: "/ day",
-    emoji: "💼",
   },
 ];
 
@@ -52,7 +49,6 @@ const TRANSPORTS = [
     desc: "Company vehicle access.",
     price: 60,
     unit: "/ day",
-    emoji: "🚘",
   },
   {
     id: "t2",
@@ -61,7 +57,6 @@ const TRANSPORTS = [
     desc: "Business class flight.",
     price: 300,
     unit: "/ ticket",
-    emoji: "✈️",
   },
 ];
 
@@ -164,47 +159,41 @@ function Summary({ selections, onConfirm, onBack }) {
   );
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
+// ── Main ─────────────────────────────────────────────
 
 export default function BookingPage() {
   const [step, setStep] = useState(1);
+  const [showAddPage, setShowAddPage] = useState(false);
   const [accommodations, setAccommodations] = useState(ACCOMMODATIONS);
 
   const [selections, setSelections] = useState({
-    accommodation: null, meals: null,transport: null,
+    accommodation: null,
+    meals: null,
+    transport: null,
   });
 
   const select = (key, item) =>
     setSelections((prev) => ({ ...prev, [key]: item }));
 
-  // ➕ Add new accommodation
-  const handleAddAccommodation = () => {
-    const name = prompt("Enter accommodation name:");
-    if (!name) return;
-    const location= prompt("Enter location:");
-    if (!location) return;
-    const price = prompt("Enter price per night:");
-    if (!price) return;
-
-    const newItem = {
-      id: Date.now().toString(),
-      tag: "Custom",
-      name,
-      location,
-      desc: "User-added accommodation",
-      price,
-      unit: "/ night",
-      emoji: "🏢",
-    };
-
+  const handleAddAccommodation = (newItem) => {
     setAccommodations((prev) => [...prev, newItem]);
   };
+
+  // ── Render Add Accommodation page ─────────────────
+  if (showAddPage) {
+    return (
+      <AddAccommodationPage
+        onAdd={handleAddAccommodation}
+        onBack={() => setShowAddPage(false)}
+      />
+    );
+  }
 
   return (
     <div className="page">
       <header className="page-header">
-        <div className="logo">■ CORPORATE TRAVEL SYSTEM</div>
-        <h1>Plan Your <em>Business Mission</em></h1>
+        <div className="logo"></div>
+        <h1>Plan<em>Business Mission</em></h1>
         <p>Configure logistics for your assignment</p>
       </header>
 
@@ -219,7 +208,7 @@ export default function BookingPage() {
             selected={selections.accommodation}
             onSelect={(item) => select("accommodation", item)}
             onNext={() => setStep(2)}
-            onAddNew={handleAddAccommodation}
+            onAddNew={() => setShowAddPage(true)}
           />
         )}
 
