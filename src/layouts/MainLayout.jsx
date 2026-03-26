@@ -9,6 +9,8 @@ import Dashboard from "../pages/Dashboard";
 import Mission from "../pages/Missions";
 import Profile from "../pages/Profile";
 import BookingPage from "../pages/BookingPage";
+import Reports from "../pages/Reports";
+import ManagerPage from "../pages/ManagerPage";
 
 // initialPage is passed from App.jsx
 function MainLayout({ activePage: initialPage }) {
@@ -20,14 +22,14 @@ function MainLayout({ activePage: initialPage }) {
   const renderPage = () => {
     switch (activePage) {
       case 'dashboard':      return <Dashboard />;
-      case 'notifications': return <div><h1>notif  soon</h1></div>;
       case 'settings': return <div><h1>settingscoming soon</h1></div>;
       case 'my-missions':    return <MyMissions setActivePage={setActivePage} />;
       case 'create-mission-page': return <CreateMissionPage />;
       case 'missions':       return <Mission />;
       case 'profile':        return <Profile />;
       case 'booking':        return <BookingPage />;
-      case 'reports':        return <div><h1>Reports coming soon</h1></div>;
+      case 'reports':        return <Reports /> ;
+      case 'ManagerPage':  return <ManagerPage/>;
       default:               return <Dashboard />;
     }
   };
@@ -41,6 +43,7 @@ function MainLayout({ activePage: initialPage }) {
     'profile':        'Profile',
     'booking':        'Booking',
     'reports':        'Reports',
+    'manager-page':   'manager Page'
   };
 
   return (

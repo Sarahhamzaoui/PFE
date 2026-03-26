@@ -7,6 +7,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../Styles/Attachments.css';
 
+ // the size limit 
+  const MAX_FILE_SIZE_MB = 25 ;
+  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
 function AttachmentsDropzone() {
 
   // useRef creates a direct reference to the dropzone DOM element
@@ -15,6 +19,23 @@ function AttachmentsDropzone() {
   const fileInputRef=useRef(null);
   // stores the list f all dropped/selected files across multiple uploads
   const [droppedFiles, setDroppedFiles]= useState([]);
+ // track rejected files
+ const [rejectedFiles, setRejectedFiles] = useState([]);
+
+ const filterFiles = (files) => {
+  const accepted= [];
+  const rejected=[];
+ 
+ files.forEach (file => {
+  if (file.size <= MAX_FILE_SIZE_BYTES) {
+    accepted.push(file);
+
+  } else {
+    rejected.push(file.name);
+  }
+ });
+ return {accepted,rejected};
+}
 
   useEffect(() => {
 
@@ -48,9 +69,10 @@ function AttachmentsDropzone() {
       e.preventDefault();
       attachments.classList.remove('dragover');
       const files = Array.from(e.dataTransfer.files); // convert filelist to an array 
-      setDroppedFiles(prev => [...prev, ...files]); // append to existing files
-      
-      
+       
+      const {accepted , rejected } = filterFiles(files);
+      setDroppedFiles(prev => [...prev, ...accepted]);
+      setRejectedFiles(rejected);
     };
 
     // Attach the three drag-and-drop event listeners to the dropzone element
@@ -79,7 +101,9 @@ function AttachmentsDropzone() {
    */
    const handleFileInput = (e) => {
     const files = Array.from(e.target.files); // convert FileList to array
-    setDroppedFiles(prev => [...prev, ...files]); // append to existing files
+      const { accepted, rejected } = filterFiles(files); //  call it first
+    setDroppedFiles(prev => [...prev, ...accepted]); // append to existing files
+   setRejectedFiles(rejected);
     e.target.value = ''; // reset input so the same file can be re-selected later
   };
  //  removeFile - removes a specific file from the list by its index
@@ -110,6 +134,16 @@ function AttachmentsDropzone() {
         
         <small>Drag &amp; drop here or browse</small>
       </div>
+      {/* Error messages for rejected files */}
+      {rejectedFiles.length > 0 && (
+        <div className='rejected-files'>
+          {rejectedFiles.map((name, index) => (
+            <div key={index} className='rejected-item'>
+              ⚠️ <strong>{name}</strong> exceeds the {MAX_FILE_SIZE_MB}MB limit and was not added.
+            </div>
+          ))}
+        </div>
+      )}
       {/*File list only renders if at least one file has been dropped */}
       {droppedFiles.length >0 && (
         <div className='file-list'>

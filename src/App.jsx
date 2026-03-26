@@ -8,6 +8,7 @@ import CreateMissionPage from "./pages/CreateMissionPage";
 import Dashboard from "./pages/Dashboard";
 import MyMissions from "./pages/MyMissions";
 import MainLayout from "./layouts/MainLayout";
+import ManagerPage from "./pages/ManagerPage";
 
 function App() {
   return (
@@ -26,8 +27,7 @@ function App() {
         <Route path="/profile"        element={<MainLayout activePage="profile" />} />
         <Route path="/booking"        element={<MainLayout activePage="booking" />} />
         <Route path="/reports"        element={<MainLayout activePage="reports" />} />
-        <Route path="/notifications"  element={<MainLayout activePage="notifications" />} />
-        
+        <Route path ="/ManagerPage" element={<MainLayout activePage="ManagerPage"/>}/>
         <Route path="/settings"       element={<MainLayout activePage="settings" />} />
       </Routes>
     </BrowserRouter>

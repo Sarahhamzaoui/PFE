@@ -15,8 +15,8 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
 
     { id: 'missions',  label:' Missions',    path: '/missions'},
     { id: 'booking',        label: 'Booking',           path: '/booking' },
-    { id: 'notifications', label: 'Notifications', path: '/notifications' },
 { id: 'settings',      label: 'Settings',      path: '/settings' },
+{id: 'ManagerPage', label: ' Manager page' , path: '/ManagerPage'},
  
   ];
 
