@@ -47,7 +47,7 @@ export default function MissionCalendar() {
                     className="calendar-toggle"
                     size="small"
                   >
-                    📅
+                    📆
                   </Button>
                 </InputAdornment>
               ),
@@ -82,7 +82,7 @@ export default function MissionCalendar() {
                     className="calendar-toggle"
                     size="small"
                   >
-                    📅
+                    📆
                   </Button>
                 </InputAdornment>
               ),

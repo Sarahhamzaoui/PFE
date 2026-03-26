@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MissionCalendar from './MissionCalendar';
 import '../Styles/MissionDeatilsForm.css';
 
+
 function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
   const [formData, setFormData] = useState({
     employeeId: '',
@@ -18,9 +19,12 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
     needsDriver: false
   });
 
+
   const [accommodation, setAccommodation] = useState('');
   const [transport, setTransport] = useState('');
   const [needsDriver, setNeedsDriver] = useState(false);
+  const [missionurgent, setmissionurgent] = useState(false);
+
 
   // auto fill 
   useEffect(() => {
@@ -43,14 +47,36 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
     }
   }, [selectedEmployee]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    onFormDataChange?.(formData);
+
+const handleInputChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  const newValue = type === 'checkbox' ? checked : value;
+
+
+  setFormData(prev => ({
+    ...prev,
+    [name]: newValue
+  }));
+};
+
+
+//  handleSubmit function with sync logic for separate states
+const handleSubmit = (e) => {
+  e.preventDefault();
+  
+  // Sync separate states (accommodation, transport, needsDriver, missionurgent) into formData
+  const finalData = {
+    ...formData,
+    accommodation,
+    transport,
+    needsDriver,
+    missionurgent
   };
+
+  onFormDataChange?.(finalData);
+  // Or call an API
+};
+
 
   const HandleCancel = () => {
     setFormData({
@@ -70,11 +96,15 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
     setAccommodation('');
     setTransport('');
     setNeedsDriver(false);
+
+
   };
 
+
   return (
-    <>
+     <form onSubmit={handleSubmit}>
       <div className="section-title">Mission Details</div>
+
 
       {/* EMPLOYEE INFO */}
       <div className="employee-info-section">
@@ -91,6 +121,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             />
           </div>
 
+
           <div className="form-group">
             <label>Employee Name</label>
             <input
@@ -102,7 +133,8 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             />
           </div>
 
-          <div className='form-goup'>
+
+          <div className='form-group'>
             <label> Phone Number</label>
             <input
             type='tel'
@@ -112,6 +144,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             readOnly
             /> 
           </div>
+
 
           <div className="form-group">
             <label>Department</label>
@@ -126,7 +159,18 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
         </div>
       </div>
 
+
       {/* MISSION INFO */}
+      <div className="checkbox-group urgent-mission" style={{ marginTop: '8px' }}>
+                <label className="checkbox-label">
+                   Urgent Mission
+                  <input
+                    type="checkbox"
+                    checked={missionurgent}
+                    onChange={(e) => setmissionurgent(e.target.checked)}
+                  />
+                </label>
+              </div> <br></br>
       <div className="mission-info-section">
         <div className="section-subtitle">Mission Information</div>
         <div className="form-row">
@@ -142,6 +186,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             />
           </div>
 
+
           <div className="form-group">
             <label>Mission Title</label>
             <input
@@ -154,6 +199,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             />
           </div>
 
+
           <div className="form-group full-width">
             <label>Mission Description</label>
             <textarea
@@ -165,16 +211,25 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             />
           </div>
 
+
           <div className="form-group full-width">
-            <MissionCalendar />
+            <MissionCalendar
+  startDate={formData.startDate}
+  endDate={formData.endDate}
+  onChange={(dates) => setFormData(prev => ({ ...prev, ...dates }))}
+/>
+
+
           </div>
         </div>
       </div>
+
 
       {/* ACCOMMODATION & TRANSPORT */}
       <div className="accommodation-transport-section">
         <div className="section-subtitle">Accommodation & Transport</div>
         <div className="form-row">
+
 
           {/* ACCOMMODATION */}
           <div className="form-group">
@@ -203,6 +258,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             </div>
           </div>
 
+
           {/* TRANSPORT */}
           <div className="form-group">
             <label>Transport</label>
@@ -229,6 +285,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
               </label>
             </div>
 
+
             {transport === 'company' && (
               <div className="checkbox-group" style={{ marginTop: '8px' }}>
                 <label className="checkbox-label">
@@ -243,8 +300,10 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
             )}
           </div>
 
+
         </div>
       </div>
+
 
       {/* BUTTONS */}
       <div className='btn-group'>
@@ -255,8 +314,9 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
           Submit Missions
         </button>
       </div>
-    </>
+    </form>
   );
 }
+
 
 export default MissionDetailsForm;
