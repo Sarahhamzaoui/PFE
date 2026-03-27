@@ -1,4 +1,3 @@
-// Shared layout: renders Sidebar + the current active page
 import React, { useState } from "react";
 import "../styles/Main.css";
 
@@ -11,45 +10,42 @@ import Profile from "../pages/Profile";
 import BookingPage from "../pages/BookingPage";
 import Reports from "../pages/Reports";
 import ManagerPage from "../pages/ManagerPage";
+import Settings from "../pages/Settings";
 
-// initialPage is passed from App.jsx
 function MainLayout({ activePage: initialPage }) {
-
-  const [activePage, setActivePage] = useState(initialPage); 
+  const [activePage, setActivePage] = useState(initialPage);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
-  // Returns  page based on activePage
   const renderPage = () => {
     switch (activePage) {
-      case 'dashboard':      return <Dashboard />;
-      case 'settings': return <div><h1>settingscoming soon</h1></div>;
-      case 'my-missions':    return <MyMissions setActivePage={setActivePage} />;
-      case 'create-mission-page': return <CreateMissionPage />;
-      case 'missions':       return <Mission />;
-      case 'profile':        return <Profile />;
-      case 'booking':        return <BookingPage />;
-      case 'reports':        return <Reports /> ;
-      case 'ManagerPage':  return <ManagerPage/>;
-      default:               return <Dashboard />;
+      case 'dashboard':            return <Dashboard />;
+      case 'my-missions':          return <MyMissions setActivePage={setActivePage} />;
+      case 'create-mission-page':  return <CreateMissionPage />;
+      case 'missions':             return <Mission />;
+      case 'profile':              return <Profile />;
+      case 'booking':              return <BookingPage />;
+      case 'reports':              return <Reports />;
+      case 'ManagerPage':          return <ManagerPage />;
+      case 'settings':             return <Settings darkMode={darkMode} setDarkMode={setDarkMode} />;
+      default:                     return <Dashboard />;
     }
   };
 
-  // Page ID to display title mapping
   const pageTitles = {
-    'dashboard':      'Dashboard',
-    'my-missions':    'My Missions',
-    'create-mission': 'Create Mission',
-    'missions':       'Missions',
-    'profile':        'Profile',
-    'booking':        'Booking',
-    'reports':        'Reports',
-    'manager-page':   'manager Page'
+    'dashboard':           'Dashboard',
+    'my-missions':         'My Missions',
+    'create-mission-page': 'Create Mission',
+    'missions':            'Missions',
+    'profile':             'Profile',
+    'booking':             'Booking',
+    'reports':             'Reports',
+    'ManagerPage':         'Manager Page',
+    'settings':            'Settings',
   };
 
   return (
     <div className="MainLayout">
-        
-
       <Sidebar
         activePage={activePage}
         setActivePage={setActivePage}
@@ -59,7 +55,6 @@ function MainLayout({ activePage: initialPage }) {
 
       <div className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="topbar">
-          {/* Toggles sidebar open/closed */}
           <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
