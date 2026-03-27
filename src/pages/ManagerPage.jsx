@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import '../Styles/ManagerPage.css';
+import MissionDetailModal from '../components/MissionDetailModal';
 
-// ─── Static Data ───────────────────────────────────────────────────────────────
+// Static Data
 
-// Missions that have already been reviewed (pre-populated history)
+
 const historyData = [
   { id: 1, title: 'Monthly audit — finance division', secretary: 'Sara Malik', date: '2026-03-25', dateLabel: 'Mar 25, 2026', priority: 'high', priLabel: 'High priority', dept: 'Finance', deadline: 'Mar 31, 2026', assignedTo: 'Audit team', location: 'Finance dept', desc: 'Carry out the monthly financial audit. Review all transactions, expense reports, and budget allocations.', attachments: ['audit-template.xlsx'], decision: 'approved', note: '' },
   { id: 2, title: 'Staff training session — HR dept', secretary: 'Lina Boudra', date: '2026-03-25', dateLabel: 'Mar 25, 2026', priority: 'low', priLabel: 'Low priority', dept: 'Human Resources', deadline: 'Apr 10, 2026', assignedTo: 'HR team', location: 'HQ — Room 204', desc: 'Organize and run the quarterly staff training session covering compliance updates and safety procedures.', attachments: ['training-agenda.docx'], decision: 'rejected', note: 'Conflicts with audit week. Please reschedule to April 14.' },
@@ -11,24 +12,23 @@ const historyData = [
   { id: 4, title: 'Site inspection — northern district', secretary: 'Sara Malik', date: '2026-03-26', dateLabel: 'Mar 26, 2026', priority: 'high', priLabel: 'High priority', dept: 'Operations', deadline: 'Apr 2, 2026', assignedTo: 'Field team B', location: 'Northern district', desc: 'Conduct a full site inspection of the northern district facilities.', attachments: ['site-brief.pdf', 'checklist-v2.docx'], decision: 'approved', note: '' },
 ];
 
-// Missions waiting to be reviewed by the manager (the queue)
+// Missions waiting to be reviewed 
 const queueData = [
   { id: 5, title: 'Procurement review — IT supplies', secretary: 'Karim Ouali', date: '2026-03-26', dateLabel: 'Mar 26, 2026', priority: 'med', priLabel: 'Medium priority', dept: 'IT', deadline: 'Apr 8, 2026', assignedTo: 'Procurement team', location: 'HQ', desc: 'Review all pending IT supply procurement requests for Q2. Approve or flag items exceeding the budget threshold.', attachments: ['procurement-list.xlsx'] },
   { id: 6, title: 'Security assessment — main entrance', secretary: 'Sara Malik', date: '2026-03-26', dateLabel: 'Mar 26, 2026', priority: 'high', priLabel: 'High priority', dept: 'Security', deadline: 'Apr 3, 2026', assignedTo: 'Security team', location: 'Main entrance', desc: 'Full security assessment of the main entrance including CCTV review and access logs.', attachments: ['security-report.pdf'] },
   { id: 7, title: 'Budget forecast — Q2 planning', secretary: 'Lina Boudra', date: '2026-03-26', dateLabel: 'Mar 26, 2026', priority: 'med', priLabel: 'Medium priority', dept: 'Finance', deadline: 'Apr 12, 2026', assignedTo: 'Finance team', location: 'HQ', desc: 'Prepare and submit Q2 budget forecast based on Q1 actuals and projected growth targets.', attachments: ['forecast-template.xlsx'] },
 ];
 
-// ─── Component ─────────────────────────────────────────────────────────────────
 
 function ManagerPage() {
 
-  // Which tab is active: 'queue' or 'history'
+  // Which tab is active  'queue' or 'history'
   const [tab, setTab] = useState('queue');
 
-  // History list — starts reversed so newest appears first
+  // History list starts reversed so newest appears first
   const [history, setHistory] = useState([...historyData].reverse());
 
-  // Queue list — missions waiting to be reviewed
+  // Queue list  missions waiting to be reviewed
   const [queue, setQueue] = useState([...queueData]);
 
   // Index of the currently displayed mission in the queue
@@ -42,8 +42,7 @@ function ManagerPage() {
   // Index of the mission currently open in the history detail modal (null = closed)
   const [modal, setModal] = useState(null);
 
-  // Note value inside the history detail modal edit field
-  const [editNote, setEditNote] = useState('');
+
 
   // Controls visibility of the reject clarification modal
   const [rejectModal, setRejectModal] = useState(false);
@@ -57,9 +56,9 @@ function ManagerPage() {
   // History date filter — filters by exact date string (YYYY-MM-DD)
   const [histDate, setHistDate] = useState('');
 
-  // ─── Handlers ───────────────────────────────────────────────────────────────
+  // Handlers 
 
-  // decide — called when the manager approves or rejects the current mission
+  // 
   // Moves the mission from the queue into history, updates counters
   const decide = (decision, note) => {
     const m = queue[idx];
@@ -81,32 +80,25 @@ function ManagerPage() {
     if (idx >= newQueue.length && idx > 0) setIdx(newQueue.length);
   };
 
-  // updateDecision — called from the history detail modal
+  // updateDecision 
   // Allows the manager to flip a past decision between approved and rejected
-  const updateDecision = (decision) => {
+ const updateDecision = (decision, note) => {
     const old = history[modal].decision;
-
-    // Adjust counters based on what changed
     if (old === 'approved' && decision === 'rejected') { setApproved(a => a - 1); setRejected(r => r + 1); }
     if (old === 'rejected' && decision === 'approved') { setRejected(r => r - 1); setApproved(a => a + 1); }
-
-    // Update the mission entry in history with the new decision and edited note
     const updated = [...history];
-    updated[modal] = { ...updated[modal], decision, note: editNote };
+    updated[modal] = { ...updated[modal], decision, note };
     setHistory(updated);
-
-    // Close the modal
     setModal(null);
-  };
-
-  // filteredHistory — applies name search and date filter to the history list
+};
+  // filteredHistory applies name search and date filter to the history list
   const filteredHistory = history.filter(m => {
     const matchName = m.title.toLowerCase().includes(histSearch.toLowerCase());
     const matchDate = histDate === '' || m.date === histDate;
     return matchName && matchDate;
   });
 
-  // ─── Derived values ──────────────────────────────────────────────────────────
+  //  Derived values
 
   // Total missions across both queue and history
   const totalAll = history.length + queue.length;
@@ -120,9 +112,9 @@ function ManagerPage() {
   // How many missions are still pending in the queue
   const pending = Math.max(0, queue.length - idx);
 
-  // ─── Sub-components ──────────────────────────────────────────────────────────
+  // Sub components
 
-  // AttachPill — renders a single file attachment badge
+  // AttachPill renders a single file attachment badge
   const AttachPill = ({ file }) => (
     <div className="attach-pill">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -133,28 +125,24 @@ function ManagerPage() {
     </div>
   );
 
-  // ─── Render ──────────────────────────────────────────────────────────────────
+ 
 
   return (
     <div className="manager-wrap">
 
-      {/* Page header */}
-      <div className="manager-topbar">
-        <h1>Mission queue</h1>
-        <p>Review and validate incoming missions</p>
-      </div>
+     
 
-      {/* Tab switcher — Queue and History */}
+      {/* Tab switcher  Queue and History */}
       <div className="manager-tabs">
         <div className={`tab ${tab === 'queue' ? 'active' : ''}`} onClick={() => setTab('queue')}>
-          Queue ({pending})
+          Queue 
         </div>
         <div className={`tab ${tab === 'history' ? 'active' : ''}`} onClick={() => setTab('history')}>
-          History ({history.length})
+          History 
         </div>
       </div>
 
-      {/* ── QUEUE TAB ─────────────────────────────────────────────────────────── */}
+      {/*  QUEUE TAB  */}
       {tab === 'queue' && (
         <>
           {/* Summary stat cards */}
@@ -198,7 +186,7 @@ function ManagerPage() {
                   Previous
                 </button>
 
-                {/* Shows current position in the queue e.g. 2 / 5 */}
+                {/* Shows current position in the queue  */}
                 <span className="nav-counter">{idx + 1} / {queue.length}</span>
 
                 <button
@@ -241,9 +229,9 @@ function ManagerPage() {
                   {queue[idx].attachments.map((f, i) => <AttachPill key={i} file={f} />)}
                 </div>
 
-                {/* Approve / Reject buttons
-                    - Approve: calls decide() immediately
-                    - Reject: opens the reject clarification modal first */}
+                {/* Approve , Reject buttons
+                     Approve calls decide immediately
+                     Reject  opens the reject clarification modal first */}
                 <div className="card-actions">
                   <button className="btn-reject" onClick={() => { setRejectModal(true); setRejNote(''); }}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -277,7 +265,7 @@ function ManagerPage() {
         </>
       )}
 
-      {/* ── HISTORY TAB ───────────────────────────────────────────────────────── */}
+      {/*  HISTORY TAB */}
       {tab === 'history' && (
         <>
           {/* Search and date filters */}
@@ -332,10 +320,7 @@ function ManagerPage() {
                           {/* View button — opens the detail modal for this mission */}
                           <button
                             className="view-btn"
-                            onClick={() => {
-                              setModal(realIdx);
-                              setEditNote(history[realIdx].note || '');
-                            }}
+                           onClick={() => setModal(realIdx)}
                           >
                             View
                           </button>
@@ -350,10 +335,8 @@ function ManagerPage() {
         </>
       )}
 
-      {/* ── REJECT CLARIFICATION MODAL ────────────────────────────────────────── */}
-      {/* Opens when the manager clicks Reject on a queue mission
-          Forces the manager to write a reason before confirming
-          The reason is saved as a note and sent as a notification to the secretary */}
+      {/*  REJECT CLARIFICATION MODAL  */}
+      {/* Opens when the manager clicks Reject on a queue mission*/}
       {rejectModal && (
         <div className="overlay">
           <div className="rej-modal">
@@ -395,69 +378,16 @@ function ManagerPage() {
         </div>
       )}
 
-      {/* ── HISTORY DETAIL MODAL ──────────────────────────────────────────────── */}
-      {/* Opens when the manager clicks View on a history row
-          Shows full mission details, rejection reason if any,
-          and allows the manager to edit the note or change the decision */}
+      {/*  HISTORY DETAIL MODAL */}
       {modal !== null && history[modal] && (
-        <div className="overlay">
-          <div className="detail-modal">
-            <div className="modal-header">
-              <div className="modal-title">{history[modal].title}</div>
-              {/* Close the modal */}
-              <button className="close-btn" onClick={() => setModal(null)}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </div>
-
-            {/* Full mission metadata */}
-            <div className="modal-fields">
-              <div><div className="field-label">Secretary</div><div className="field-val">{history[modal].secretary}</div></div>
-              <div><div className="field-label">Date</div><div className="field-val">{history[modal].dateLabel}</div></div>
-              <div><div className="field-label">Department</div><div className="field-val">{history[modal].dept}</div></div>
-              <div><div className="field-label">Deadline</div><div className="field-val">{history[modal].deadline}</div></div>
-              <div><div className="field-label">Assigned to</div><div className="field-val">{history[modal].assignedTo}</div></div>
-              <div><div className="field-label">Location</div><div className="field-val">{history[modal].location}</div></div>
-            </div>
-
-            {/* Mission description */}
-            <div className="modal-desc">{history[modal].desc}</div>
-
-            {/* Rejection reason — only shown if the mission was rejected with a note */}
-            {history[modal].note && (
-              <div className="modal-rej-note">
-                <div className="modal-rej-label">Rejection reason sent</div>
-                {history[modal].note}
-              </div>
-            )}
-
-            {/* Editable note field — manager can update the note */}
-            <div className="note-area">
-              <div className="note-label">Edit note</div>
-              <textarea value={editNote} onChange={e => setEditNote(e.target.value)} />
-            </div>
-
-            {/* Change decision section — lets the manager flip approved ↔ rejected */}
-            <div className="edit-label">Change decision</div>
-            <div className="edit-actions">
-              <button className="btn-reject" onClick={() => updateDecision('rejected')}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-                Set as rejected
-              </button>
-              <button className="btn-approve" onClick={() => updateDecision('approved')}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Set as approved
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        <MissionDetailModal
+        mission={history[modal]}
+        onClose={() => setModal (null)}
+        role="manager"
+        onUpdateDecision={(decision , note) => updateDecision(decision, note)}
+        />
+      )
+      }
 
     </div>
   );

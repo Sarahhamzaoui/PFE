@@ -1,17 +1,44 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../Styles/Dashboard.css";
+import MissionDetailModal from "../components/MissionDetailModal";
+
 
 // Static mission data — replace with API call (fetch/axios) when backend is ready
 const missions = [
-  { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active"   },
-  { id: 2, name: "Zeraouti Lyna",   destination: "Spain",   start: "2026-01-05", status: "Pending"  },
-  { id: 3, name: "Roumane Lydia",   destination: "Italy",   start: "2025-12-04", status: "Urgent" },
-  { id: 4, name: "Amir Sali",       destination: "Germany", start: "2026-03-01", status: "Active"   },
-  { id: 5, name: "Fatima Zohra",    destination: "Dubai",   start: "2026-03-10", status: "Pending"  },
+  { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active",
+    title: "Mission to Paris", secretary: "Hamzaoui Sarah", dateLabel: "Feb 20, 2026",
+    priority: "med", priLabel: "Medium priority", dept: "Finance",
+    deadline: "Mar 1, 2026", assignedTo: "Finance team", location: "Paris",
+    desc: "Finance-related mission to Paris.", attachments: [], decision: "approved", note: "" },
+
+  { id: 2, name: "Zeraouti Lyna",   destination: "Spain",   start: "2026-01-05", status: "Pending",
+    title: "Mission to Spain", secretary: "Zeraouti Lyna", dateLabel: "Jan 5, 2026",
+    priority: "low", priLabel: "Low priority", dept: "HR",
+    deadline: "Jan 20, 2026", assignedTo: "HR team", location: "Spain",
+    desc: "HR-related mission to Spain.", attachments: [], decision: null, note: "" },
+
+  { id: 3, name: "Roumane Lydia",   destination: "Italy",   start: "2025-12-04", status: "Urgent",
+    title: "Mission to Italy", secretary: "Roumane Lydia", dateLabel: "Dec 4, 2025",
+    priority: "high", priLabel: "High priority", dept: "Operations",
+    deadline: "Dec 15, 2025", assignedTo: "Operations team", location: "Italy",
+    desc: "Urgent operations mission to Italy.", attachments: [], decision: null, note: "" },
+
+  { id: 4, name: "Amir Sali",       destination: "Germany", start: "2026-03-01", status: "Active",
+    title: "Mission to Germany", secretary: "Amir Sali", dateLabel: "Mar 1, 2026",
+    priority: "med", priLabel: "Medium priority", dept: "IT",
+    deadline: "Mar 15, 2026", assignedTo: "IT team", location: "Germany",
+    desc: "IT infrastructure mission to Germany.", attachments: [], decision: "approved", note: "" },
+
+  { id: 5, name: "Fatima Zohra",    destination: "Dubai",   start: "2026-03-10", status: "Pending",
+    title: "Mission to Dubai", secretary: "Fatima Zohra", dateLabel: "Mar 10, 2026",
+    priority: "med", priLabel: "Medium priority", dept: "Sales",
+    deadline: "Mar 25, 2026", assignedTo: "Sales team", location: "Dubai",
+    desc: "Sales outreach mission to Dubai.", attachments: [], decision: null, note: "" },
 ];
 
 // Draws a donut chart on an HTML canvas using the Canvas 2D API
 function DonutChart({ approved, pending, urgent }) {
+  
   const canvasRef = useRef(null);
 
   // Redraws the chart whenever the stats change
@@ -74,6 +101,9 @@ function Dashboard() {
   const approved = missions.filter(m => m.status === "Active").length;
   const pending  = missions.filter(m => m.status === "Pending").length;
   const urgent   = missions.filter(m => m.status === "Urgent").length;
+
+  // Tracks which mission is open in the detail modal (null = closed)
+  const [selectedMission, setSelectedMission] = useState(null);
 
   return (
     <div className="db-page">
@@ -188,13 +218,23 @@ function Dashboard() {
                   </span>
                 </td>
                 <td>
-                  <button className="mm-action-btn">View ›</button>
+                  {/* Opens the read-only detail modal for this mission */}
+                  <button className="mm-action-btn" onClick={() => setSelectedMission(m)}>View ›</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Mission detail modal — read-only for non-managers */}
+      {selectedMission && (
+        <MissionDetailModal
+          mission={selectedMission}
+          onClose={() => setSelectedMission(null)}
+          role="employee"
+        />
+      )}
 
     </div>
   );

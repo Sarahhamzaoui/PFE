@@ -1,36 +1,59 @@
 import React, { useState } from "react";
 import "../Styles/MyMissions.css";
-
-
+import MissionDetailModal from "../components/MissionDetailModal";
 
 const allMissions = [
-  { id: "MSN001", name: "Hamzaoui Sarah",  destination: "Paris",   date: "2026-02-20", status: "Active",   payment: "Approved" },
-  { id: "MSN002", name: "Zeraouti Lyna",   destination: "Spain",   date: "2026-01-05", status: "Pending",  payment: "Pending"  },
-  { id: "MSN003", name: "Roumane Lydia",   destination: "Italy",   date: "2025-12-04", status: "Urgent", payment: "Urgent" },
-  { id: "MSN004", name: "Amir Sali",       destination: "Germany", date: "2026-03-01", status: "Active",   payment: "Approved" },
-  { id: "MSN005", name: "Fatima Zohra",    destination: "Dubai",   date: "2026-03-10", status: "Pending",  payment: "Pending"  },
-  { id: "MSN006", name: "Karim Benali",    destination: "London",  date: "2026-03-15", status: "Active",   payment: "Approved" },
-  { id: "MSN007", name: "Nadia Oukaci",    destination: "Paris",   date: "2026-03-18", status: "Pending",  payment: "Pending"  },
+  { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active",
+    title: "Mission to Paris", secretary: "Hamzaoui Sarah", dateLabel: "Feb 20, 2026",
+    priority: "med", priLabel: "Medium priority", dept: "Finance",
+    deadline: "Mar 1, 2026", assignedTo: "Finance team", location: "Paris",
+    desc: "Finance-related mission to Paris.", attachments: [], decision: "approved", note: "" },
+
+  { id: 2, name: "Zeraouti Lyna",   destination: "Spain",   start: "2026-01-05", status: "Pending",
+    title: "Mission to Spain", secretary: "Zeraouti Lyna", dateLabel: "Jan 5, 2026",
+    priority: "low", priLabel: "Low priority", dept: "HR",
+    deadline: "Jan 20, 2026", assignedTo: "HR team", location: "Spain",
+    desc: "HR-related mission to Spain.", attachments: [], decision: null, note: "" },
+
+  { id: 3, name: "Roumane Lydia",   destination: "Italy",   start: "2025-12-04", status: "Urgent",
+    title: "Mission to Italy", secretary: "Roumane Lydia", dateLabel: "Dec 4, 2025",
+    priority: "high", priLabel: "High priority", dept: "Operations",
+    deadline: "Dec 15, 2025", assignedTo: "Operations team", location: "Italy",
+    desc: "Urgent operations mission to Italy.", attachments: [], decision: null, note: "" },
+
+  { id: 4, name: "Amir Sali",       destination: "Germany", start: "2026-03-01", status: "Active",
+    title: "Mission to Germany", secretary: "Amir Sali", dateLabel: "Mar 1, 2026",
+    priority: "med", priLabel: "Medium priority", dept: "IT",
+    deadline: "Mar 15, 2026", assignedTo: "IT team", location: "Germany",
+    desc: "IT infrastructure mission to Germany.", attachments: [], decision: "approved", note: "" },
+
+  { id: 5, name: "Fatima Zohra",    destination: "Dubai",   start: "2026-03-10", status: "Pending",
+    title: "Mission to Dubai", secretary: "Fatima Zohra", dateLabel: "Mar 10, 2026",
+    priority: "med", priLabel: "Medium priority", dept: "Sales",
+    deadline: "Mar 25, 2026", assignedTo: "Sales team", location: "Dubai",
+    desc: "Sales outreach mission to Dubai.", attachments: [], decision: null, note: "" },
 ];
 
 const TABS = ["All missions", "Pending", "Active", "Urgent"];
 
-export default function MyMissions({setActivePage}) {
+export default function MyMissions({ setActivePage }) {
   const [activeTab, setActiveTab] = useState("All missions");
   const [search, setSearch] = useState("");
 
-  const pending   = allMissions.filter(m => m.status === "Pending").length;
-  const approved   = allMissions.filter(m => m.status === "Active").length;
-  const urgent= allMissions.filter(m => m.status === "Urgent").length;
-  const total = allMissions.length;
+  // Tracks which mission is open in the detail modal (null = closed)
+  const [selectedMission, setSelectedMission] = useState(null);
+
+  const pending  = allMissions.filter(m => m.status === "Pending").length;
+  const approved = allMissions.filter(m => m.status === "Active").length;
+  const urgent   = allMissions.filter(m => m.status === "Urgent").length;
+  const total    = allMissions.length;
 
   const filtered = allMissions.filter(m => {
     const matchTab    = activeTab === "All missions" || m.status === activeTab;
     const matchSearch = m.name.toLowerCase().includes(search.toLowerCase()) ||
                         m.destination.toLowerCase().includes(search.toLowerCase()) ||
-                        m.id.toLowerCase().includes(search.toLowerCase());
+                        String(m.id).toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
-    
   });
 
   return (
@@ -134,14 +157,15 @@ export default function MyMissions({setActivePage}) {
                 <td className="mm-table__id">{m.id}</td>
                 <td className="mm-table__name">{m.name}</td>
                 <td>{m.destination}</td>
-                <td>{m.date}</td>
+                <td>{m.start}</td>
                 <td>
                   <span className={`mm-badge mm-badge--${m.status.toLowerCase()}`}>
                     {m.status}
                   </span>
                 </td>
                 <td>
-                  <button className="mm-action-btn">View ›</button>
+                  {/* Opens the read-only detail modal for this mission */}
+                  <button className="mm-action-btn" onClick={() => setSelectedMission(m)}>View ›</button>
                 </td>
               </tr>
             ))}
@@ -154,6 +178,16 @@ export default function MyMissions({setActivePage}) {
         </table>
 
       </div>
+
+      {/* Mission detail modal — read-only for employees */}
+      {selectedMission && (
+        <MissionDetailModal
+          mission={selectedMission}
+          onClose={() => setSelectedMission(null)}
+          role="employee"
+        />
+      )}
+
     </div>
   );
 }
