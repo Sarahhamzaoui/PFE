@@ -7,7 +7,6 @@
 }
 
 /* ===== PAGE WRAPPER ===== */
-/* Full screen centered layout with light blue background */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -19,7 +18,6 @@
 }
 
 /* ===== GLOW CIRCLES ===== */
-/* Blurred circles in background for depth effect */
 .glow-circle {
   position: absolute;
   border-radius: 50%;
@@ -27,7 +25,6 @@
   opacity: 0.35;
 }
 
-/* Top left — blue glow */
 .gc1 {
   width: 400px;
   height: 400px;
@@ -36,7 +33,6 @@
   left: -100px;
 }
 
-/* Bottom right — light blue glow */
 .gc2 {
   width: 300px;
   height: 300px;
@@ -46,30 +42,39 @@
 }
 
 /* ===== FORM WRAPPER ===== */
-/* No card — form floats directly on the background */
 .login-container {
-  width: 400px;
+  width: 460px;
   position: relative;
   z-index: 2;
   text-align: center;
+}
+
+.login-container img {
+  margin-bottom: 16px;
 }
 
 .login-container h2 {
   color: #1a3a5c;
   font-size: 28px;
   font-weight: 600;
-  margin: 10px 0 6px;
+  margin: 0 0 6px;
 }
 
-/* Subtitle under the title */
-.login-container p {
+.login-container > p {
   color: #8a9ab8;
   font-size: 14px;
-  margin: 0 0 32px;
+  margin: 0 0 24px;
+}
+
+/* ===== FORM CARD ===== */
+form {
+  background: #d0e8ff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 24px rgba(0, 120, 255, 0.1);
 }
 
 /* ===== INPUT FIELDS ===== */
-/* Underline style inputs — no box border */
 .input-group {
   margin-bottom: 24px;
   text-align: left;
@@ -94,15 +99,25 @@
   color: #1a3a5c;
   font-size: 15px;
   outline: none;
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
-/* Highlight underline on focus */
 .input-group:focus-within {
   border-bottom-color: #0099ff;
 }
 
 .input-group input::placeholder {
   color: #b0cfe8;
+}
+
+/* ===== AUTOFILL OVERRIDE ===== */
+.input-group input:-webkit-autofill,
+.input-group input:-webkit-autofill:hover,
+.input-group input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #d0e8ff inset;
+  -webkit-text-fill-color: #1a3a5c;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* ===== REMEMBER ME ROW ===== */
@@ -125,7 +140,6 @@
 }
 
 /* ===== LOGIN BUTTON ===== */
-/* Pill shaped gradient button */
 .login-btn {
   width: 100%;
   padding: 14px;
@@ -169,7 +183,6 @@
 }
 
 /* ===== SUCCESS MESSAGE ===== */
-/* Shown after successful login */
 .message {
   color: #0077cc;
   font-size: 14px;

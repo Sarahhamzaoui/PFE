@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import MissionCalendar from './MissionCalendar';
 import '../Styles/MissionDeatilsForm.css';
 
-
 function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
   const [formData, setFormData] = useState({
     employeeId: '',
     employeeName: '',
-    phoneNumber:'',
+    phoneNumber: '',
     employeeDepartment: '',
     destination: '',
     missionTitle: '',
@@ -19,14 +18,11 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
     needsDriver: false
   });
 
-
   const [accommodation, setAccommodation] = useState('');
   const [transport, setTransport] = useState('');
   const [needsDriver, setNeedsDriver] = useState(false);
   const [missionurgent, setmissionurgent] = useState(false);
 
-
-  // auto fill 
   useEffect(() => {
     if (selectedEmployee) {
       setFormData(prev => ({
@@ -34,7 +30,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
         employeeId: selectedEmployee.employeeId,
         employeeName: selectedEmployee.name,
         employeeDepartment: selectedEmployee.department,
-        phoneNumber:selectedEmployee.phoneNumber
+        phoneNumber: selectedEmployee.phoneNumber
       }));
     } else {
       setFormData(prev => ({
@@ -42,47 +38,36 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
         employeeId: '',
         employeeName: '',
         employeeDepartment: '',
-        phoneNumber:''
+        phoneNumber: ''
       }));
     }
   }, [selectedEmployee]);
 
-
-const handleInputChange = (e) => {
-  const { name, value, type, checked } = e.target;
-  const newValue = type === 'checkbox' ? checked : value;
-
-
-  setFormData(prev => ({
-    ...prev,
-    [name]: newValue
-  }));
-};
-
-
-//  handleSubmit function with sync logic for separate states
-const handleSubmit = (e) => {
-  e.preventDefault();
-  
-  // Sync separate states (accommodation, transport, needsDriver, missionurgent) into formData
-  const finalData = {
-    ...formData,
-    accommodation,
-    transport,
-    needsDriver,
-    missionurgent
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
-  onFormDataChange?.(finalData);
-  // Or call an API
-};
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const finalData = {
+      ...formData,
+      accommodation,
+      transport,
+      needsDriver,
+      missionurgent
+    };
+    onFormDataChange?.(finalData);
+  };
 
   const HandleCancel = () => {
     setFormData({
       employeeId: '',
       employeeName: '',
-      phoneNumber:'',
+      phoneNumber: '',
       employeeDepartment: '',
       destination: '',
       missionTitle: '',
@@ -96,15 +81,11 @@ const handleSubmit = (e) => {
     setAccommodation('');
     setTransport('');
     setNeedsDriver(false);
-
-
   };
 
-
   return (
-     <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <div className="section-title">Mission Details</div>
-
 
       {/* EMPLOYEE INFO */}
       <div className="employee-info-section">
@@ -112,211 +93,128 @@ const handleSubmit = (e) => {
         <div className="form-row">
           <div className="form-group">
             <label>Employee ID</label>
-            <input
-              type="text"
-              name="employeeId"
-              className="form-input readonly"
-              value={formData.employeeId}
-              readOnly
-            />
+            <input type="text" name="employeeId" className="form-input readonly"
+              value={formData.employeeId} readOnly />
           </div>
-
-
           <div className="form-group">
             <label>Employee Name</label>
-            <input
-              type="text"
-              name="employeeName"
-              className="form-input readonly"
-              value={formData.employeeName}
-              readOnly
-            />
+            <input type="text" name="employeeName" className="form-input readonly"
+              value={formData.employeeName} readOnly />
           </div>
-
-
-          <div className='form-group'>
-            <label> Phone Number</label>
-            <input
-            type='tel'
-            name='phoneNumber'
-            className='form-input readonly'
-            value={formData.phoneNumber}
-            readOnly
-            /> 
+          <div className="form-group">
+            <label>Phone Number</label>
+            <input type="tel" name="phoneNumber" className="form-input readonly"
+              value={formData.phoneNumber} readOnly />
           </div>
-
-
           <div className="form-group">
             <label>Department</label>
-            <input
-              type="text"
-              name="employeeDepartment"
-              className="form-input readonly"
-              value={formData.employeeDepartment}
-              readOnly
-            />
+            <input type="text" name="employeeDepartment" className="form-input readonly"
+              value={formData.employeeDepartment} readOnly />
           </div>
         </div>
       </div>
 
+      {/* URGENT */}
+      <div className="checkbox-group urgent-mission" style={{ marginTop: '8px' }}>
+        <label className="checkbox-label">
+          Urgent Mission
+          <input type="checkbox" checked={missionurgent}
+            onChange={(e) => setmissionurgent(e.target.checked)} />
+        </label>
+      </div>
+      <br />
 
       {/* MISSION INFO */}
-      <div className="checkbox-group urgent-mission" style={{ marginTop: '8px' }}>
-                <label className="checkbox-label">
-                   Urgent Mission
-                  <input
-                    type="checkbox"
-                    checked={missionurgent}
-                    onChange={(e) => setmissionurgent(e.target.checked)}
-                  />
-                </label>
-              </div> <br></br>
       <div className="mission-info-section">
         <div className="section-subtitle">Mission Information</div>
         <div className="form-row">
           <div className="form-group">
             <label>Destination</label>
-            <input
-              type="text"
-              name="destination"
-              className="form-input"
-              placeholder="Enter Destination"
-              value={formData.destination}
-              onChange={handleInputChange}
-            />
+            <input type="text" name="destination" className="form-input"
+              placeholder="Enter Destination" value={formData.destination}
+              onChange={handleInputChange} />
           </div>
-
-
           <div className="form-group">
             <label>Mission Title</label>
-            <input
-              type="text"
-              name="missionTitle"
-              className="form-input"
-              placeholder="Enter Mission Title"
-              value={formData.missionTitle}
-              onChange={handleInputChange}
-            />
+            <input type="text" name="missionTitle" className="form-input"
+              placeholder="Enter Mission Title" value={formData.missionTitle}
+              onChange={handleInputChange} />
           </div>
-
-
           <div className="form-group full-width">
             <label>Mission Description</label>
-            <textarea
-              name="missionDescription"
-              className="form-textarea"
-              placeholder="Enter mission description..."
-              value={formData.missionDescription}
-              onChange={handleInputChange}
-            />
+            <textarea name="missionDescription" className="form-textarea"
+              placeholder="Enter mission description..." value={formData.missionDescription}
+              onChange={handleInputChange} />
           </div>
-
-
           <div className="form-group full-width">
             <MissionCalendar
-  startDate={formData.startDate}
-  endDate={formData.endDate}
-  onChange={(dates) => setFormData(prev => ({ ...prev, ...dates }))}
-/>
-
-
+              startDate={formData.startDate}
+              endDate={formData.endDate}
+              onChange={(dates) => setFormData(prev => ({ ...prev, ...dates }))}
+            />
           </div>
         </div>
       </div>
-
 
       {/* ACCOMMODATION & TRANSPORT */}
       <div className="accommodation-transport-section">
         <div className="section-subtitle">Accommodation & Transport</div>
         <div className="form-row">
-
-
-          {/* ACCOMMODATION */}
           <div className="form-group">
             <label>Accommodation</label>
             <div className="checkbox-group">
               <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="accommodation"
-                  value="hotel"
+                <input type="radio" name="accommodation" value="hotel"
                   checked={accommodation === 'hotel'}
-                  onChange={(e) => setAccommodation(e.target.value)}
-                />
+                  onChange={(e) => setAccommodation(e.target.value)} />
                 Hotel
               </label>
               <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="accommodation"
-                  value="residence"
+                <input type="radio" name="accommodation" value="residence"
                   checked={accommodation === 'residence'}
-                  onChange={(e) => setAccommodation(e.target.value)}
-                />
+                  onChange={(e) => setAccommodation(e.target.value)} />
                 Residence
               </label>
             </div>
           </div>
-
-
-          {/* TRANSPORT */}
           <div className="form-group">
             <label>Transport</label>
             <div className="checkbox-group">
               <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="transport"
-                  value="company"
+                <input type="radio" name="transport" value="Plane"
+                  checked={transport === 'Plane'}
+                  onChange={(e) => { setTransport(e.target.value); setNeedsDriver(false); }} />
+                Plane
+              </label>
+              <label className="checkbox-label">
+                <input type="radio" name="transport" value="company"
                   checked={transport === 'company'}
-                  onChange={(e) => { setTransport(e.target.value); setNeedsDriver(false); }}
-                />
+                  onChange={(e) => { setTransport(e.target.value); setNeedsDriver(false); }} />
                 Company Car
               </label>
               <label className="checkbox-label">
-                <input
-                  type="radio"
-                  name="transport"
-                  value="personal"
+                <input type="radio" name="transport" value="personal"
                   checked={transport === 'personal'}
-                  onChange={(e) => { setTransport(e.target.value); setNeedsDriver(false); }}
-                />
+                  onChange={(e) => { setTransport(e.target.value); setNeedsDriver(false); }} />
                 Personal Car
               </label>
             </div>
-
-
             {transport === 'company' && (
               <div className="checkbox-group" style={{ marginTop: '8px' }}>
                 <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={needsDriver}
-                    onChange={(e) => setNeedsDriver(e.target.checked)}
-                  />
+                  <input type="checkbox" checked={needsDriver}
+                    onChange={(e) => setNeedsDriver(e.target.checked)} />
                   Needs a Driver
                 </label>
               </div>
             )}
           </div>
-
-
         </div>
       </div>
 
-
-      {/* BUTTONS */}
-      <div className='btn-group'>
-        <button type='button' className='btn btn-cancel' onClick={HandleCancel}>
-          Cancel
-        </button>
-        <button type='submit' className='btn btn-submit'>
-          Submit Missions
-        </button>
-      </div>
+     
     </form>
   );
 }
-
 
 export default MissionDetailsForm;

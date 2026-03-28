@@ -8,28 +8,40 @@ import MissionCalendar from '../components/MissionCalendar';
 function CreateMissionPage() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('SUBMIT FORM:', selectedEmployee, 'Mission Data: ', {
-      employeeId: selectedEmployee?.employeeId,
-      employeeName: selectedEmployee?.name,
-      department: selectedEmployee?.department
-    });
+  const handleSubmit = (data) => {
+    console.log('SUBMIT FORM:' , data);
+  };
+  const handleCancel = () => {
+    setSelectedEmployee(null);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
+    <div  className="form-container">
       <div className="header">
       
         <h1>Create Mission</h1>
       </div>
 
       <EmployeeSelection onEmployeeSelect={setSelectedEmployee} />
-      <MissionDetailsForm selectedEmployee={selectedEmployee} />
+
+      <MissionDetailsForm 
+      selectedEmployee={selectedEmployee}
+      onFormDataChange={handleSubmit}
+       />
       <AttachmentsDropzone />
+
+       {/* BUTTONS */}
+      <div className="btn-group">
+        <button type="button" className="btn btn-cancel" onClick={handleCancel}>
+          Cancel
+        </button>
+        <button type="submit" className="btn btn-submit" form='mission-form'>  {/*the form="mission-form" to triggers the form in MissionDetailsForm */}
+          Submit Mission
+        </button>
+      </div>
       
       
-    </form>
+    </div>
   );
 }
 
