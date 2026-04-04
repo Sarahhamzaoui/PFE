@@ -2,23 +2,23 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import '../styles/Sidebar.css';
 
-const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => {
+const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen, userRole }) => {
   
   const navigate = useNavigate();
 
   const menuItems = [
-    { id: 'dashboard',      label: 'Dashboard',       path: '/dashboard' },
-    { id: 'my-missions',    label: 'My Missions',      path: '/my-missions' },
-    { id: 'reports',        label: 'Reports',          path: '/reports' },
-    { id: 'create-mission-page', label: 'Create Mission ',   path: '/create-mission-page' },
-    { id: 'profile',        label: 'Profile',          path: '/profile' },
-
-    { id: 'missions',  label:' Missions',    path: '/missions'},
-    { id: 'booking',        label: 'Booking',           path: '/booking' },
-{ id: 'settings',      label: 'Settings',      path: '/settings' },
-{id: 'ManagerPage', label: ' Manager page' , path: '/ManagerPage'},
- 
+    { id: 'dashboard',           label: 'Dashboard',      path: '/dashboard',           roles: ['admin', 'employee', 'DML'] },
+    { id: 'my-missions',         label: 'My Missions',    path: '/my-missions',         roles: ['admin', 'manager', 'user'] },
+    { id: 'reports',             label: 'Reports',        path: '/reports',             roles: ['admin', 'employee'] },
+    { id: 'create-mission-page', label: 'Create Mission', path: '/create-mission-page', roles: ['admin', 'manager'] },
+    { id: 'profile',             label: 'Profile',        path: '/profile',             roles: ['admin', 'employee', 'user'] }, // ✅ fixed missing quote
+    { id: 'missions',            label: 'Missions',       path: '/missions',            roles: ['admin', 'manager'] },
+    { id: 'booking',             label: 'Booking',        path: '/booking',             roles: ['admin', 'manager',  'user'] },
+    { id: 'settings',            label: 'Settings',       path: '/settings',            roles: ['admin', 'employee'] },
+    { id: 'ManagerPage',         label: 'Manager Page',   path: '/ManagerPage',         roles: ['admin', 'manager'] },
   ];
+
+  const visibleItems = menuItems.filter(item => item.roles.includes(userRole));
 
   const handleLogout = () => {
     localStorage.removeItem("users");
@@ -45,15 +45,13 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
         </div>
 
         <nav className="sidebar-nav">
-          {menuItems.map((item) => (
+          {visibleItems.map((item) => (
             <button
               key={item.id}
               className={`nav-item ${activePage === item.id ? 'active' : ''}`}
               onClick={() => {
                 setActivePage(item.id);
                 navigate(item.path);
-                // this will close the sidebar when clickong on a page 
-             //   setSidebarOpen(false);
               }}
             >
               <span className="nav-icon">{item.icon}</span>

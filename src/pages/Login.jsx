@@ -38,17 +38,32 @@ fetch("http://localhost/PFE_backend/login.php",{
 
 .then(data => {
 
-  if(data.message === "Login successful"){ 
+if (data.message === "Login successful") {
 
-    setMessage("Welcome " + data.user.first_name);
+  const user = data.user;
 
-    setTimeout(()=>{
-      navigate("/Dashboard");
-    },1000);
+  setMessage("Welcome " + user.first_name);
 
-  }else{
-    alert(data.message);
-  }
+  // save logged user
+  localStorage.setItem("user", JSON.stringify(user));
+
+  setTimeout(() => {
+
+    if (user.role === "employee") {
+      navigate("/employee");
+    } 
+    else if (user.role === "manager") {
+      navigate("/manager");
+    } 
+    else {
+      navigate("/dashboard");
+    }
+
+  }, 1000);
+
+} else {
+  alert(data.message);
+}
 
 })
 .catch((err)=>{

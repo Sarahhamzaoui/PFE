@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import MyMissions from "./pages/MyMissions";
 import MainLayout from "./layouts/MainLayout";
 import ManagerPage from "./pages/ManagerPage";
+import Employee from "./pages/employee";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/reports"        element={<MainLayout activePage="reports" />} />
         <Route path ="/ManagerPage" element={<MainLayout activePage="ManagerPage"/>}/>
         <Route path="/settings"       element={<MainLayout activePage="settings" />} />
+        <Route path="/employee" element={<Employee />} />
       </Routes>
     </BrowserRouter>
   );
