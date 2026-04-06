@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import '../Styles/createMission.css'; 
-import EmployeeSelection from '../components/EmployeeSelection';
-import MissionDetailsForm from '../components/MissionDetailsForm';
-import AttachmentsDropzone from '../components/AttachmentsDropzone';
-import MissionCalendar from '../components/MissionCalendar';
+import './createMissionPage.css'; 
+import EmployeeSelection from '../../components/EmployeeSelection';
+import MissionDetailsForm from '../../components/MissionDetailsForm';
+import AttachmentsDropzone from '../../components/AttachmentsDropzone';
+import MissionCalendar from '../../components/MissionCalendar';
 
 function CreateMissionPage() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);

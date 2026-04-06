@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import '../Styles/ManagerPage.css';
-import MissionDetailModal from '../components/MissionDetailModal';
+import './ManagerPage.css';
+import MissionDetailModal from '../../components/MissionDetailModal';
 
 // Static Data
 

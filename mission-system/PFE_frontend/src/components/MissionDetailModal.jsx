@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import '../Styles/ManagerPage.css';
+import '../pages/manager/ManagerPage.css';
 function MissionDetailModal({ mission, onClose, role, onUpdateDecision }) {
 
   // Local note state — manager can edit before saving

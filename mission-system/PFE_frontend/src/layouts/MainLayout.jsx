@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 
 // Old pages
 import MyMissions from "../pages/MyMissions";
-import CreateMissionPage from "../pages/CreateMissionPage";
+import CreateMissionPage from "../pages/secretary/CreateMissionPage";
 import Mission from "../pages/Missions";
 import Profile from "../pages/Profile";
 import Reports from "../pages/Reports";
@@ -13,7 +13,7 @@ import Settings from "../pages/Settings";
 // Role-based pages
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
-import ManagerPage from "../pages/ManagerPage";
+import ManagerPage from "../pages/manager/ManagerPage";
 import SecretaryDashboard from "../pages/secretary/SecretaryDashboard";
 import CreateMission from "../pages/secretary/CreateMission";
 import EmployeeDashboard from "../pages/employee/EmployeeDashboard";
