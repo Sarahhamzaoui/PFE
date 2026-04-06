@@ -1,0 +1,232 @@
+/* ── Page ───────────────────────────────────────────── */
+.mm-page {
+  padding: 1.75rem 2rem;
+  background: #f4f6fb;
+  min-height: 100vh;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.mm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.mm-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a2340;
+  margin: 0;
+}
+
+.mm-btn-primary {
+  background: linear-gradient(135deg, #4a6cf7, #3b55e6);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.mm-btn-primary:hover { opacity: 0.88; }
+
+/* ── Summary cards ──────────────────────────────────── */
+.mm-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 1.25rem;
+}
+
+.mm-summary-card {
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.mm-summary-card--blue   { background: #4a6cf7; }
+.mm-summary-card--green  { background: #2ecc8a; }
+.mm-summary-card--red    { background: #e85454; }
+.mm-summary-card--amber  { background: #f5a623; }
+
+.mm-summary__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.75);
+  margin: 0 0 6px;
+  font-weight: 500;
+}
+
+.mm-summary__value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px;
+  line-height: 1;
+}
+
+.mm-summary__sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  margin: 0;
+}
+
+/* ── Table card ─────────────────────────────────────── */
+.mm-table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(60, 80, 180, 0.06);
+  overflow: hidden;
+}
+
+/* ── Tabs ───────────────────────────────────────────── */
+.mm-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #f0f2f8;
+  padding: 0 1.5rem;
+}
+
+.mm-tab {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8a93a8;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+}
+
+.mm-tab:hover { color: #4a6cf7; }
+
+.mm-tab--active {
+  color: #4a6cf7;
+  border-bottom-color: #4a6cf7;
+}
+
+/* ── Toolbar ────────────────────────────────────────── */
+.mm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 1.5rem;
+  border-bottom: 1px solid #f0f2f8;
+}
+
+.mm-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fd;
+  border-radius: 8px;
+  padding: 7px 12px;
+  flex: 1;
+  max-width: 280px;
+}
+
+.mm-search {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: #3a4260;
+  outline: none;
+  width: 100%;
+}
+.mm-search::placeholder { color: #aab0c0; }
+
+.mm-count {
+  font-size: 12px;
+  color: #aab0c0;
+  margin-left: 4px;
+  flex: 1;
+}
+
+.mm-btn-outline {
+  background: none;
+  border: 1px solid #e4e8f0;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  color: #5a6380;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.mm-btn-outline:hover { background: #f8f9fd; }
+
+/* ── Table ──────────────────────────────────────────── */
+.mm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mm-table thead tr {
+  background: #f8f9fd;
+}
+
+.mm-table th {
+  text-align: left;
+  color: #8a93a8;
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 11px 16px;
+}
+
+.mm-table td {
+  padding: 14px 16px;
+  color: #3a4260;
+  border-bottom: 1px solid #f4f6fb;
+}
+
+.mm-table tr:last-child td { border-bottom: none; }
+.mm-table tbody tr:hover td { background: #fafbff; }
+
+.mm-table__num  { color: #c0c8d8 !important; font-size: 12px !important; }
+.mm-table__id   { font-family: monospace; color: #8a93a8 !important; font-size: 12px !important; }
+.mm-table__name { font-weight: 600; color: #1a2340 !important; }
+
+.mm-empty {
+  text-align: center;
+  color: #aab0c0;
+  padding: 2rem !important;
+  font-size: 13px;
+}
+
+/* ── Badges ─────────────────────────────────────────── */
+.mm-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.mm-badge--active   { background: #e8f8f1; color: #2a9b6a; }
+.mm-badge--pending  { background: #fff5e6; color: #c07b10; }
+.mm-badge--urgent { background: #fdeaea; color: #c03030; }
+
+/* ── Action button ──────────────────────────────────── */
+.mm-action-btn {
+  background: #eef1fd;
+  border: none;
+  border-radius: 7px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: #4a6cf7;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.mm-action-btn:hover { background: #dde3fb; }

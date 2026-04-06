@@ -1,0 +1,345 @@
+/* ── Wrapper ────────────────────────────────────────── */
+.st-wrap {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  background: #f4f6fb;
+  min-height: 100vh;
+  padding: 1.75rem 1.5rem 2.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 560px;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.st-header {
+  margin-bottom: 1.5rem;
+}
+
+.st-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a2340;
+  margin: 0 0 4px;
+}
+
+.st-sub {
+  font-size: 13px;
+  color: #8a93a8;
+  margin: 0;
+}
+
+/* ── Card ───────────────────────────────────────────── */
+.st-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 2px 12px rgba(60, 80, 180, 0.06);
+  margin-bottom: 1.25rem;
+}
+
+.st-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #f0f2f8;
+}
+
+.st-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a2340;
+}
+
+.st-card-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #4a6cf7;
+  background: #eef1fd;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* ── Toggle Row ─────────────────────────────────────── */
+.st-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.st-row__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.st-row__icon {
+  width: 38px;
+  height: 38px;
+  background: #f4f6fb;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.st-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.st-row__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a2340;
+}
+
+.st-row__desc {
+  font-size: 12px;
+  color: #8a93a8;
+}
+
+/* ── Toggle Switch ──────────────────────────────────── */
+.st-toggle {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 99px;
+  border: none;
+  background: #e2e6f3;
+  cursor: pointer;
+  transition: background 0.25s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.st-toggle--on {
+  background: linear-gradient(135deg, #4a6cf7, #3b55e6);
+}
+
+.st-toggle__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.25s;
+  display: block;
+}
+
+.st-toggle--on .st-toggle__knob {
+  transform: translateX(20px);
+}
+
+/* ── Info Rows ──────────────────────────────────────── */
+.st-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f2f8;
+  font-size: 13px;
+}
+
+.st-info-row:last-child {
+  border-bottom: none;
+}
+
+.st-info-label {
+  color: #8a93a8;
+  font-weight: 500;
+}
+
+.st-info-value {
+  color: #1a2340;
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════
+   DARK MODE — applies when <body class="dark">
+   ════════════════════════════════════════════════════════ */
+
+body.dark {
+  background: #0f1117 !important;
+}
+
+/* Layout shells */
+body.dark .MainLayout,
+body.dark .main-content,
+body.dark .page-content {
+  background: #0f1117;
+}
+
+/* Topbar */
+body.dark .topbar {
+  background: #161b27;
+  border-bottom-color: #1e2535;
+}
+body.dark .topbar h1,
+body.dark .topbar .topbar-title h1 {
+  color: #e8ecf4;
+}
+body.dark .user-name {
+  color: #8a93a8;
+}
+
+/* Sidebar */
+body.dark .sidebar,
+body.dark .Sidebar {
+  background: #161b27;
+  border-right-color: #1e2535;
+}
+body.dark .sidebar a,
+body.dark .sidebar span,
+body.dark .sidebar li {
+  color: #8a93a8;
+}
+body.dark .sidebar .active,
+body.dark .sidebar a.active {
+  background: #1e2a45;
+  color: #4a6cf7;
+}
+
+/* Dashboard stat cards */
+body.dark .db-card,
+body.dark .db-section,
+body.dark .pf-card,
+body.dark .ep-card,
+body.dark .st-card,
+body.dark .add-card,
+body.dark .step-panel,
+body.dark .summary-panel {
+  background: #161b27;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+/* Page backgrounds */
+body.dark .db-page,
+body.dark .pf-wrap,
+body.dark .ep-wrap,
+body.dark .st-wrap,
+body.dark .add-page,
+body.dark .page {
+  background: #0f1117;
+}
+
+/* Text */
+body.dark .db-greeting,
+body.dark .db-card__value,
+body.dark .db-section__title,
+body.dark .db-table__name,
+body.dark .pf-name,
+body.dark .pf-card-title,
+body.dark .pf-field-value,
+body.dark .ep-title,
+body.dark .ep-card-title,
+body.dark .ep-field-input,
+body.dark .st-title,
+body.dark .st-card-title,
+body.dark .st-row__label,
+body.dark .st-info-value,
+body.dark .step-title,
+body.dark .card-name,
+body.dark .price-val {
+  color: #e8ecf4;
+}
+
+body.dark .db-sub,
+body.dark .db-card__sub,
+body.dark .db-card__label,
+body.dark .db-table th,
+body.dark .pf-field-label,
+body.dark .ep-field-label,
+body.dark .ep-subtitle,
+body.dark .st-sub,
+body.dark .st-info-label,
+body.dark .st-row__desc,
+body.dark .step-subtitle,
+body.dark .card-desc,
+body.dark .price-unit {
+  color: #5a6478;
+}
+
+/* Table */
+body.dark .db-table td {
+  color: #aab0c0;
+  border-bottom-color: #1e2535;
+}
+body.dark .db-table thead tr {
+  background: #1a2035;
+}
+body.dark .db-table tr:hover td {
+  background: #1a2035;
+}
+
+/* Cards grid items */
+body.dark .card {
+  background: #1a2035;
+  border-color: transparent;
+}
+body.dark .card:hover {
+  background: #1e2545;
+}
+body.dark .card.selected {
+  background: #1e2545;
+  border-color: #4a6cf7;
+}
+
+/* Inputs */
+body.dark .ep-field-input,
+body.dark .form-input {
+  background: #1a2035;
+  border-color: #2a3350;
+  color: #e8ecf4;
+}
+body.dark .ep-field-input:focus,
+body.dark .form-input:focus {
+  border-color: #4a6cf7;
+  background: #1e2545;
+}
+
+/* Field icons */
+body.dark .pf-field-icon,
+body.dark .ep-field-icon,
+body.dark .st-row__icon {
+  background: #1a2035;
+}
+
+/* Dividers */
+body.dark .pf-card-head,
+body.dark .ep-card-head,
+body.dark .st-card-head,
+body.dark .pf-field,
+body.dark .ep-field,
+body.dark .st-info-row,
+body.dark .summary-item {
+  border-bottom-color: #1e2535;
+}
+
+/* Toggle knob bg in dark */
+body.dark .st-toggle {
+  background: #2a3350;
+}
+
+/* Avatar border */
+body.dark .pf-avatar,
+body.dark .ep-avatar {
+  border-color: #0f1117;
+}
+
+/* Ghost button */
+body.dark .ep-btn-ghost,
+body.dark .btn-ghost {
+  background: #1a2035;
+  color: #4a6cf7;
+}
