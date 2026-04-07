@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./Addnewhotel.css";
+import { addAccommodation }  from "../../services/api";
 
 const TIERS = ["Corporate · Tier 1", "Corporate · Tier 2", "Custom"];
 
@@ -28,7 +29,7 @@ export default function Addnewhotel({ onAdd, onBack }) {
     return e;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
 
@@ -41,12 +42,21 @@ export default function Addnewhotel({ onAdd, onBack }) {
       price: Number(form.price),
       unit: "/ night",
     };
-
-    setSubmitted(true);
-    setTimeout(() => {
-      onAdd?.(newItem);
-      onBack?.();
-    }, 1200);
+    try{
+      const res = await addAccommodation(newItem);
+      if(res.success){
+       newItem.id = res.id.toString();
+        setSubmitted(true);
+        setTimeout(() => {
+          onAdd?.(newItem);
+          onBack?.();
+        }, 1200);
+      } else {
+        alert("Failed to save: " + res.message);
+      }
+    } catch (err) {
+      alert("Server error: " + err.message);
+    }
   };
 
   return (

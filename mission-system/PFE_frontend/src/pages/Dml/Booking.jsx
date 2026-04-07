@@ -1,7 +1,10 @@
-import{ useLocation, useNavigate} from "react-router-dom";
-import { saveBooking } from "../../services/api";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import "./Booking.css";
+import Addnewhotel from "./Addnewhotel";
+import { getAccommodations } from "../../services/api"; // adjust path
+// ... rest of imports
+
+
 // ── Data ──────────────────────────────────────────────────────────────────────
 const ACCOMMODATIONS = [
   {
@@ -62,7 +65,7 @@ const TRANSPORTS = [
 
 const STEPS = ["Accommodation", "Meals", "Transport"];
 
-// ── Components ───────────────────────────────────────────────────────────────
+// ── Components ────────────────────────────────────────────────────────────────
 
 function ProgressBar({ currentStep }) {
   const fillPct = ((currentStep - 1) / (STEPS.length - 1)) * 100;
@@ -118,7 +121,9 @@ function StepPanel({ title, subtitle, items, selected, onSelect, onNext, onBack,
       </div>
 
       <div className="btn-row">
-        {onBack && <button className="btn btn-ghost" onClick={onBack}>← Back</button>}
+        {onBack && (
+          <button className="btn btn-ghost" onClick={onBack}>← Back</button>
+        )}
 
         <button className="btn btn-primary" disabled={!selected} onClick={onNext}>
           Continue →
@@ -159,7 +164,7 @@ function Summary({ selections, onConfirm, onBack }) {
   );
 }
 
-// ── Main ─────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function BookingPage() {
   const [step, setStep] = useState(1);
@@ -179,10 +184,10 @@ export default function BookingPage() {
     setAccommodations((prev) => [...prev, newItem]);
   };
 
-  // ── Render Add Accommodation page ─────────────────
+  // ── Show Addnewhotel page when button clicked ─────────────────────────────
   if (showAddPage) {
     return (
-      <AddAccommodationPage
+      <Addnewhotel
         onAdd={handleAddAccommodation}
         onBack={() => setShowAddPage(false)}
       />
@@ -193,7 +198,7 @@ export default function BookingPage() {
     <div className="page">
       <header className="page-header">
         <div className="logo"></div>
-        <h1>Plan<em>Business Mission</em></h1>
+        <h1>Plan <em>Business Mission</em></h1>
         <p>Configure logistics for your assignment</p>
       </header>
 

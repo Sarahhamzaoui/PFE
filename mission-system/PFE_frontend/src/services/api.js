@@ -55,3 +55,18 @@ export const saveBooking = async (bookingData) => {
   });
   return res.json();
 };
+// DML: add new accommodation
+export const addAccommodation = async (accommodationData) => {
+  const res = await fetch(`${BASE_URL}/accommodations/add_accommodation.php`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(accommodationData),
+  });
+  return res.json();
+};
+
+// DML: get all accommodations
+export const getAccommodations = async () => {
+  const res = await fetch(`${BASE_URL}/accommodations/get_accommodations.php`);
+  return res.json();
+};

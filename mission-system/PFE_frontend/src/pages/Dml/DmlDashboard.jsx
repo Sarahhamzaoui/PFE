@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./DmlDashboard.css";
 import { getAcceptedMissions, saveBooking } from "../../services/api";
+import { useNavigate } from "react-router-dom"; // ← ADD THIS
 
-// Donut chart stays exactly the same
+// Donut chart - unchanged
 function DonutChart({ booked, notBooked }) {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -47,7 +48,7 @@ function DonutChart({ booked, notBooked }) {
   return <canvas ref={canvasRef} width={160} height={160} />;
 }
 
-// Booking modal stays exactly the same
+// Booking modal - unchanged (only used for "View ›" now)
 function BookingModal({ mission, onClose, onSave }) {
   const [accomodation, setAccomodation] = useState(mission.accomodation || "");
   const [transport, setTransport]       = useState(mission.transport || "");
@@ -118,13 +119,13 @@ function BookingModal({ mission, onClose, onSave }) {
 }
 
 function DmlDashboard() {
-  const [missionList, setMissionList]       = useState([]);
+  const navigate = useNavigate(); // ← ADD THIS
+  const [missionList, setMissionList]         = useState([]);
   const [selectedMission, setSelectedMission] = useState(null);
-  const [activeTab, setActiveTab]           = useState("all");
-  const [loading, setLoading]               = useState(true);
-  const [error, setError]                   = useState("");
+  const [activeTab, setActiveTab]             = useState("all");
+  const [loading, setLoading]                 = useState(true);
+  const [error, setError]                     = useState("");
 
-  // Fetch accepted missions from backend on load
   useEffect(() => {
     const fetchMissions = async () => {
       try {
@@ -143,12 +144,10 @@ function DmlDashboard() {
     fetchMissions();
   }, []);
 
-  // Save booking to backend
   const handleSaveBooking = async (id, accomodation, transport, food) => {
     try {
       const data = await saveBooking({ mission_id: id, accomodation, transport, food });
       if (data.message === "Booking saved successfully") {
-        // Update UI instantly without refetching
         setMissionList(prev =>
           prev.map(m =>
             m.id === id ? { ...m, booked: "1", accomodation, transport, food } : m
@@ -272,12 +271,23 @@ function DmlDashboard() {
                     </span>
                   </td>
                   <td>
-                    <button
-                      className={`dml-action-btn ${m.booked === "1" || m.booked === 1 ? "dml-action-btn--view" : "dml-action-btn--book"}`}
-                      onClick={() => setSelectedMission(m)}
-                    >
-                      {m.booked === "1" || m.booked === 1 ? "View ›" : "Book Now"}
-                    </button>
+                    {m.booked === "1" || m.booked === 1 ? (
+                      // View modal for already booked missions
+                      <button
+                        className="dml-action-btn dml-action-btn--view"
+                        onClick={() => setSelectedMission(m)}
+                      >
+                        View ›
+                      </button>
+                    ) : (
+                      // ← CHANGED: navigate to booking page instead of opening modal
+                      <button
+                        className="dml-action-btn dml-action-btn--book"
+                        onClick={() => navigate("/booking", { state: { mission: m } })}
+                      >
+                        Book Now
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
