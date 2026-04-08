@@ -47,14 +47,7 @@
   z-index: 1001;
 }
 
-/* ==================== FUTURE QUICK CHANGES ==================== */
-/* 
-  Quick edit guide:
-  - Tabs boldness     → .tab + .tab.active
-  - Reject popup      → .overlay + .rej-modal
-  - History View popup→ .overlay + .detail-modal
-  - Backdrop darkness → .overlay background
-*/
+
 
 /* ==================== REST OF STYLES (UNCHANGED) ==================== */
 
@@ -380,7 +373,7 @@ td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color:#333
+  color:#000000
 }
 
 tr:last-child td { border-bottom: none; }

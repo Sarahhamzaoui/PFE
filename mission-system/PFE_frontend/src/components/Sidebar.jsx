@@ -16,11 +16,12 @@ const menuByRole = {
   ],
   manager: [
     { id: 'dashboard',   label: 'Dashboard',       path: '/manager/dashboard' },
-    { id: 'missions',    label: 'Missions',        path: '/missions' },
+    { id: 'ManagerPage',    label: 'Missions',        path: '/manager/ManagerPage' },
   ],
   secretary: [
     { id: 'dashboard',      label: 'Dashboard',       path: '/secretary/dashboard' },
     { id: 'create-mission', label: 'Create Mission',  path: '/secretary/create-mission' },
+    { id: 'my-mission',      label: 'My Missions',     path: '/secretary/my-missions' }
   ],
   employee: [
     { id: 'dashboard',   label: 'Dashboard',       path: '/employee/dashboard' },

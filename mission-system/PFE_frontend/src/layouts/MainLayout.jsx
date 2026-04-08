@@ -3,8 +3,8 @@ import "../styles/Main.css";
 import Sidebar from "../components/Sidebar";
 
 // Old pages
-import MyMissions from "../pages/MyMissions";
-import CreateMissionPage from "../pages/secretary/CreateMissionPage";
+import MyMissions from "../pages/secretary/MyMissions";
+
 import Mission from "../pages/Missions";
 import Profile from "../pages/Profile";
 import Reports from "../pages/Reports";
@@ -14,8 +14,8 @@ import Settings from "../pages/Settings";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import ManagerPage from "../pages/manager/ManagerPage";
-import SecretaryDashboard from "../pages/secretary/SecretaryDashboard";
-import CreateMission from "../pages/secretary/CreateMission";
+import Dashboard from "../pages/secretary/Dashboard";
+import CreateMissionPage from "../pages/secretary/CreateMissionPage";
 import EmployeeDashboard from "../pages/employee/EmployeeDashboard";
 import DmlDashboard from "../pages/Dml/DmlDashboard";
 import BookingPage from "../pages/Dml/Booking";
@@ -38,7 +38,7 @@ function MainLayout({ activePage: initialPage }) {
         if (role === 'admin')      return <AdminDashboard />;
         if (role === 'dml')        return <DmlDashboard />;
         if (role === 'manager')    return <ManagerDashboard />;
-        if (role === 'secretary')  return <SecretaryDashboard />;
+        if (role === 'secretary')  return <Dashboard />;
         if (role === 'employee')   return <EmployeeDashboard />;
         return <AdminDashboard />;
 
@@ -50,8 +50,9 @@ function MainLayout({ activePage: initialPage }) {
       case 'settings':             return <Settings darkMode={darkMode} setDarkMode={setDarkMode} />;
 
       // ── Secretary ──
-      case 'create-mission':       return <CreateMission />;
+      case 'create-mission':       return <CreateMissionPage />;
       case 'create-mission-page':  return <CreateMissionPage />;
+      case 'my-missions':          return <MyMissions/>
 
       // ── DML ──
       case 'booking':              return <BookingPage />;

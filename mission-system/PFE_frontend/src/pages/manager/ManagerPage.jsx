@@ -20,7 +20,7 @@ const queueData = [
 ];
 
 
-function ManagerPage() {
+function ManagerMissions() {
 
   // Which tab is active  'queue' or 'history'
   const [tab, setTab] = useState('queue');
@@ -393,4 +393,4 @@ function ManagerPage() {
   );
 }
 
-export default ManagerPage;
+export default ManagerMissions;

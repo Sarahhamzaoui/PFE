@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../Styles/MyMissions.css";
-import MissionDetailModal from "../components/MissionDetailModal";
+import "./MyMissions.css";
+import MissionDetailModal from "../../components/MissionDetailModal";
 
 const allMissions = [
   { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active",
