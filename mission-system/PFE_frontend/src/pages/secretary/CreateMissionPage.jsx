@@ -9,18 +9,18 @@ const BASE_URL = "http://localhost/PFE/mission-system/PFE_backend/api";
 function CreateMissionPage() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [resetKey, setResetKey] = useState(0); //  forces MissionDetailsForm to remount = reset
 
   // Gets called when the form is submitted
   const handleSubmit = async (data) => {
-    console.log("Form data received:", data);
-    // Get the logged-in secretary's user_id from localStorage
-    const user = JSON.parse(localStorage.getItem("user"));
-
     // Basic validation
     if (!data.missionTitle || !data.destination || !data.startDate || !data.endDate) {
       alert("Please fill in all required fields.");
       return;
     }
+    // Get the logged-in secretary's user_id from localStorage
+     const user = JSON.parse(localStorage.getItem("user"));
 
     // Build the payload matching your missions table columns
     const payload = {
@@ -43,11 +43,19 @@ function CreateMissionPage() {
       });
 
       const result = await res.json();
-
+      
       if (res.ok) {
-        alert("Mission created successfully!");
-        setSelectedEmployee(null);
-      } else {
+        setSuccessMessage("Mission created successfully! ✓");
+
+        // Reset form after showing the message
+        setTimeout(() => {
+            setSuccessMessage("");        // clear message after reset
+          setSelectedEmployee(null);
+          setResetKey(prev => prev + 1);
+        
+        }, 5000);   // show banner for 5 seconds
+      } 
+      else {
         alert(result.message || "Failed to create mission.");
       }
     } catch (err) {
@@ -57,9 +65,12 @@ function CreateMissionPage() {
       setLoading(false);
     }
   };
+      
 
   const handleCancel = () => {
     setSelectedEmployee(null);
+    setResetKey(prev => prev +1);
+    setSuccessMessage("");
   };
 
   return (
@@ -67,14 +78,21 @@ function CreateMissionPage() {
       <div className="header">
         <h1>Create Mission</h1>
       </div>
-
+     
       <EmployeeSelection onEmployeeSelect={setSelectedEmployee} />
 
       <MissionDetailsForm 
+      key={resetKey} /*changing key forces full reset */
         selectedEmployee={selectedEmployee}
         onFormDataChange={handleSubmit}
       />
-      <AttachmentsDropzone />
+      <AttachmentsDropzone key={"drop-" + resetKey} />
+       {/*  success message */}
+      {successMessage && (
+        <div className="success-banner">
+           {successMessage}
+        </div>
+      )}
 
       {/* BUTTONS */}
       <div className="btn-group">

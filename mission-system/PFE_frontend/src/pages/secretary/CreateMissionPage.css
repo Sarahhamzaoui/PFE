@@ -441,4 +441,34 @@ h1 {
 .full-width {
   grid-column: 1 / -1;
 }
+/* SUCCESS BANNER  */
 
+.success-banner {
+  background-color: #d4edda;
+  color: #155724;
+  border: 2px solid #c3e6cb;
+  border-radius: 10px;
+  padding: 16px 24px;
+  margin: 20px auto 30px auto;
+  max-width: 520px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.08rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
