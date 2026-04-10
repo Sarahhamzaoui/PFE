@@ -10,7 +10,7 @@ function ManagerMissions() {
   const [history, setHistory] = useState([]);
   const [queue, setQueue] = useState([]);
   const [idx, setIdx] = useState(0);
-  const [modal, setModal] = useState(null);
+  const [modal, setModal] = useState(null); // { index, attachments } or null
   const [rejectModal, setRejectModal] = useState(false);
   const [rejNote, setRejNote] = useState('');
   const [histSearch, setHistSearch] = useState('');
@@ -33,7 +33,7 @@ function ManagerMissions() {
 
       // Split into queue (pending) and history (approved/rejected)
       const pending  = data.missions.filter(m => m.status === 'pending')
-       .sort((a, b) => b.is_urgent - a.is_urgent);
+        .sort((a, b) => b.is_urgent - a.is_urgent);
       const reviewed = data.missions.filter(m => m.status !== 'pending');
 
       setQueue(pending);
@@ -46,7 +46,23 @@ function ManagerMissions() {
     }
   };
 
-  // Approve or reject a mission — calls the PUT endpoint
+  // Opens the detail modal — fetches attachments first, then sets modal state
+  const handleViewMission = async (index) => {
+    const mission = filteredHistory[index];
+    try {
+      // fetch attachments for this specific mission
+      const res = await fetch(`${BASE_URL}/missions/attachments.php?mission_id=${mission.mission_id}`);
+      const data = await res.json();
+      // modal is an object: { index, attachments }
+      setModal({ index, attachments: data.attachments || [] });
+    } catch (err) {
+      console.error(err);
+      // still open the modal even if attachments fail
+      setModal({ index, attachments: [] });
+    }
+  };
+
+  // Approve or reject a mission from the queue — calls the PUT endpoint
   const decide = async (decision, note) => {
     const mission = queue[idx];
     try {
@@ -78,9 +94,9 @@ function ManagerMissions() {
     }
   };
 
-  // Allows the manager to flip a past decision
+  // Allows the manager to flip a past decision from the history modal
   const updateDecision = async (decision, note) => {
-    const mission = history[modal];
+    const mission = history[modal.index]; // ← modal.index not modal
     try {
       const res = await fetch(`${BASE_URL}/missions/missions.php`, {
         method: "PUT",
@@ -93,10 +109,11 @@ function ManagerMissions() {
       });
 
       if (res.ok) {
+        // update the history entry locally with the new decision
         const updated = [...history];
-        updated[modal] = { ...updated[modal], status: decision, note };
+        updated[modal.index] = { ...updated[modal.index], status: decision, note }; // ← modal.index
         setHistory(updated);
-        setModal(null);
+        setModal(null); // close modal
       }
     } catch (err) {
       console.error(err);
@@ -111,7 +128,7 @@ function ManagerMissions() {
     return matchName && matchDate;
   });
 
-  // Derived values
+  // Derived values for stat cards and progress bar
   const approved = history.filter(m => m.status === 'approved').length;
   const rejected  = history.filter(m => m.status === 'rejected').length;
   const pending   = queue.length;
@@ -135,7 +152,7 @@ function ManagerMissions() {
   return (
     <div className="manager-wrap">
 
-      {/* Tab switcher Queue and History */}
+      {/* Tab switcher — Queue and History */}
       <div className="manager-tabs">
         <div className={`tab ${tab === 'queue' ? 'active' : ''}`} onClick={() => setTab('queue')}>
           Queue
@@ -163,7 +180,7 @@ function ManagerMissions() {
             <span className="progress-label">{doneAll} of {totalAll} reviewed</span>
           </div>
 
-          {/* Empty state — shown when the manager finishes all missions */}
+          {/* Empty state — shown when all missions are reviewed */}
           {idx >= queue.length ? (
             <div className="done-state">
               <div className="done-icon">
@@ -197,15 +214,15 @@ function ManagerMissions() {
               <div className="mission-card">
                 <div className="card-header">
                   <div>
-                   <div className="card-title">
-  {queue[idx].is_urgent == 1 && (
-    <span style={{ background: '#E05252', color: 'white', fontSize: '11px', padding: '2px 8px', borderRadius: '4px', marginRight: '8px' }}>
-      URGENT
-    </span>
-  )}
-  {queue[idx].title}
-</div>
-
+                    <div className="card-title">
+                      {/* Urgent badge — only shown if mission is urgent */}
+                      {queue[idx].is_urgent == 1 && (
+                        <span style={{ background: '#E05252', color: 'white', fontSize: '11px', padding: '2px 8px', borderRadius: '4px', marginRight: '8px' }}>
+                          URGENT
+                        </span>
+                      )}
+                      {queue[idx].title}
+                    </div>
                     <div className="card-sub">
                       Submitted by {queue[idx].created_by_name} · {queue[idx].sent_date}
                     </div>
@@ -238,7 +255,7 @@ function ManagerMissions() {
                 </div>
               </div>
 
-              {/* Queue peek — shows remaining missions below current card */}
+              {/* Queue peek — shows remaining missions below the current card */}
               {queue.slice(idx + 1).length > 0 && (
                 <div className="queue-peek">
                   <div className="peek-label">Up next in queue</div>
@@ -282,7 +299,7 @@ function ManagerMissions() {
                 <thead>
                   <tr>
                     <th>Mission</th>
-                    <th>Created by</th>
+                    <th>assigned to</th>
                     <th>Date</th>
                     <th>Decision</th>
                     <th></th>
@@ -300,7 +317,8 @@ function ManagerMissions() {
                         </span>
                       </td>
                       <td>
-                        <button className="view-btn" onClick={() => setModal(i)}>View</button>
+                        {/* clicking View fetches attachments then opens modal */}
+                        <button className="view-btn" onClick={() => handleViewMission(i)}>View</button>
                       </td>
                     </tr>
                   ))}
@@ -350,16 +368,23 @@ function ManagerMissions() {
       )}
 
       {/* HISTORY DETAIL MODAL */}
-      {modal !== null && history[modal] && (
+      {/* modal is { index, attachments } — use modal.index to get the mission */}
+      {modal !== null && filteredHistory[modal.index] && (
         <MissionDetailModal
           mission={{
-            ...history[modal],
-            title:      history[modal].title,
-            secretary:  history[modal].created_by_name,
-            dateLabel:  history[modal].start_date,
-            decision:   history[modal].status,
-            note:       history[modal].note || '',
-            attachments: [],
+            ...filteredHistory[modal.index],
+            // map DB column names to what MissionDetailModal expects
+            title:      filteredHistory[modal.index].title,
+            secretary:  filteredHistory[modal.index].created_by_name,
+            dateLabel:  filteredHistory[modal.index].sent_date,
+            decision:   filteredHistory[modal.index].status,
+            note:       filteredHistory[modal.index].note || '',
+            attachments: modal.attachments,
+            dept:       filteredHistory[modal.index].department_name  || 'N/A',
+            deadline:   filteredHistory[modal.index].end_date         || 'N/A',
+            assignedTo: filteredHistory[modal.index].assigned_to_name || 'N/A',
+            location:   filteredHistory[modal.index].destination      || 'N/A',
+            desc:       filteredHistory[modal.index].objectives       || '',
           }}
           onClose={() => setModal(null)}
           role="manager"

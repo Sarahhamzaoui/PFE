@@ -50,10 +50,6 @@
   gap: 14px;
   margin-bottom: 1.25rem;
 }
-.db-badge--Urgent{
-    background-color: #fdedea;
-    color: #E05252;
-}
 
 .db-card {
   background: #ffffff;
@@ -68,7 +64,6 @@
   box-shadow: 0 6px 20px rgba(60, 80, 180, 0.1);
 }
 
-/* Blue accent hero card */
 .db-card--blue {
   background: linear-gradient(135deg, #4a6cf7 0%, #3b55e6 100%);
 }
@@ -206,19 +201,23 @@
 }
 
 .db-table thead tr {
-  background: #f8f9fd;
+  background: #7a9bb5;
+  overflow: hidden;
 }
 
 .db-table th {
   text-align: left;
-  color: #8a93a8;
+  color: #f0f4ff;
   font-weight: 500;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 10px 12px;
-  border-radius: 6px;
+  border-radius: 0;
 }
+
+.db-table thead tr th:first-child { border-radius: 10px 0 0 10px; }
+.db-table thead tr th:last-child  { border-radius: 0 10px 10px 0; }
 
 .db-table td {
   padding: 12px 12px;
@@ -254,4 +253,4 @@
 
 .db-badge--active   { background: #e8f8f1; color: #2e9b6a; }
 .db-badge--pending  { background: #fff5e6; color: #c07b10; }
-.db-badge--Urgent { background: #fdeaea; color: #c03030; }
+.db-badge--Urgent   { background: #fdeaea; color: #c03030; }

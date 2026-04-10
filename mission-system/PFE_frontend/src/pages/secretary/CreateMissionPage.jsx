@@ -53,7 +53,7 @@ function CreateMissionPage() {
           setSelectedEmployee(null);
           setResetKey(prev => prev + 1);
         
-        }, 5000);   // show banner for 5 seconds
+        }, 3000);   // show banner for 5 seconds
       } 
       else {
         alert(result.message || "Failed to create mission.");
@@ -79,7 +79,9 @@ function CreateMissionPage() {
         <h1>Create Mission</h1>
       </div>
      
-      <EmployeeSelection onEmployeeSelect={setSelectedEmployee} />
+      <EmployeeSelection
+      key={"emp-" + resetKey} 
+      onEmployeeSelect={setSelectedEmployee} />
 
       <MissionDetailsForm 
       key={resetKey} /*changing key forces full reset */
