@@ -57,17 +57,18 @@ function App() {
             <ManagerDashboard />
           </ProtectedRoute>
         }/>
-// ── DML ──
-<Route path="/dml/dashboard" element={
-  <ProtectedRoute allowedRoles={["dml"]}>
-    <MainLayout activePage="dashboard" />  {/* ✅ uses MainLayout */}
-  </ProtectedRoute>
-}/>
-<Route path="/dml/booking" element={
-  <ProtectedRoute allowedRoles={["dml"]}>
-    <MainLayout activePage="booking" />
-  </ProtectedRoute>
-}/>
+
+        <Route path="/dml/dashboard" element={
+          <ProtectedRoute allowedRoles={["dml"]}>
+            <MainLayout activePage="dashboard" />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/dml/booking" element={
+          <ProtectedRoute allowedRoles={["dml"]}>
+            <MainLayout activePage="booking" />
+          </ProtectedRoute>
+        }/>
 
         <Route path="*" element={<Navigate to="/" />} />
 

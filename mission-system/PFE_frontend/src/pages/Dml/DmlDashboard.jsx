@@ -283,7 +283,7 @@ function DmlDashboard() {
                       // ← CHANGED: navigate to booking page instead of opening modal
                       <button
                         className="dml-action-btn dml-action-btn--book"
-                        onClick={() => navigate("/booking", { state: { mission: m } })}
+                        onClick={() => navigate("/dml/booking", { state: { mission: m } })}
                       >
                         Book Now
                       </button>
