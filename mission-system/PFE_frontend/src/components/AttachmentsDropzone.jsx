@@ -1,9 +1,3 @@
-/**
- * AttachmentsDropzone Component
- * Provides a drag-and-drop zone for uploading supporting documents (PDF, DOCX).
- 
- */
-
 import React, { useEffect, useRef, useState } from 'react';
 import '../Styles/Attachments.css';
 
@@ -11,7 +5,7 @@ import '../Styles/Attachments.css';
   const MAX_FILE_SIZE_MB = 25 ;
   const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-function AttachmentsDropzone() {
+function AttachmentsDropzone({onFilesChange}) {
 
   // useRef creates a direct reference to the dropzone DOM element
   const attachmentsRef = useRef(null);
@@ -29,13 +23,12 @@ function AttachmentsDropzone() {
  files.forEach (file => {
   if (file.size <= MAX_FILE_SIZE_BYTES) {
     accepted.push(file);
-
   } else {
     rejected.push(file.name);
   }
  });
  return {accepted,rejected};
-}
+};
 
   useEffect(() => {
 
@@ -54,24 +47,22 @@ function AttachmentsDropzone() {
       attachments.classList.add('dragover');
     };
 
-    
-     //hndleDragLeave - fires when the dragged file leaves the dropzone area
-  
-    
+    //hndleDragLeave - fires when the dragged file leaves the dropzone area
     const handleDragLeave = () => {
       attachments.classList.remove('dragover');
     };
 
-    
-   //* handleDrop - fires when the user releases/drops the file onto the zone
-    
+    //* handleDrop - fires when the user releases/drops the file onto the zone
     const handleDrop = (e) => {
       e.preventDefault();
       attachments.classList.remove('dragover');
       const files = Array.from(e.dataTransfer.files); // convert filelist to an array 
-       
-      const {accepted , rejected } = filterFiles(files);
-      setDroppedFiles(prev => [...prev, ...accepted]);
+      const { accepted, rejected } = filterFiles(files); // ← fix: moved outside setDroppedFiles
+      setDroppedFiles(prev => {
+        const updated = [...prev, ...accepted]; // ← fix: define updated before using it
+        if (onFilesChange) onFilesChange(updated);
+        return updated;
+      });
       setRejectedFiles(rejected);
     };
 
@@ -94,6 +85,7 @@ function AttachmentsDropzone() {
  const handleClick = () => {
   fileInputRef.current.click();
  };
+
  /**
    * handleFileInput - fires when the user selects files from the file explorer
    * - Array.from() converts the FileList to a regular array
@@ -101,16 +93,26 @@ function AttachmentsDropzone() {
    */
    const handleFileInput = (e) => {
     const files = Array.from(e.target.files); // convert FileList to array
-      const { accepted, rejected } = filterFiles(files); //  call it first
-    setDroppedFiles(prev => [...prev, ...accepted]); // append to existing files
-   setRejectedFiles(rejected);
+    const { accepted, rejected } = filterFiles(files); // call it first
+    setDroppedFiles(prev => {
+      const updated = [...prev, ...accepted]; // ← fix: single setDroppedFiles, updated defined first
+      if (onFilesChange) onFilesChange(updated); // notify parent
+      return updated;
+    });
+    setRejectedFiles(rejected);
     e.target.value = ''; // reset input so the same file can be re-selected later
   };
+
  //  removeFile - removes a specific file from the list by its index
    //*  filters out the file at the given index, keeping all others
   const removeFile = (index) => {
-    setDroppedFiles(prev => prev.filter((_,i) =>  i !== index));
+    setDroppedFiles(prev => {
+      const updated = prev.filter((_, i) => i !== index);
+      if (onFilesChange) onFilesChange(updated); // notify parent
+      return updated;
+    });
   };
+
   return (
     <>
     {/* Hidden file input — no UI, triggered programmatically on dropzone click */}
@@ -131,9 +133,9 @@ function AttachmentsDropzone() {
       >
         Upload supporting documents (PDF, DOCX)
         <br />
-        
         <small>Drag &amp; drop here or browse</small>
       </div>
+
       {/* Error messages for rejected files */}
       {rejectedFiles.length > 0 && (
         <div className='rejected-files'>
@@ -144,22 +146,21 @@ function AttachmentsDropzone() {
           ))}
         </div>
       )}
+
       {/*File list only renders if at least one file has been dropped */}
-      {droppedFiles.length >0 && (
+      {droppedFiles.length > 0 && (
         <div className='file-list'>
-          { droppedFiles.map((file,index) => (
+          { droppedFiles.map((file, index) => (
           // Each file row shows its name, size, and a remove button
             <div key={index} className='file-item'>
-            <span className="file-name">📄 {file.name}</span>
-            {/* Convert bytes to KB and round to 1 decimal */}
+              <span className="file-name">📄 {file.name}</span>
+              {/* Convert bytes to KB and round to 1 decimal */}
               <span className="file-size">({(file.size / 1024).toFixed(1)} KB)</span>
-          {/* Clicking ✕ removes only this file from the list */}
-              <button className="remove-file-btn" onClick={(e) =>{e.stopPropagation();  removeFile(index) }}>✕</button>
-              </div>
+              {/* Clicking ✕ removes only this file from the list */}
+              <button className="remove-file-btn" onClick={(e) => { e.stopPropagation(); removeFile(index); }}>✕</button>
+            </div>
           ))}
         </div>
-
-
       )}
     </>
   );

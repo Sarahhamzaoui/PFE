@@ -1,34 +1,48 @@
 <?php
-header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
 
-include("../../config/database.php");
-
-$data = json_decode(file_get_contents("php://input"));
-
-if (!$data) {
-    echo json_encode(["error" => "No data received"]);
-    exit;
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
 }
 
-$email = $data->email ?? '';
-$password = $data->password ?? '';
+require_once '../../config/database.php';
 
-$sql = "SELECT * FROM users WHERE email='$email'";
-$result = $conn->query($sql);
+$input    = json_decode(file_get_contents('php://input'), true);
+$email    = $input['email']    ?? '';
+$password = $input['password'] ?? '';
 
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
 
-    if (password_verify($password, $user['password'])) {
-        echo json_encode([
-            "message" => "Login successful",  // ✅ React looks for this
-            "user" => $user
-        ]);
-    } else {
-        echo json_encode(["message" => "Wrong password"]);  // ✅ use message not error
-    }
+
+if (empty($email) || empty($password)) {
+    echo json_encode(["message" => "Please provide email and password"]);
+    exit();
+}
+
+$stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+$stmt->execute([$email]);
+$user = $stmt->fetch();
+
+if ($user && password_verify($password, $user['password'])) {
+    echo json_encode([
+        "message" => "Login successful",
+        "user" => [
+            "user_id"       => $user['user_id'],
+            "employee_id"   => $user['employee_id'],
+            "first_name"    => $user['first_name'],
+            "last_name"     => $user['last_name'],
+            "email"         => $user['email'],
+            "role"          => $user['role'],
+            "department_id" => $user['department_id']
+        ]
+    ]);
 } else {
-    echo json_encode(["message" => "User not found"]);  // ✅ use message not error
+    echo json_encode(["message" => "Invalid credentials"]);
 }
+?>

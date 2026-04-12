@@ -46,17 +46,19 @@ function Login() {
   };
 
   return (
-    <div className="login-page">
+    <div className="login-page">a
 
-      <div className="glow-circle gc1"></div>
-      <div className="glow-circle gc2"></div>
+      <div className="glow-circle gc1"/>
+      <div className="glow-circle gc2"/>
+      <div className="glow-circle gc3"/>
+      <div className="login-container">
 
       <div className="particles">
         <span></span><span></span><span></span>
         <span></span><span></span><span></span>
       </div>
 
-      <div className="login-container">
+      
 
         <img src="/logo.jpg" width="150" alt="logo" />
         <h2>Welcome</h2>
@@ -89,7 +91,7 @@ function Login() {
             <a href="#">Forgot password?</a>
           </div>
 
-          {message && <p style={{ color: "green" }}>{message}</p>}
+          {message && <p style={{ color: "#1a2a4f" }}>{message}</p>}
 
           <button className="login-btn">Login</button>
 

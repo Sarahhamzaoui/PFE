@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../Styles/Dashboard.css";
-import MissionDetailModal from "../components/MissionDetailModal";
+import "./Dashboard.css";
+import MissionDetailModal from "../../components/MissionDetailModal";
 
 
 // Static mission data — replace with API call (fetch/axios) when backend is ready

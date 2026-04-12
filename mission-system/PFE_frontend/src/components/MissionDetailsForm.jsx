@@ -84,7 +84,7 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} id="mission-form">
       <div className="section-title">Mission Details</div>
 
       {/* EMPLOYEE INFO */}
