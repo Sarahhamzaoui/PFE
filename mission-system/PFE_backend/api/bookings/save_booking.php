@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
@@ -9,51 +9,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-include("../../config/database.php");
+require_once '../../config/database.php';
 
-$data = json_decode(file_get_contents("php://input"));
+$data = json_decode(file_get_contents("php://input"), true);
 
 if (!$data) {
+    http_response_code(400);
     echo json_encode(["error" => "No data received"]);
     exit;
 }
 
-$mission_id    = $data->mission_id    ?? null;
-$accomodation  = $data->accomodation  ?? '';
-$transport     = $data->transport     ?? '';
-$food          = $data->food          ?? '';
+$mission_id   = $data['mission_id']   ?? null;
+$accomodation = $data['accomodation'] ?? '';
+$transport    = $data['transport']    ?? '';
+$food         = $data['food']         ?? '';
 
 if (!$mission_id) {
+    http_response_code(400);
     echo json_encode(["error" => "Mission ID is required"]);
     exit;
 }
 
-// Check if booking already exists for this mission
-$check = $conn->prepare("SELECT id FROM bookings WHERE mission_id = ?");
-$check->bind_param("i", $mission_id);
-$check->execute();
-$check->store_result();
+try {
+    // Delete old bookings for this mission first
+    $delete = $pdo->prepare("DELETE FROM bookings WHERE mission_id = ?");
+    $delete->execute([$mission_id]);
 
-if ($check->num_rows > 0) {
-    // Update existing booking
-    $stmt = $conn->prepare("
-        UPDATE bookings 
-        SET accomodation = ?, transport = ?, food = ?
-        WHERE mission_id = ?
-    ");
-    $stmt->bind_param("sssi", $accomodation, $transport, $food, $mission_id);
-} else {
-    // Insert new booking
-    $stmt = $conn->prepare("
-        INSERT INTO bookings (mission_id, accomodation, transport, food)
-        VALUES (?, ?, ?, ?)
-    ");
-    $stmt->bind_param("isss", $mission_id, $accomodation, $transport, $food);
-}
+    // Insert accommodation
+    if (!empty($accomodation)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO bookings (mission_id, type, provider, booking_date, status)
+            VALUES (?, 'hotel', ?, CURDATE(), 'confirmed')
+        ");
+        $stmt->execute([$mission_id, $accomodation]);
+    }
 
-if ($stmt->execute()) {
+    // Insert transport
+    if (!empty($transport)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO bookings (mission_id, type, provider, booking_date, status)
+            VALUES (?, 'transport', ?, CURDATE(), 'confirmed')
+        ");
+        $stmt->execute([$mission_id, $transport]);
+    }
+
+    // Insert food as 'other'
+    if (!empty($food)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO bookings (mission_id, type, provider, booking_date, status, notes)
+            VALUES (?, 'other', ?, CURDATE(), 'confirmed', 'Food/Meals')
+        ");
+        $stmt->execute([$mission_id, $food]);
+    }
+
+    // Mark mission as booked
+    $update = $pdo->prepare("UPDATE missions SET booked = 1 WHERE mission_id = ?");
+    $update->execute([$mission_id]);
+
+    http_response_code(200);
     echo json_encode(["message" => "Booking saved successfully"]);
-} else {
-    echo json_encode(["error" => "Failed to save booking: " . $stmt->error]);
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(["error" => "Database error: " . $e->getMessage()]);
 }
 ?>

@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./DmlDashboard.css";
 import { getAcceptedMissions, saveBooking } from "../../services/api";
-import { useNavigate } from "react-router-dom"; // ← ADD THIS
 
-// Donut chart - unchanged
+// Donut chart
 function DonutChart({ booked, notBooked }) {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -48,7 +47,7 @@ function DonutChart({ booked, notBooked }) {
   return <canvas ref={canvasRef} width={160} height={160} />;
 }
 
-// Booking modal - unchanged (only used for "View ›" now)
+// View modal (for already booked missions)
 function BookingModal({ mission, onClose, onSave }) {
   const [accomodation, setAccomodation] = useState(mission.accomodation || "");
   const [transport, setTransport]       = useState(mission.transport || "");
@@ -118,8 +117,8 @@ function BookingModal({ mission, onClose, onSave }) {
   );
 }
 
-function DmlDashboard() {
-  const navigate = useNavigate(); // ← ADD THIS
+// ── Main Component ─────────────────────────────────────────────────────────────
+function DmlDashboard({ setActivePage, setBookingMission }) {
   const [missionList, setMissionList]         = useState([]);
   const [selectedMission, setSelectedMission] = useState(null);
   const [activeTab, setActiveTab]             = useState("all");
@@ -162,6 +161,11 @@ function DmlDashboard() {
     }
   };
 
+  const handleBookNow = (mission) => {
+    setBookingMission(mission);
+    setActivePage("booking");
+  };
+
   const total     = missionList.length;
   const booked    = missionList.filter(m => m.booked === "1" || m.booked === 1).length;
   const notBooked = missionList.filter(m => !m.booked || m.booked === "0").length;
@@ -172,7 +176,7 @@ function DmlDashboard() {
     missionList;
 
   if (loading) return <div className="dml-page"><p>Loading missions...</p></div>;
-  if (error)   return <div className="dml-page"><p style={{color:"red"}}>{error}</p></div>;
+  if (error)   return <div className="dml-page"><p style={{ color: "red" }}>{error}</p></div>;
 
   return (
     <div className="dml-page">
@@ -272,7 +276,6 @@ function DmlDashboard() {
                   </td>
                   <td>
                     {m.booked === "1" || m.booked === 1 ? (
-                      // View modal for already booked missions
                       <button
                         className="dml-action-btn dml-action-btn--view"
                         onClick={() => setSelectedMission(m)}
@@ -280,10 +283,9 @@ function DmlDashboard() {
                         View ›
                       </button>
                     ) : (
-                      // ← CHANGED: navigate to booking page instead of opening modal
                       <button
                         className="dml-action-btn dml-action-btn--book"
-                        onClick={() => navigate("/dml/booking", { state: { mission: m } })}
+                        onClick={() => handleBookNow(m)}
                       >
                         Book Now
                       </button>

@@ -1,29 +1,7 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import "./Booking.css";
 import Addnewhotel from "./Addnewhotel";
-import { getAccommodations } from "../../services/api"; // adjust path
-// ... rest of imports
-
-
-// ── Data ──────────────────────────────────────────────────────────────────────
-const ACCOMMODATIONS = [
-  {
-    id: "h1",
-    tag: "Corporate · Tier 1",
-    name: "Executive Residence",
-    desc: "Premium company-approved housing with workspace.",
-    price: 220,
-    unit: "/ night",
-  },
-  {
-    id: "h2",
-    tag: "Corporate · Tier 2",
-    name: "Business Apartment",
-    desc: "Comfortable apartment for assignments.",
-    price: 140,
-    unit: "/ night",
-  },
-];
+import { getAccommodations, saveBooking } from "../../services/api";
 
 const MEALS = [
   {
@@ -33,14 +11,16 @@ const MEALS = [
     desc: "All meals included daily.",
     price: 40,
     unit: "/ day",
+    emoji: "🍽️",
   },
   {
     id: "r2",
     tag: "Flexible",
     name: "Meal Allowance",
-    desc: "Daily allowance.",
+    desc: "Daily allowance for meals.",
     price: 15,
     unit: "/ day",
+    emoji: "💰",
   },
 ];
 
@@ -52,6 +32,7 @@ const TRANSPORTS = [
     desc: "Company vehicle access.",
     price: 60,
     unit: "/ day",
+    emoji: "🚗",
   },
   {
     id: "t2",
@@ -60,23 +41,21 @@ const TRANSPORTS = [
     desc: "Business class flight.",
     price: 300,
     unit: "/ ticket",
+    emoji: "✈️",
   },
 ];
 
 const STEPS = ["Accommodation", "Meals", "Transport"];
 
-// ── Components ────────────────────────────────────────────────────────────────
-
+// ── Progress Bar ──────────────────────────────────────────────────────────────
 function ProgressBar({ currentStep }) {
   const fillPct = ((currentStep - 1) / (STEPS.length - 1)) * 100;
-
   return (
     <div className="progress-wrap">
       <div className="progress-steps">
         <div className="progress-line">
           <div className="progress-line-fill" style={{ width: `${fillPct}%` }} />
         </div>
-
         {STEPS.map((label, i) => {
           const stepNum = i + 1;
           return (
@@ -91,6 +70,7 @@ function ProgressBar({ currentStep }) {
   );
 }
 
+// ── Card ──────────────────────────────────────────────────────────────────────
 function Card({ item, selected, onSelect }) {
   return (
     <div className={`card ${selected ? "selected" : ""}`} onClick={() => onSelect(item)}>
@@ -108,27 +88,29 @@ function Card({ item, selected, onSelect }) {
   );
 }
 
+// ── Step Panel ────────────────────────────────────────────────────────────────
 function StepPanel({ title, subtitle, items, selected, onSelect, onNext, onBack, onAddNew }) {
   return (
     <div className="step-panel">
       <h2 className="step-title">{title}</h2>
       <p className="step-subtitle">{subtitle}</p>
-
       <div className="cards-grid">
         {items.map((item) => (
-          <Card key={item.id} item={item} selected={selected?.id === item.id} onSelect={onSelect} />
+          <Card
+            key={item.id}
+            item={item}
+            selected={selected?.id === item.id}
+            onSelect={onSelect}
+          />
         ))}
       </div>
-
       <div className="btn-row">
         {onBack && (
           <button className="btn btn-ghost" onClick={onBack}>← Back</button>
         )}
-
         <button className="btn btn-primary" disabled={!selected} onClick={onNext}>
           Continue →
         </button>
-
         {onAddNew && (
           <button className="btn btn-add" onClick={onAddNew}>
             + Add New Accommodation
@@ -139,17 +121,24 @@ function StepPanel({ title, subtitle, items, selected, onSelect, onNext, onBack,
   );
 }
 
-function Summary({ selections, onConfirm, onBack }) {
-  const total = Object.values(selections).reduce((sum, s) => sum + s.price, 0);
+// ── Summary ───────────────────────────────────────────────────────────────────
+function Summary({ mission, selections, onConfirm, onBack, saving }) {
+  const total = Object.values(selections)
+    .filter(Boolean)
+    .reduce((sum, s) => sum + s.price, 0);
 
   return (
     <div className="summary-panel">
       <h2>Assignment Summary</h2>
-      <p>Review mission configuration</p>
+      {mission && (
+        <p style={{ color: "#8a93a8", marginBottom: "1rem" }}>
+          Mission: <strong>{mission.title}</strong> — {mission.assigned_employee}
+        </p>
+      )}
 
-      {Object.values(selections).map((item, i) => (
+      {Object.values(selections).filter(Boolean).map((item, i) => (
         <div className="summary-item" key={i}>
-          <span>{item.name}</span>
+          <span>{item.emoji} {item.name}</span>
           <span>${item.price}</span>
         </div>
       ))}
@@ -157,19 +146,44 @@ function Summary({ selections, onConfirm, onBack }) {
       <div className="total">Total: ${total}</div>
 
       <div className="btn-row">
-        <button className="btn btn-ghost" onClick={onBack}>Edit</button>
-        <button className="btn btn-primary" onClick={onConfirm}>Confirm</button>
+        <button className="btn btn-ghost" onClick={onBack}>← Edit</button>
+        <button
+          className="btn btn-primary"
+          onClick={onConfirm}
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Confirm Booking ✓"}
+        </button>
       </div>
     </div>
   );
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
-
-export default function BookingPage() {
-  const [step, setStep] = useState(1);
+export default function BookingPage({ mission }) {
+  const [step, setStep]               = useState(1);
   const [showAddPage, setShowAddPage] = useState(false);
-  const [accommodations, setAccommodations] = useState(ACCOMMODATIONS);
+  const [saving, setSaving]           = useState(false);
+  const [accommodations, setAccommodations] = useState([
+    {
+      id: "h1",
+      tag: "Corporate · Tier 1",
+      name: "Executive Residence",
+      desc: "Premium company-approved housing with workspace.",
+      price: 220,
+      unit: "/ night",
+      emoji: "🏨",
+    },
+    {
+      id: "h2",
+      tag: "Corporate · Tier 2",
+      name: "Business Apartment",
+      desc: "Comfortable apartment for assignments.",
+      price: 140,
+      unit: "/ night",
+      emoji: "🏠",
+    },
+  ]);
 
   const [selections, setSelections] = useState({
     accommodation: null,
@@ -177,14 +191,81 @@ export default function BookingPage() {
     transport: null,
   });
 
+  // Load accommodations from backend
+  useEffect(() => {
+    const loadAccommodations = async () => {
+      try {
+        const data = await getAccommodations();
+        if (Array.isArray(data) && data.length > 0) {
+          const formatted = data.map((a) => ({
+            id:    String(a.id),
+            tag:   a.tier        || "Hotel",
+            name:  a.name,
+            desc:  a.description || "",
+            price: Number(a.price) || 0,
+            unit:  "/ night",
+            emoji: "🏨",
+          }));
+          setAccommodations(formatted);
+        }
+      } catch (err) {
+        console.error("Could not load accommodations:", err);
+      }
+    };
+    loadAccommodations();
+  }, []);
+
   const select = (key, item) =>
     setSelections((prev) => ({ ...prev, [key]: item }));
 
   const handleAddAccommodation = (newItem) => {
-    setAccommodations((prev) => [...prev, newItem]);
+    setAccommodations((prev) => [...prev, { ...newItem, emoji: "🏨" }]);
   };
 
-  // ── Show Addnewhotel page when button clicked ─────────────────────────────
+  const handleConfirm = async () => {
+    // ── DEBUG ──
+    console.log("Full mission object:", mission);
+    console.log("Mission ID:", mission?.id);
+    console.log("Mission ID (mission_id):", mission?.mission_id);
+
+    if (!mission) {
+      alert("No mission selected.");
+      return;
+    }
+
+    // Use mission_id if id is undefined
+    const missionId = mission.id || mission.mission_id;
+
+    if (!missionId) {
+      alert("Could not find mission ID. Check console for details.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const data = await saveBooking({
+        mission_id:   missionId,
+        accomodation: selections.accommodation?.name || "",
+        transport:    selections.transport?.name     || "",
+        food:         selections.meals?.name         || "",
+      });
+
+      console.log("Save booking response:", data);
+
+      if (data.message === "Booking saved successfully") {
+        alert("✅ Booking confirmed successfully!");
+      } else {
+        alert(data.error || "Failed to save booking");
+      }
+    } catch (err) {
+      console.error("Booking error:", err);
+      alert("Server error: " + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Show add hotel page
   if (showAddPage) {
     return (
       <Addnewhotel
@@ -197,9 +278,12 @@ export default function BookingPage() {
   return (
     <div className="page">
       <header className="page-header">
-        <div className="logo"></div>
         <h1>Plan <em>Business Mission</em></h1>
-        <p>Configure logistics for your assignment</p>
+        {mission && (
+          <p style={{ color: "#8a93a8" }}>
+            Booking for: <strong>{mission.title}</strong> — {mission.assigned_employee}
+          </p>
+        )}
       </header>
 
       <ProgressBar currentStep={step} />
@@ -243,9 +327,11 @@ export default function BookingPage() {
 
         {step === 4 && (
           <Summary
+            mission={mission}
             selections={selections}
             onBack={() => setStep(3)}
-            onConfirm={() => alert("Mission Confirmed")}
+            onConfirm={handleConfirm}
+            saving={saving}
           />
         )}
       </main>

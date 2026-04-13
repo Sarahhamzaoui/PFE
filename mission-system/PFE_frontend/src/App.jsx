@@ -62,7 +62,7 @@ function App() {
             <MainLayout activePage="booking" />
           </ProtectedRoute>
         }/>
-<<<<<<< HEAD
+
 
         <Route path="/dml/dashboard" element={
           <ProtectedRoute allowedRoles={["dml"]}>
@@ -75,8 +75,6 @@ function App() {
             <MainLayout activePage="booking" />
           </ProtectedRoute>
         }/>
-=======
->>>>>>> 5012b07b0d408947c01dfaa412a987212452e546
 
         <Route path="*" element={<Navigate to="/" />} />
 

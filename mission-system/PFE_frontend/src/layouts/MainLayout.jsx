@@ -4,7 +4,6 @@ import Sidebar from "../components/Sidebar";
 
 // Old pages
 import MyMissions from "../pages/secretary/MyMissions";
-
 import Mission from "../pages/Missions";
 import Profile from "../pages/Profile";
 import Reports from "../pages/Reports";
@@ -21,46 +20,49 @@ import DmlDashboard from "../pages/Dml/DmlDashboard";
 import BookingPage from "../pages/Dml/Booking";
 
 function MainLayout({ activePage: initialPage }) {
-  const [activePage, setActivePage] = useState(initialPage);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [activePage, setActivePage]       = useState(initialPage);
+  const [sidebarOpen, setSidebarOpen]     = useState(false);
+  const [darkMode, setDarkMode]           = useState(false);
+  const [bookingMission, setBookingMission] = useState(null);
 
   // Get logged-in user
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || "employee";
 
-  // Pages available per role
   const renderPage = () => {
     switch (activePage) {
 
-      // ── Admin ──
       case 'dashboard':
-        if (role === 'admin')      return <AdminDashboard />;
-        if (role === 'dml')        return <DmlDashboard />;
-        if (role === 'manager')    return <ManagerDashboard />;
-        if (role === 'secretary')  return <Dashboard />;
-        if (role === 'employee')   return <EmployeeDashboard />;
+        if (role === 'admin')     return <AdminDashboard />;
+        if (role === 'dml')       return (
+          <DmlDashboard
+            setActivePage={setActivePage}
+            setBookingMission={setBookingMission}
+          />
+        );
+        if (role === 'manager')   return <ManagerDashboard />;
+        if (role === 'secretary') return <Dashboard />;
+        if (role === 'employee')  return <EmployeeDashboard />;
         return <AdminDashboard />;
 
       // ── Shared ──
-      case 'missions':             return <Mission />;
-      case 'my-missions':          return <MyMissions setActivePage={setActivePage} />;
-      case 'profile':              return <Profile />;
-      case 'reports':              return <Reports />;
-      case 'settings':             return <Settings darkMode={darkMode} setDarkMode={setDarkMode} />;
+      case 'missions':            return <Mission />;
+      case 'my-missions':         return <MyMissions setActivePage={setActivePage} />;
+      case 'profile':             return <Profile />;
+      case 'reports':             return <Reports />;
+      case 'settings':            return <Settings darkMode={darkMode} setDarkMode={setDarkMode} />;
 
       // ── Secretary ──
-      case 'create-mission':       return <CreateMissionPage />;
-      case 'create-mission-page':  return <CreateMissionPage />;
-
+      case 'create-mission':      return <CreateMissionPage />;
+      case 'create-mission-page': return <CreateMissionPage />;
 
       // ── DML ──
-      case 'booking':              return <BookingPage />;
+      case 'booking':             return <BookingPage mission={bookingMission} />;
 
       // ── Manager ──
-      case 'ManagerPage':          return <ManagerPage />;
+      case 'ManagerPage':         return <ManagerPage />;
 
-      default:                     return <DmlDashboard />;
+      default:                    return <AdminDashboard />;
     }
   };
 
@@ -77,7 +79,6 @@ function MainLayout({ activePage: initialPage }) {
     'settings':            'Settings',
   };
 
-  // Show logged-in user's name in topbar
   const displayName = user
     ? `${user.first_name} ${user.last_name}`
     : "User";

@@ -1,36 +1,54 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
 
-include_once("../../config/database.php");
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once '../../config/database.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!$data) {
+    http_response_code(400);
     echo json_encode(["success" => false, "message" => "No data received"]);
     exit;
 }
 
-$name     = $conn->real_escape_string($data["name"]);
-$location = $conn->real_escape_string($data["location"]);
-$price    = floatval($data["price"]);
-$tier     = $conn->real_escape_string($data["tag"]);
-$desc     = $conn->real_escape_string($data["desc"]);
+$name     = trim($data['name']     ?? '');
+$location = trim($data['location'] ?? '');
+$price    = floatval($data['price'] ?? 0);
+$tier     = trim($data['tag']      ?? '');
+$desc     = trim($data['desc']     ?? '');
 
-$sql = "INSERT INTO accommodations (name, location, price, tier, description)
-        VALUES ('$name', '$location', '$price', '$tier', '$desc')";
-
-if ($conn->query($sql)) {
-    echo json_encode([
-        "success" => true,
-        "message" => "Accommodation added",
-        "id"      => $conn->insert_id
-    ]);
-} else {
-    echo json_encode(["success" => false, "message" => $conn->error]);
+if (empty($name) || empty($location) || $price <= 0) {
+    http_response_code(400);
+    echo json_encode(["success" => false, "message" => "Missing required fields"]);
+    exit;
 }
 
-$conn->close();
+try {
+    $stmt = $pdo->prepare("
+        INSERT INTO accommodations (name, location, price, tier, description)
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([$name, $location, $price, $tier, $desc]);
+
+    $newId = $pdo->lastInsertId();
+
+    http_response_code(201);
+    echo json_encode([
+        "success" => true,
+        "message" => "Accommodation added successfully",
+        "id"      => $newId
+    ]);
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(["success" => false, "message" => "Database error: " . $e->getMessage()]);
+}
 ?>

@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost/PFE/mission-system/PFE_backend/api";
+const BASE_URL = "http://localhost/mission-system/PFE_backend/api";
 
 // ── Auth ──────────────────────────────────────────────────────
 export const loginUser = async (email, password) => {
