@@ -51,6 +51,11 @@ function App() {
             <MainLayout activePage="dashboard" />
           </ProtectedRoute>
         }/>
+        <Route path="/profile" element={
+  <ProtectedRoute allowedRoles={["admin","employee","manager","secretary","dml"]}>
+    <MainLayout activePage="profile" />
+  </ProtectedRoute>
+}/>
 
         <Route path="/dml/dashboard" element={
           <ProtectedRoute allowedRoles={["dml"]}>
