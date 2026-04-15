@@ -168,7 +168,7 @@ export default function MyMissions({ setActivePage }) {
               <th>Destination</th>
               <th>Start date</th>
               <th>Status</th>
-              <th>Rejection reason</th>
+             
               <th>Action</th>
             </tr>
           </thead>
@@ -193,13 +193,7 @@ export default function MyMissions({ setActivePage }) {
                   </span>
                 </td>
 
-                {/* rejection reason — only shown if the manager rejected the mission */}
-                <td style={{ fontSize: "13px", color: "#c0392b" }}>
-                  {m.status === "rejected" && m.manager_note
-                    ? m.manager_note
-                    : "—"}
-                </td>
-
+                
                 <td>
                   {/* opens the read-only detail modal */}
                   <button

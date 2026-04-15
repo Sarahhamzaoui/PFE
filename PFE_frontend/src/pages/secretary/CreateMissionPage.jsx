@@ -30,7 +30,7 @@ function CreateMissionPage() {
       end_date:    data.endDate,
       objectives:  data.missionDescription,
       is_urgent: data.missionurgent ? 1 : 0,
-      assigned_to: selectedEmployee?.id ?? null,
+      assigned_to: selectedEmployee?.user_id ?? null,
       created_by:  user?.user_id,
     };
 

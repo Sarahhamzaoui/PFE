@@ -147,21 +147,25 @@ switch ($method) {
             exit();
         }
 
-        // if approved set today date if rejected null
+       // if approved set today date if rejected null
         $approved_date = ($status === 'approved') ? date('Y-m-d') : null;
 
-        // the update query
+        // extract the rejection note sent from the manager (empty string if approved)
+        $note = trim($input['note'] ?? '');
+
+        // the update query — now also saves the manager note
         $stmt = $pdo->prepare("
             UPDATE missions 
             SET status        = ?, 
                 validated_by  = ?, 
-                approved_date = ?
+                approved_date = ?,
+                manager_note  = ?
             WHERE mission_id  = ?
         ");
 
         // update success and at least one row was affected: success message
         // else no row was affected 404, otherwise server error 500
-        $stmt->execute([$status, $validated_by, $approved_date, $mission_id]);
+        $stmt->execute([$status, $validated_by, $approved_date, $note, $mission_id]);
 
         if ($stmt->rowCount() > 0) {
             http_response_code(200);
