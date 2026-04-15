@@ -32,7 +32,10 @@ function CreateMissionPage() {
       is_urgent: data.missionurgent ? 1 : 0,
       assigned_to: selectedEmployee?.user_id ?? null,
       created_by:  user?.user_id,
-    };
+      accommodation: data.accommodation || null,   
+      transport:     data.transport     || null,   
+      needs_driver:  data.needsDriver   ? 1 : 0, 
+        };
 
     try {
       setLoading(true);

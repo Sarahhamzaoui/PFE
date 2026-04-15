@@ -77,10 +77,13 @@ function ManagerMissions() {
 
       const result = await res.json();
       if (res.ok) {
+        // move mission from queue to history locally — set both note and manager_note
+        // so the modal always finds the rejection reason regardless of which key it reads
         const newEntry = { 
           ...mission, 
-          status: decision === 'approved' ? 'approved' : 'rejected', 
-          note 
+          status:       decision === 'approved' ? 'approved' : 'rejected', 
+          note,
+          manager_note: note,
         };
         setHistory(prev => [newEntry, ...prev]);
         const newQueue = [...queue];
@@ -112,8 +115,14 @@ function ManagerMissions() {
       });
 
       if (res.ok) {
+        // update history entry locally — keep both note and manager_note in sync
         const updated = [...history];
-        updated[modal.index] = { ...updated[modal.index], status: decision, note };
+        updated[modal.index] = { 
+          ...updated[modal.index], 
+          status: decision, 
+          note,
+          manager_note: note,
+        };
         setHistory(updated);
         setModal(null);
       }
@@ -126,7 +135,8 @@ function ManagerMissions() {
   // filter history by search and date
   const filteredHistory = history.filter(m => {
     const matchName = m.title.toLowerCase().includes(histSearch.toLowerCase());
-    const matchDate = histDate === '' || m.created_at?.startsWith(histDate);
+    // use sent_date for date filtering since created_at may not be returned by the api
+    const matchDate = histDate === '' || m.sent_date?.startsWith(histDate);
     return matchName && matchDate;
   });
 
@@ -215,6 +225,7 @@ function ManagerMissions() {
                 <div className="card-header">
                   <div>
                     <div className="card-title">
+                      {/* urgent badge — only shown if mission is marked urgent */}
                       {queue[idx].is_urgent == 1 && (
                         <span style={{ background: '#E05252', color: 'white', fontSize: '11px', padding: '2px 8px', borderRadius: '4px', marginRight: '8px' }}>
                           URGENT
@@ -291,7 +302,7 @@ function ManagerMissions() {
                 <thead>
                   <tr>
                     <th>Mission</th>
-                    <th>assigned to</th>         
+                    <th>assigned to</th>
                     <th>Date</th>
                     <th>Decision</th>
                     <th></th>
@@ -301,7 +312,7 @@ function ManagerMissions() {
                   {filteredHistory.map((m, i) => (
                     <tr key={m.mission_id}>
                       <td className="td-title">{m.title}</td>
-                      {/*  show employee name*/}
+                      {/* show employee name */}
                       <td className="td-muted">
                         {m.assigned_to_name || m.employee_name || 'N/A'}
                       </td>
@@ -312,6 +323,7 @@ function ManagerMissions() {
                         </span>
                       </td>
                       <td>
+                        {/* clicking view fetches attachments then opens the modal */}
                         <button className="view-btn" onClick={() => handleViewMission(i)}>View</button>
                       </td>
                     </tr>
@@ -329,6 +341,7 @@ function ManagerMissions() {
           <div className="rej-modal">
             <div className="modal-header">
               <div className="modal-title">Rejection reason</div>
+              {/* close without rejecting */}
               <button className="close-btn" onClick={() => setRejectModal(false)}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -357,22 +370,25 @@ function ManagerMissions() {
         </div>
       )}
 
-      {/* history detail modal */}
+      {/* history detail modal — manager_note is the db column, note is the local state key */}
       {modal !== null && filteredHistory[modal.index] && (
         <MissionDetailModal
           mission={{
             ...filteredHistory[modal.index],
-            title:      filteredHistory[modal.index].title,
-            secretary:  filteredHistory[modal.index].created_by_name,
-            dateLabel:  filteredHistory[modal.index].sent_date,
-            decision:   filteredHistory[modal.index].status,
-            note:       filteredHistory[modal.index].note || '',
+            title:       filteredHistory[modal.index].title,
+            secretary:   filteredHistory[modal.index].created_by_name,
+            dateLabel:   filteredHistory[modal.index].sent_date,
+            decision:    filteredHistory[modal.index].status,
+            note:        filteredHistory[modal.index].manager_note || filteredHistory[modal.index].note || '',
             attachments: modal.attachments,
-            dept:       filteredHistory[modal.index].department_name || 'N/A',
-            deadline:   filteredHistory[modal.index].end_date || 'N/A',
-            assignedTo: filteredHistory[modal.index].assigned_to_name || 'N/A',
-            location:   filteredHistory[modal.index].destination || 'N/A',
-            desc:       filteredHistory[modal.index].objectives || '',
+            dept:        filteredHistory[modal.index].department_name || 'N/A',
+            deadline:    filteredHistory[modal.index].end_date        || 'N/A',
+            assignedTo:  filteredHistory[modal.index].assigned_to_name || 'N/A',
+            location:    filteredHistory[modal.index].destination      || 'N/A',
+            desc:        filteredHistory[modal.index].objectives       || '',
+             accommodation: filteredHistory[modal.index].accommodation || '',
+            transport:     filteredHistory[modal.index].transport     || '',
+             needs_driver:  filteredHistory[modal.index].needs_driver  || 0,
           }}
           onClose={() => setModal(null)}
           role="manager"

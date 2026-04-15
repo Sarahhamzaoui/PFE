@@ -46,7 +46,7 @@ function Login() {
   };
 
   return (
-    <div className="login-page">a
+    <div className="login-page">
 
       <div className="glow-circle gc1"/>
       <div className="glow-circle gc2"/>

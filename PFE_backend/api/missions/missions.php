@@ -100,6 +100,9 @@ switch ($method) {
         $assigned_to = $input['assigned_to']      ?? null;
         $created_by  = (int)($input['created_by'] ?? 0);
         $is_urgent   = isset($input['is_urgent']) ? (int)$input['is_urgent'] : 0;
+        $accommodation = trim($input['accommodation'] ?? '');
+        $transport     = trim($input['transport']     ?? '');
+        $needs_driver  = isset($input['needs_driver']) ? (int)$input['needs_driver'] : 0;
         $sent_date   = date('Y-m-d');
 
         // basic validation anything missing return 400 bad request and stop
@@ -110,13 +113,14 @@ switch ($method) {
         }
 
         // prepares the insert query pending is hardcoded as default status
-        $stmt = $pdo->prepare("
-            INSERT INTO missions 
-                (title, destination, start_date, end_date, sent_date, objectives, created_by, assigned_to, status)
-            VALUES 
-                (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-        ");
+       $stmt = $pdo->prepare("
+    INSERT INTO missions 
+        (title, destination, start_date, end_date, sent_date, objectives, created_by, assigned_to, status, accommodation, transport, needs_driver)
+    VALUES 
+        (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)
+");
 
+if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to, $accommodation, $transport, $needs_driver])) {
         // success return 201, if fails return 500 internal server error
         if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to])) {
             $new_id = $pdo->lastInsertId();

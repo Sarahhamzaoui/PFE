@@ -60,6 +60,36 @@ function MissionDetailModal({ mission, onClose, role, onUpdateDecision }) {
           <div><div className="field-label">Assigned to</div><div className="field-val">{mission.assignedTo}</div></div>
           <div><div className="field-label">Location</div><div className="field-val">{mission.location}</div></div>
         </div>
+        {/* ── travel preferences — shown when any value is set ── */}
+{(mission.accommodation || mission.transport || mission.needs_driver) && (
+  <div className="modal-fields" style={{ marginTop: '12px' }}>
+    {mission.accommodation && (
+      <div>
+        <div className="field-label">Accommodation</div>
+        <div className="field-val" style={{ textTransform: 'capitalize' }}>
+          {mission.accommodation}
+        </div>
+      </div>
+    )}
+    {mission.transport && (
+      <div>
+        <div className="field-label">Transport</div>
+        <div className="field-val" style={{ textTransform: 'capitalize' }}>
+          {mission.transport === 'company' ? 'Company Car'
+          : mission.transport === 'personal' ? 'Personal Car'
+          : mission.transport}
+        </div>
+      </div>
+    )}
+    <div>
+      <div className="field-label">Driver needed</div>
+      <div className="field-val">
+        {mission.needs_driver == 1 ? 'Yes' : 'No'}
+      </div>
+    </div>
+  </div>
+)}
+
 
         {/* ── Description ── */}
         <div className="modal-desc">{mission.desc}</div>

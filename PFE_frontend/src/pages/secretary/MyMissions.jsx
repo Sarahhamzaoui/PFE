@@ -233,7 +233,10 @@ export default function MyMissions({ setActivePage }) {
             location:    selectedMission.destination      || "N/A",
             desc:        selectedMission.objectives       || "",
             attachments: [],
-          }}
+             accommodation: filteredHistory[modal.index].accommodation || '',
+              transport:     filteredHistory[modal.index].transport     || '',
+            needs_driver:  filteredHistory[modal.index].needs_driver  || 0,
+            }}
           onClose={() => setSelectedMission(null)}
           role="employee"
         />
