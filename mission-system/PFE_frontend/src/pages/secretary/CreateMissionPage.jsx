@@ -4,7 +4,7 @@ import EmployeeSelection from '../../components/EmployeeSelection';
 import MissionDetailsForm from '../../components/MissionDetailsForm';
 import AttachmentsDropzone from '../../components/AttachmentsDropzone';
 
-const BASE_URL = "http://localhost/PFE/mission-system/PFE_backend/api";
+const BASE_URL = "http://localhost/mission-system/PFE_backend/api";
 
 function CreateMissionPage() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);

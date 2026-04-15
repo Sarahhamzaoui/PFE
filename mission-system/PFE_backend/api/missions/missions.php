@@ -44,8 +44,24 @@ switch ($method) {
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$user_id]);
 
-        } else {
-            // if the user is not an employee : manager secretary admin return ALL missions
+            } elseif ($role === 'secretary' && $user_id > 0) {
+              $sql = "
+                 SELECT m.*,
+               CONCAT(creator.first_name, ' ', creator.last_name) AS created_by_name,
+               CONCAT(emp.first_name, ' ', emp.last_name)         AS assigned_to_name,
+                  d.name AS department_name
+                   FROM missions m
+                  LEFT JOIN users creator ON m.created_by  = creator.user_id
+                   LEFT JOIN users emp     ON m.assigned_to = emp.user_id
+                    LEFT JOIN departments d ON emp.department_id = d.department_id
+                    WHERE m.created_by = ?
+                         ORDER BY m.created_at DESC
+                               ";
+                            $stmt = $pdo->prepare($sql);
+                       $stmt->execute([$user_id]);
+
+        } else{
+              // if the user is not an employee : manager secretary admin return ALL missions
             $sql = "
                 SELECT 
                     m.*,

@@ -1,71 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./MyMissions.css";
 import MissionDetailModal from "../../components/MissionDetailModal";
 
-const allMissions = [
-  { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active",
-    title: "Mission to Paris", secretary: "Hamzaoui Sarah", dateLabel: "Feb 20, 2026",
-    priority: "med", priLabel: "Medium priority", dept: "Finance",
-    deadline: "Mar 1, 2026", assignedTo: "Finance team", location: "Paris",
-    desc: "Finance-related mission to Paris.", attachments: [], decision: "approved", note: "" },
-
-  { id: 2, name: "Zeraouti Lyna",   destination: "Spain",   start: "2026-01-05", status: "Pending",
-    title: "Mission to Spain", secretary: "Zeraouti Lyna", dateLabel: "Jan 5, 2026",
-    priority: "low", priLabel: "Low priority", dept: "HR",
-    deadline: "Jan 20, 2026", assignedTo: "HR team", location: "Spain",
-    desc: "HR-related mission to Spain.", attachments: [], decision: null, note: "" },
-
-  { id: 3, name: "Roumane Lydia",   destination: "Italy",   start: "2025-12-04", status: "Urgent",
-    title: "Mission to Italy", secretary: "Roumane Lydia", dateLabel: "Dec 4, 2025",
-    priority: "high", priLabel: "High priority", dept: "Operations",
-    deadline: "Dec 15, 2025", assignedTo: "Operations team", location: "Italy",
-    desc: "Urgent operations mission to Italy.", attachments: [], decision: null, note: "" },
-
-  { id: 4, name: "Amir Sali",       destination: "Germany", start: "2026-03-01", status: "Active",
-    title: "Mission to Germany", secretary: "Amir Sali", dateLabel: "Mar 1, 2026",
-    priority: "med", priLabel: "Medium priority", dept: "IT",
-    deadline: "Mar 15, 2026", assignedTo: "IT team", location: "Germany",
-    desc: "IT infrastructure mission to Germany.", attachments: [], decision: "approved", note: "" },
-
-  { id: 5, name: "Fatima Zohra",    destination: "Dubai",   start: "2026-03-10", status: "Pending",
-    title: "Mission to Dubai", secretary: "Fatima Zohra", dateLabel: "Mar 10, 2026",
-    priority: "med", priLabel: "Medium priority", dept: "Sales",
-    deadline: "Mar 25, 2026", assignedTo: "Sales team", location: "Dubai",
-    desc: "Sales outreach mission to Dubai.", attachments: [], decision: null, note: "" },
-];
-
-const TABS = ["All missions", "Pending", "Active", "Urgent"];
+const BASE_URL = "http://localhost/mission-system/PFE_backend/api";
 
 export default function MyMissions({ setActivePage }) {
-  const [activeTab, setActiveTab] = useState("All missions");
-  const [search, setSearch] = useState("");
-
-  // Tracks which mission is open in the detail modal (null = closed)
+  const [allMissions, setAllMissions] = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [activeTab, setActiveTab]     = useState("All missions");
+  const [search, setSearch]           = useState("");
   const [selectedMission, setSelectedMission] = useState(null);
 
-  const pending  = allMissions.filter(m => m.status === "Pending").length;
-  const approved = allMissions.filter(m => m.status === "Active").length;
-  const urgent   = allMissions.filter(m => m.status === "Urgent").length;
+  // get the logged-in secretary from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  // fetch missions on mount
+  useEffect(() => {
+    const fetchMissions = async () => {
+      try {
+        const res  = await fetch(
+          `${BASE_URL}/missions/missions.php?role=secretary&user_id=${user?.user_id}`
+        );
+        const data = await res.json();
+        setAllMissions(data.missions || []);
+
+        // keep localStorage in sync for offline fallback
+        localStorage.setItem("my_missions", JSON.stringify(data.missions || []));
+      } catch (err) {
+        console.error(err);
+        // fallback: use whatever was saved locally if the api is unreachable
+        const local = JSON.parse(localStorage.getItem("my_missions") || "[]");
+        setAllMissions(local);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMissions();
+  }, []);
+
+  // stat card counts — api returns lowercase statuses
   const total    = allMissions.length;
+  const approved = allMissions.filter(m => m.status === "approved").length;
+  const pending  = allMissions.filter(m => m.status === "pending").length;
+  const urgent   = allMissions.filter(m => m.is_urgent == 1).length;
+
+  // tab + search filtering
+  const TABS = ["All missions", "Pending", "Approved", "Rejected"];
 
   const filtered = allMissions.filter(m => {
-    const matchTab    = activeTab === "All missions" || m.status === activeTab;
-    const matchSearch = m.name.toLowerCase().includes(search.toLowerCase()) ||
-                        m.destination.toLowerCase().includes(search.toLowerCase()) ||
-                        String(m.id).toLowerCase().includes(search.toLowerCase());
+    // match the selected tab against the mission status
+    const matchTab =
+      activeTab === "All missions" ||
+      m.status?.toLowerCase() === activeTab.toLowerCase();
+
+    // search across employee name, destination, and mission id
+    const matchSearch =
+      m.assigned_to_name?.toLowerCase().includes(search.toLowerCase()) ||
+      m.destination?.toLowerCase().includes(search.toLowerCase()) ||
+      String(m.mission_id).includes(search);
+
     return matchTab && matchSearch;
   });
+
+  // map api status to the css badge modifier
+  const badgeClass = (status) => {
+    if (status === "approved") return "mm-badge--active";
+    if (status === "rejected") return "mm-badge--urgent";
+    return "mm-badge--pending"; // pending is the default
+  };
+
+  if (loading) return <div style={{ padding: "2rem" }}>Loading your missions...</div>;
 
   return (
     <div className="mm-page">
 
-      {/* Header */}
+      {/* page header with the new mission button */}
       <div className="mm-header">
         <h1 className="mm-title">My Missions</h1>
-        <button className="mm-btn-primary" onClick={() => setActivePage("create-mission-page")}>+ New Mission</button>
+        <button
+          className="mm-btn-primary"
+          onClick={() => setActivePage("create-mission-page")}
+        >
+          + New Mission
+        </button>
       </div>
 
-      {/* Summary cards */}
+      {/* summary stat cards */}
       <div className="db-cards-grid">
         <div className="db-card db-card--blue">
           <div className="db-card__top">
@@ -104,10 +125,10 @@ export default function MyMissions({ setActivePage }) {
         </div>
       </div>
 
-      {/* Table card */}
+      {/* table card — contains tabs, search bar, and the missions table */}
       <div className="mm-table-card">
 
-        {/* Tabs */}
+        {/* tab switcher */}
         <div className="mm-tabs">
           {TABS.map(tab => (
             <button
@@ -120,7 +141,7 @@ export default function MyMissions({ setActivePage }) {
           ))}
         </div>
 
-        {/* Toolbar */}
+        {/* search bar and row count */}
         <div className="mm-toolbar">
           <div className="mm-search-wrap">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aab0c0" strokeWidth="2.5">
@@ -137,7 +158,7 @@ export default function MyMissions({ setActivePage }) {
           <button className="mm-btn-outline">⬇ Export</button>
         </div>
 
-        {/* Table */}
+        {/* missions table */}
         <table className="mm-table">
           <thead>
             <tr>
@@ -145,33 +166,56 @@ export default function MyMissions({ setActivePage }) {
               <th>Mission ID</th>
               <th>Employee</th>
               <th>Destination</th>
-              <th>Date</th>
+              <th>Start date</th>
               <th>Status</th>
+              <th>Rejection reason</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((m, i) => (
-              <tr key={m.id}>
+              <tr key={m.mission_id}>
                 <td className="mm-table__num">{i + 1}</td>
-                <td className="mm-table__id">{m.id}</td>
-                <td className="mm-table__name">{m.name}</td>
+                <td className="mm-table__id">{m.mission_id}</td>
+
+                {/* show assigned employee name, fall back to creator if not assigned */}
+                <td className="mm-table__name">
+                  {m.assigned_to_name || m.created_by_name || "—"}
+                </td>
+
                 <td>{m.destination}</td>
-                <td>{m.start}</td>
+                <td>{m.start_date}</td>
+
+                {/* status badge — capitalize first letter for display */}
                 <td>
-                  <span className={`mm-badge mm-badge--${m.status.toLowerCase()}`}>
-                    {m.status}
+                  <span className={`mm-badge ${badgeClass(m.status)}`}>
+                    {m.status?.charAt(0).toUpperCase() + m.status?.slice(1)}
                   </span>
                 </td>
+
+                {/* rejection reason — only shown if the manager rejected the mission */}
+                <td style={{ fontSize: "13px", color: "#c0392b" }}>
+                  {m.status === "rejected" && m.manager_note
+                    ? m.manager_note
+                    : "—"}
+                </td>
+
                 <td>
-                  {/* Opens the read-only detail modal for this mission */}
-                  <button className="mm-action-btn" onClick={() => setSelectedMission(m)}>View ›</button>
+                  {/* opens the read-only detail modal */}
+                  <button
+                    className="mm-action-btn"
+                    onClick={() => setSelectedMission(m)}
+                  >
+                    View ›
+                  </button>
                 </td>
               </tr>
             ))}
+
+            {/* empty state when no missions match the filter */}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="mm-empty">No missions found.</td>
+                <td colSpan={8} className="mm-empty">No missions found.</td>
               </tr>
             )}
           </tbody>
@@ -179,10 +223,23 @@ export default function MyMissions({ setActivePage }) {
 
       </div>
 
-      {/* Mission detail modal — read-only for employees */}
+      {/* mission detail modal — maps api field names to what MissionDetailModal expects */}
       {selectedMission && (
         <MissionDetailModal
-          mission={selectedMission}
+          mission={{
+            ...selectedMission,
+            title:       selectedMission.title,
+            secretary:   selectedMission.created_by_name,
+            dateLabel:   selectedMission.start_date,
+            decision:    selectedMission.status,
+            note:        selectedMission.manager_note || "",
+            dept:        selectedMission.department_name  || "N/A",
+            deadline:    selectedMission.end_date         || "N/A",
+            assignedTo:  selectedMission.assigned_to_name || "N/A",
+            location:    selectedMission.destination      || "N/A",
+            desc:        selectedMission.objectives       || "",
+            attachments: [],
+          }}
           onClose={() => setSelectedMission(null)}
           role="employee"
         />

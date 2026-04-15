@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ManagerPage.css';
 import MissionDetailModal from '../../components/MissionDetailModal';
 
-const BASE_URL = "http://localhost/PFE/mission-system/PFE_backend/api";
+const BASE_URL = "http://localhost/mission-system/PFE_backend/api";
 
 function ManagerMissions() {
 
