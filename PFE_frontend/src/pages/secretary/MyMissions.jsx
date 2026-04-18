@@ -155,7 +155,7 @@ export default function MyMissions({ setActivePage }) {
             />
           </div>
           <span className="mm-count">{filtered.length} missions</span>
-          <button className="mm-btn-outline">⬇ Export</button>
+          
         </div>
 
         {/* missions table */}
@@ -233,9 +233,9 @@ export default function MyMissions({ setActivePage }) {
             location:    selectedMission.destination      || "N/A",
             desc:        selectedMission.objectives       || "",
             attachments: [],
-             accommodation: filteredHistory[modal.index].accommodation || '',
-              transport:     filteredHistory[modal.index].transport     || '',
-            needs_driver:  filteredHistory[modal.index].needs_driver  || 0,
+             accommodation: selectedMission.accommodation || '',
+              transport:      selectedMission.transport     || '',
+            needs_driver:   selectedMission.needs_driver  || 0,
             }}
           onClose={() => setSelectedMission(null)}
           role="employee"

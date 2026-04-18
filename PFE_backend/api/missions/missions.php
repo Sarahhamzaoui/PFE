@@ -1,6 +1,8 @@
 <?php
 // RESTful API endpoint for managing missions it handles 3 main operations
-
+// debugging 
+ini_set('display_errors', 0);
+error_reporting(0);
 // CORS + response type
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS");
@@ -12,6 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+// catch all uncaught errors and return them as json 
+set_exception_handler(function($e) {
+    http_response_code(500);
+    echo json_encode(["error" => $e->getMessage(), "line" => $e->getLine()]);
+    exit();
+});
+
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    http_response_code(500);
+    echo json_encode(["error" => $errstr, "line" => $errline]);
+    exit();
+});
 
 // db connection
 require_once '../../config/database.php';
@@ -105,6 +119,7 @@ switch ($method) {
         $needs_driver  = isset($input['needs_driver']) ? (int)$input['needs_driver'] : 0;
         $sent_date   = date('Y-m-d');
 
+
         // basic validation anything missing return 400 bad request and stop
         if (empty($title) || empty($destination) || empty($start_date) || empty($end_date) || $created_by <= 0) {
             http_response_code(400);
@@ -115,14 +130,13 @@ switch ($method) {
         // prepares the insert query pending is hardcoded as default status
        $stmt = $pdo->prepare("
     INSERT INTO missions 
-        (title, destination, start_date, end_date, sent_date, objectives, created_by, assigned_to, status, accommodation, transport, needs_driver)
+        (title, destination, start_date, end_date, sent_date, objectives, created_by, assigned_to, status, accommodation, transport, needs_driver, is_urgent)
     VALUES 
-        (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?,?)
 ");
-
-if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to, $accommodation, $transport, $needs_driver])) {
-        // success return 201, if fails return 500 internal server error
-        if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to])) {
+ // success return 201, if fails return 500 internal server error
+if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to, $accommodation, $transport, $needs_driver, $is_urgent])) {
+       
             $new_id = $pdo->lastInsertId();
             http_response_code(201);
             echo json_encode([
