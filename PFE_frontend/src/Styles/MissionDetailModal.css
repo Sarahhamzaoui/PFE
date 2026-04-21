@@ -1,0 +1,103 @@
+/* ─────────────────────────────────────────
+   MissionDetailModal.css
+   styles specific to the mission detail modal.
+   shared styles (overlay, detail-modal, modal-fields,
+   field-label, field-val, decision-badge, etc.)
+   stay in ManagerPage.css.
+───────────────────────────────────────── */
+
+/* ── Header layout ── */
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.modal-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.modal-header__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Title row ── */
+.modal-title {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── Urgent badge — shown inside modal for all statuses ── */
+.modal-urgent-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #e53e3e;
+  background-color: #fff0f0;
+  border: 1px solid #e53e3e;
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  /* no animation here — the decision is already made,
+     urgency is historical info, no need to pulse */
+}
+
+/* ── Submission meta line ── */
+.modal-meta {
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* ── Close button ── */
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #555;
+}
+
+/* ── Travel preferences block — extra top margin ── */
+.modal-fields--travel {
+  margin-top: 12px;
+}
+
+/* ── Capitalize modifier for transport / accommodation values ── */
+.field-val--capitalize {
+  text-transform: capitalize;
+}
+
+/* ── Attachments spacing ── */
+.modal-attachments {
+  margin-bottom: 16px;
+}
+
+/* ── Decision section spacing ── */
+.modal-decision {
+  margin-bottom: 16px;
+}
+
+.modal-decision .field-label {
+  margin-bottom: 6px;
+}

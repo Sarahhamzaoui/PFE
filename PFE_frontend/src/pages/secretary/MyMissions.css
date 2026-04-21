@@ -230,3 +230,28 @@
   transition: background 0.15s;
 }
 .mm-action-btn:hover { background: #dde3fb; }
+
+/* row highlight only for urgent + pending missions */
+.mm-table__row--urgent {
+  background-color: #fff5f5;
+  border-left: 3px solid #e53e3e;
+}
+
+/* urgent pill badge — only shown while pending */
+.mm-badge--urgent-flag {
+  background-color: #fff0f0;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+  margin-left: 6px;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 600;
+  animation: pulse-urgent 1.5s ease-in-out infinite; /* subtle pulse to grab attention */
+}
+
+/* animation for urgent pending missions */
+@keyframes pulse-urgent {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}

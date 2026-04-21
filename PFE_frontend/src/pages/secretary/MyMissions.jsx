@@ -154,7 +154,7 @@ export default function MyMissions({ setActivePage }) {
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <span className="mm-count">{filtered.length} missions</span>
+          <span className="mm-count">{filtered.length} EMPLOYEE </span>
           
         </div>
 
@@ -173,46 +173,46 @@ export default function MyMissions({ setActivePage }) {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((m, i) => (
-              <tr key={m.mission_id}>
-                <td className="mm-table__num">{i + 1}</td>
-                <td className="mm-table__id">{m.mission_id}</td>
+  {filtered.map((m, i) => (
+    <tr key={m.mission_id} className={m.is_urgent == 1 && m.status === "pending"? "mm-table__row--urgent" : ""}>
+      <td className="mm-table__num">{i + 1}</td>
+      <td className="mm-table__id">{m.mission_id}</td>
 
-                {/* show assigned employee name, fall back to creator if not assigned */}
-                <td className="mm-table__name">
-                  {m.assigned_to_name || m.created_by_name || "—"}
-                </td>
+      {/* employee name */}
+      <td className="mm-table__name">
+        {m.assigned_to_name || m.created_by_name || "—"}
+      </td>
 
-                <td>{m.destination}</td>
-                <td>{m.start_date}</td>
+      <td>{m.destination}</td>
+      <td>{m.start_date}</td>
 
-                {/* status badge — capitalize first letter for display */}
-                <td>
-                  <span className={`mm-badge ${badgeClass(m.status)}`}>
-                    {m.status?.charAt(0).toUpperCase() + m.status?.slice(1)}
-                  </span>
-                </td>
+      {/* status + urgent badge in the SAME cell */}
+      <td>
+        <span className={`mm-badge ${badgeClass(m.status)}`}>
+          {m.status?.charAt(0).toUpperCase() + m.status?.slice(1)}
+        </span>
+        {m.is_urgent == 1 && m.status === "pending" && (
+          <span className="mm-badge mm-badge--urgent-flag">Urgent</span>
+        )}
+      </td>
 
-                
-                <td>
-                  {/* opens the read-only detail modal */}
-                  <button
-                    className="mm-action-btn"
-                    onClick={() => setSelectedMission(m)}
-                  >
-                    View ›
-                  </button>
-                </td>
-              </tr>
-            ))}
+      <td>
+        <button
+          className="mm-action-btn"
+          onClick={() => setSelectedMission(m)}
+        >
+          View ›
+        </button>
+      </td>
+    </tr>
+  ))}
 
-            {/* empty state when no missions match the filter */}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={8} className="mm-empty">No missions found.</td>
-              </tr>
-            )}
-          </tbody>
+  {filtered.length === 0 && (
+    <tr>
+      <td colSpan={7} className="mm-empty">No missions found.</td>
+    </tr>
+  )}
+</tbody>
         </table>
 
       </div>

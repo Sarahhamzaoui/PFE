@@ -251,19 +251,6 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
                 <input 
                   type="radio" 
                   name="transport" 
-                  value="company"
-                  checked={transport === 'company'}
-                  onChange={(e) => { 
-                    setTransport(e.target.value); 
-                    setNeedsDriver(false); 
-                  }} 
-                />
-                Company Car
-              </label>
-              <label className="checkbox-label">
-                <input 
-                  type="radio" 
-                  name="transport" 
                   value="personal"
                   checked={transport === 'personal'}
                   onChange={(e) => { 
@@ -273,6 +260,20 @@ function MissionDetailsForm({ selectedEmployee, onFormDataChange }) {
                 />
                 Personal Car
               </label>
+              <label className="checkbox-label">
+                <input 
+                  type="radio" 
+                  name="transport" 
+                  value="company"
+                  checked={transport === 'company'}
+                  onChange={(e) => { 
+                    setTransport(e.target.value); 
+                    setNeedsDriver(false); 
+                  }} 
+                />
+                Company Car
+              </label>
+              
             </div>
 
             {transport === 'company' && (

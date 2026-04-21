@@ -134,10 +134,11 @@ function ManagerMissions() {
 
   // filter history by search and date
   const filteredHistory = history.filter(m => {
-    const matchName = m.title.toLowerCase().includes(histSearch.toLowerCase());
+      const name = (m.assigned_to_name || m.employee_name || '').toLowerCase();
     // use sent_date for date filtering since created_at may not be returned by the api
-    const matchDate = histDate === '' || m.sent_date?.startsWith(histDate);
-    return matchName && matchDate;
+     const matchName = name.includes(histSearch.toLowerCase());
+const matchDate = histDate === '' || (m.sent_date || m.start_date || '').startsWith(histDate);
+  return matchName && matchDate;
   });
 
   // calculate statistics
@@ -282,12 +283,15 @@ function ManagerMissions() {
           <div className="hist-filters">
             <input
               type="text"
-              placeholder="Search by mission name..."
+              placeholder="Search by an employee name ..."
               value={histSearch}
               onChange={e => setHistSearch(e.target.value)}
             />
+           
+            
             <input
-              type="date"
+              type="text"
+              placeholder='Filtre by date yyyy-mm-dd'
               value={histDate}
               onChange={e => setHistDate(e.target.value)}
             />
