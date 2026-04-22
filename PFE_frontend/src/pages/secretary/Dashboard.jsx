@@ -2,86 +2,59 @@ import React, { useEffect, useRef, useState } from "react";
 import "./Dashboard.css";
 import MissionDetailModal from "../../components/MissionDetailModal";
 
+const BASE_URL = "http://localhost/mission-system/PFE_backend/api";
 
-// Static mission data — replace with API call (fetch/axios) when backend is ready
-const missions = [
-  { id: 1, name: "Hamzaoui Sarah",  destination: "Paris",   start: "2026-02-20", status: "Active",
-    title: "Mission to Paris", secretary: "Hamzaoui Sarah", dateLabel: "Feb 20, 2026",
-    priority: "med", priLabel: "Medium priority", dept: "Finance",
-    deadline: "Mar 1, 2026", assignedTo: "Finance team", location: "Paris",
-    desc: "Finance-related mission to Paris.", attachments: [], decision: "approved", note: "" },
-
-  { id: 2, name: "Zeraouti Lyna",   destination: "Spain",   start: "2026-01-05", status: "Pending",
-    title: "Mission to Spain", secretary: "Zeraouti Lyna", dateLabel: "Jan 5, 2026",
-    priority: "low", priLabel: "Low priority", dept: "HR",
-    deadline: "Jan 20, 2026", assignedTo: "HR team", location: "Spain",
-    desc: "HR-related mission to Spain.", attachments: [], decision: null, note: "" },
-
-  { id: 3, name: "Roumane Lydia",   destination: "Italy",   start: "2025-12-04", status: "Urgent",
-    title: "Mission to Italy", secretary: "Roumane Lydia", dateLabel: "Dec 4, 2025",
-    priority: "high", priLabel: "High priority", dept: "Operations",
-    deadline: "Dec 15, 2025", assignedTo: "Operations team", location: "Italy",
-    desc: "Urgent operations mission to Italy.", attachments: [], decision: null, note: "" },
-
-  { id: 4, name: "Amir Sali",       destination: "Germany", start: "2026-03-01", status: "Active",
-    title: "Mission to Germany", secretary: "Amir Sali", dateLabel: "Mar 1, 2026",
-    priority: "med", priLabel: "Medium priority", dept: "IT",
-    deadline: "Mar 15, 2026", assignedTo: "IT team", location: "Germany",
-    desc: "IT infrastructure mission to Germany.", attachments: [], decision: "approved", note: "" },
-
-  { id: 5, name: "Fatima Zohra",    destination: "Dubai",   start: "2026-03-10", status: "Pending",
-    title: "Mission to Dubai", secretary: "Fatima Zohra", dateLabel: "Mar 10, 2026",
-    priority: "med", priLabel: "Medium priority", dept: "Sales",
-    deadline: "Mar 25, 2026", assignedTo: "Sales team", location: "Dubai",
-    desc: "Sales outreach mission to Dubai.", attachments: [], decision: null, note: "" },
-];
-
-// Draws a donut chart on an HTML canvas using the Canvas 2D API
-function DonutChart({ approved, pending, urgent }) {
-  
+// draws a donut chart on an html canvas using the Canvas 2D API
+function DonutChart({ approved, pending, rejected }) {
   const canvasRef = useRef(null);
 
-  // Redraws the chart whenever the stats change
+  // redraws the chart whenever the stats change
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    const total = approved + pending + urgent;
+    const total = approved + pending + rejected;
 
-    // Each slice has a value and a color
     const slices = [
       { value: approved, color: "#4CAF82" },
       { value: pending,  color: "#F5A623" },
-      { value: urgent,   color: "#E05252" },
+      { value: rejected, color: "#E05252" },
     ];
 
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
-    const outerR = 68; // outer radius of the donut
-    const innerR = 42; // inner radius — creates the "hole"
-    let startAngle = -Math.PI / 2; // start from top (12 o'clock)
+    const outerR = 68;
+    const innerR = 42;
+    let startAngle = -Math.PI / 2;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw each colored slice
-    slices.forEach(slice => {
-      const angle = (slice.value / total) * 2 * Math.PI;
+    if (total > 0) {
+      slices.forEach(slice => {
+        const angle = (slice.value / total) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, outerR, startAngle, startAngle + angle);
+        ctx.closePath();
+        ctx.fillStyle = slice.color;
+        ctx.fill();
+        startAngle += angle;
+      });
+    } else {
+      // empty gray ring when no missions yet
       ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, outerR, startAngle, startAngle + angle);
-      ctx.closePath();
-      ctx.fillStyle = slice.color;
+      ctx.arc(cx, cy, outerR, 0, 2 * Math.PI);
+      ctx.fillStyle = "#eee";
       ctx.fill();
-      startAngle += angle;
-    });
+    }
 
-    // Draw white circle in the center to create the donut hole
+    // white hole in the center
     ctx.beginPath();
     ctx.arc(cx, cy, innerR, 0, 2 * Math.PI);
     ctx.fillStyle = "#fff";
     ctx.fill();
 
-    // Draw total number and label inside the donut
+    // total count + label inside the donut
     ctx.fillStyle = "#1a2340";
     ctx.font = "bold 18px sans-serif";
     ctx.textAlign = "center";
@@ -90,28 +63,77 @@ function DonutChart({ approved, pending, urgent }) {
     ctx.font = "10px sans-serif";
     ctx.fillStyle = "#aab0c0";
     ctx.fillText("missions", cx, cy + 10);
-  }, [approved, pending, urgent]);
+  }, [approved, pending, rejected]);
 
   return <canvas ref={canvasRef} width={160} height={160} />;
 }
 
 function Dashboard() {
-  // Count missions by status — drives both stat cards and the donut chart
-  const total    = missions.length;
-  const approved = missions.filter(m => m.status === "Active").length;
-  const pending  = missions.filter(m => m.status === "Pending").length;
-  const urgent   = missions.filter(m => m.status === "Urgent").length;
-
-  // Tracks which mission is open in the detail modal (null = closed)
+  const [missions, setMissions]               = useState([]);
+  const [loading, setLoading]                 = useState(true);
   const [selectedMission, setSelectedMission] = useState(null);
+
+  // get logged-in secretary from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  // fetch secretary's missions on mount
+  useEffect(() => {
+    const fetchMissions = async () => {
+      try {
+        const res  = await fetch(
+          `${BASE_URL}/missions/missions.php?role=secretary&user_id=${user?.user_id}`
+        );
+        const data = await res.json();
+        setMissions(data.missions || []);
+      } catch (err) {
+        console.error("dashboard fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMissions();
+  }, []);
+
+  // current month string e.g. "2026-04" — used to filter this month's missions
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
+  // this month's missions — drives the donut chart
+  const thisMonth = missions.filter(m =>
+    (m.sent_date || m.created_at || "").startsWith(currentMonth)
+  );
+
+  // all-time counts — drive the stat cards
+  const total    = missions.length;
+  const approved = missions.filter(m => m.status === "approved").length;
+  const pending  = missions.filter(m => m.status === "pending").length;
+  const urgent   = missions.filter(m => m.is_urgent == 1).length;
+
+  // this month counts — drive the donut chart
+  const monthApproved = thisMonth.filter(m => m.status === "approved").length;
+  const monthPending  = thisMonth.filter(m => m.status === "pending").length;
+  const monthRejected = thisMonth.filter(m => m.status === "rejected").length;
+
+  // recent table — all missions (all statuses), newest first, capped at 5
+  const recentMissions = [...missions]
+    .sort((a, b) => new Date(b.created_at || b.sent_date) - new Date(a.created_at || a.sent_date))
+    .slice(0, 5);
+
+  // map status to badge css modifier
+  const badgeClass = (status) => {
+    if (status === "approved") return "db-badge--active";
+    if (status === "rejected") return "db-badge--urgent";
+    return "db-badge--pending";
+  };
+
+  if (loading) return <div style={{ padding: "2rem" }}>Loading dashboard...</div>;
 
   return (
     <div className="db-page">
 
-      {/* Page header */}
+      {/* page header */}
       <div className="db-header">
         <div>
-          <h1 className="db-greeting">Dashboard Overview </h1>
+          <h1 className="db-greeting">Dashboard Overview</h1>
           <p className="db-sub">Here's what's happening with your missions.</p>
         </div>
         <div className="db-header-right">
@@ -119,7 +141,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Summary stat cards */}
+      {/* summary stat cards — all time counts */}
       <div className="db-cards-grid">
         <div className="db-card db-card--blue">
           <div className="db-card__top">
@@ -158,79 +180,114 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Donut chart — visual breakdown of missions by status */}
+      {/* donut chart — this month's breakdown by status */}
       <div className="db-section">
         <div className="db-section__header">
-          <p className="db-section__title">By status</p>
+          <p className="db-section__title">This month by status</p>
         </div>
         <div className="db-donut-wrapper">
-          <DonutChart approved={approved} pending={pending} urgent={urgent} />
-          {/* Legend — maps colors to status labels */}
+          <DonutChart
+            approved={monthApproved}
+            pending={monthPending}
+            rejected={monthRejected}
+          />
+          {/* legend */}
           <div className="db-legend">
             <div className="db-legend__item">
               <span className="db-legend__dot" style={{ background: "#4CAF82" }} />
               <span className="db-legend__label">Approved</span>
-              <span className="db-legend__val">{approved}</span>
+              <span className="db-legend__val">{monthApproved}</span>
             </div>
             <div className="db-legend__item">
               <span className="db-legend__dot" style={{ background: "#F5A623" }} />
               <span className="db-legend__label">Pending</span>
-              <span className="db-legend__val">{pending}</span>
+              <span className="db-legend__val">{monthPending}</span>
             </div>
             <div className="db-legend__item">
               <span className="db-legend__dot" style={{ background: "#E05252" }} />
-              <span className="db-legend__label">Urgent</span>
-              <span className="db-legend__val">{urgent}</span>
+              <span className="db-legend__label">Rejected</span>
+              <span className="db-legend__val">{monthRejected}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recent missions table */}
+      {/* recent missions — all statuses, newest 5 */}
       <div className="db-section" style={{ marginTop: "1rem" }}>
         <div className="db-section__header">
           <p className="db-section__title">Recent missions</p>
-          <a className="db-view-all" href="#">View all →</a>
         </div>
-        <table className="db-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Destination</th>
-              <th>Start date</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Dynamically render one row per mission */}
-            {missions.map((m, i) => (
-              <tr key={m.id}>
-                <td className="db-table__num">{i + 1}</td>
-                <td className="db-table__name">{m.name}</td>
-                <td>{m.destination}</td>
-                <td>{m.start}</td>
-                <td>
-                  {/* Badge color is driven by status value via CSS class */}
-                  <span className={`db-badge db-badge--${m.status.toLowerCase()}`}>
-                    {m.status}
-                  </span>
-                </td>
-                <td>
-                  {/* Opens the read-only detail modal for this mission */}
-                  <button className="mm-action-btn" onClick={() => setSelectedMission(m)}>View ›</button>
-                </td>
+
+        {recentMissions.length === 0 ? (
+          <p style={{ color: "#aaa", padding: "1rem 0" }}>No missions yet.</p>
+        ) : (
+          <table className="db-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Employee</th>
+                <th>Destination</th>
+                <th>Start date</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {recentMissions.map((m, i) => (
+                <tr key={m.mission_id}>
+                  <td className="db-table__num">{i + 1}</td>
+                  <td className="db-table__name">
+                    {m.assigned_to_name || m.created_by_name || "—"}
+                  </td>
+                  <td>{m.destination}</td>
+                  <td>{m.start_date}</td>
+                  <td>
+                    {/* status badge */}
+                    <span className={`db-badge ${badgeClass(m.status)}`}>
+                      {m.status?.charAt(0).toUpperCase() + m.status?.slice(1)}
+                    </span>
+                    {/* urgent flag — shown for pending urgent missions */}
+                    {m.is_urgent == 1 && m.status === "pending" && (
+                      <span className="mm-badge mm-badge--urgent-flag" style={{ marginLeft: "6px" }}>
+                        🔴 Urgent
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      className="mm-action-btn"
+                      onClick={() => setSelectedMission(m)}
+                    >
+                      View ›
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      {/* Mission detail modal — read-only for non-managers */}
+      {/* mission detail modal — read-only for secretary */}
       {selectedMission && (
         <MissionDetailModal
-          mission={selectedMission}
+          mission={{
+            ...selectedMission,
+            title:         selectedMission.title,
+            secretary:     selectedMission.created_by_name,
+            dateLabel:     selectedMission.start_date,
+            decision:      selectedMission.status,
+            note:          selectedMission.manager_note || "",
+            dept:          selectedMission.department_name  || "N/A",
+            deadline:      selectedMission.end_date         || "N/A",
+            assignedTo:    selectedMission.assigned_to_name || "N/A",
+            location:      selectedMission.destination      || "N/A",
+            desc:          selectedMission.objectives       || "",
+            attachments:   [],
+            accommodation: selectedMission.accommodation    || "",
+            transport:     selectedMission.transport        || "",
+            needs_driver:  selectedMission.needs_driver     || 0,
+          }}
           onClose={() => setSelectedMission(null)}
           role="employee"
         />
