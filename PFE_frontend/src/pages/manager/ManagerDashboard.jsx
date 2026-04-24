@@ -1,9 +1,7 @@
+import Dashboard from "../secretary/Dashboard"; 
+
 function ManagerDashboard() {
-  return (
-    <div>
-      <h1>Manager Dashboard</h1>
-    </div>
-  );
+  return <Dashboard role="manager" />;
 }
 
-export default ManagerDashboard; // ✅
+export default ManagerDashboard;
