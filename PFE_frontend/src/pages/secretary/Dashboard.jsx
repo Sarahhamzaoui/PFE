@@ -181,7 +181,6 @@ function BarChart({ missions }) {
                   <div style={{
                     height:       pendingH,
                     background:   "#F5A623",
-                    // only round the top if rejected is absent
                     borderRadius: d.rejected === 0 ? "3px 3px 0 0" : 0,
                   }} />
                 )}
@@ -243,20 +242,20 @@ function BarChart({ missions }) {
 // ─────────────────────────────────────────────
 // main dashboard component
 // ─────────────────────────────────────────────
-function Dashboard( {role = "secretary"}) {
+function Dashboard({ role = "secretary" }) {
   const [missions, setMissions]               = useState([]);
   const [loading, setLoading]                 = useState(true);
   const [selectedMission, setSelectedMission] = useState(null);
 
-  // get logged-in secretary from localStorage
+  // get logged-in user from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // fetch secretary's missions on mount
+  // fetch missions on mount
   useEffect(() => {
     const fetchMissions = async () => {
       try {
         const res  = await fetch(
-        `${BASE_URL}/missions/missions.php?role=${role}&user_id=${user?.user_id}`
+          `${BASE_URL}/missions/missions.php?role=${role}&user_id=${user?.user_id}`
         );
         const data = await res.json();
         setMissions(data.missions || []);
@@ -268,6 +267,17 @@ function Dashboard( {role = "secretary"}) {
     };
     fetchMissions();
   }, []);
+
+  // fetch attachments then open the detail modal
+  const handleViewMission = async (mission) => {
+    try {
+      const res  = await fetch(`${BASE_URL}/missions/attachments.php?mission_id=${mission.mission_id}`);
+      const data = await res.json();
+      setSelectedMission({ ...mission, fetchedAttachments: data.attachments || [] });
+    } catch {
+      setSelectedMission({ ...mission, fetchedAttachments: [] });
+    }
+  };
 
   // current month string e.g. "2026-04" — used to filter this month's missions
   const currentMonth = new Date().toISOString().slice(0, 7);
@@ -296,7 +306,7 @@ function Dashboard( {role = "secretary"}) {
   // map status to badge css modifier
   const badgeClass = (status) => {
     if (status === "approved") return "db-badge--active";
-    if (status === "rejected") return "db-badge--urgent";
+    if (status === "rejected") return "db-badge--rejected";
     return "db-badge--pending";
   };
 
@@ -311,7 +321,6 @@ function Dashboard( {role = "secretary"}) {
           <h1 className="db-greeting">Dashboard Overview</h1>
           <p className="db-sub">Here's what's happening with your missions.</p>
         </div>
-        
       </div>
 
       {/* ── summary stat cards — all-time counts ── */}
@@ -409,7 +418,7 @@ function Dashboard( {role = "secretary"}) {
                   <td>{m.destination}</td>
                   <td>{m.start_date}</td>
                   <td>
-                    {/* status badge */}
+                    {/* status badge — approved green, rejected red, pending amber */}
                     <span className={`db-badge ${badgeClass(m.status)}`}>
                       {m.status?.charAt(0).toUpperCase() + m.status?.slice(1)}
                     </span>
@@ -421,9 +430,10 @@ function Dashboard( {role = "secretary"}) {
                     )}
                   </td>
                   <td>
+                    {/* clicking view fetches attachments then opens the modal */}
                     <button
                       className="mm-action-btn"
-                      onClick={() => setSelectedMission(m)}
+                      onClick={() => handleViewMission(m)}
                     >
                       View ›
                     </button>
@@ -435,7 +445,7 @@ function Dashboard( {role = "secretary"}) {
         )}
       </div>
 
-      {/* ── mission detail modal — read-only for secretary ── */}
+      {/* ── mission detail modal — read-only for secretary/employee ── */}
       {selectedMission && (
         <MissionDetailModal
           mission={{
@@ -450,7 +460,8 @@ function Dashboard( {role = "secretary"}) {
             assignedTo:    selectedMission.assigned_to_name || "N/A",
             location:      selectedMission.destination      || "N/A",
             desc:          selectedMission.objectives       || "",
-            attachments:   [],
+            // use fetched attachments instead of hardcoded empty array
+            attachments:   selectedMission.fetchedAttachments || [],
             accommodation: selectedMission.accommodation    || "",
             transport:     selectedMission.transport        || "",
             needs_driver:  selectedMission.needs_driver     || 0,

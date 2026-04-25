@@ -39,6 +39,17 @@ export default function MyMissions({ setActivePage }) {
     fetchMissions();
   }, []);
 
+  // fetch attachments then open the detail modal
+  const handleViewMission = async (mission) => {
+    try {
+      const res  = await fetch(`${BASE_URL}/missions/attachments.php?mission_id=${mission.mission_id}`);
+      const data = await res.json();
+      setSelectedMission({ ...mission, fetchedAttachments: data.attachments || [] });
+    } catch {
+      setSelectedMission({ ...mission, fetchedAttachments: [] });
+    }
+  };
+
   // stat card counts — api returns lowercase statuses
   const total    = allMissions.length;
   const approved = allMissions.filter(m => m.status === "approved").length;
@@ -66,7 +77,7 @@ export default function MyMissions({ setActivePage }) {
   // map api status to the css badge modifier
   const badgeClass = (status) => {
     if (status === "approved") return "mm-badge--active";
-    if (status === "rejected") return "mm-badge--urgent";
+    if (status === "rejected") return "mm-badge--rejected";
     return "mm-badge--pending"; // pending is the default
   };
 
@@ -154,8 +165,7 @@ export default function MyMissions({ setActivePage }) {
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <span className="mm-count">{filtered.length} EMPLOYEE </span>
-          
+          <span className="mm-count">{filtered.length} EMPLOYEE</span>
         </div>
 
         {/* missions table */}
@@ -168,51 +178,51 @@ export default function MyMissions({ setActivePage }) {
               <th>Destination</th>
               <th>Start date</th>
               <th>Status</th>
-             
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-  {filtered.map((m, i) => (
-    <tr key={m.mission_id} className={m.is_urgent == 1 && m.status === "pending"? "mm-table__row--urgent" : ""}>
-      <td className="mm-table__num">{i + 1}</td>
-      <td className="mm-table__id">{m.mission_id}</td>
+            {filtered.map((m, i) => (
+              <tr key={m.mission_id} className={m.is_urgent == 1 && m.status === "pending" ? "mm-table__row--urgent" : ""}>
+                <td className="mm-table__num">{i + 1}</td>
+                <td className="mm-table__id">{m.mission_id}</td>
 
-      {/* employee name */}
-      <td className="mm-table__name">
-        {m.assigned_to_name || m.created_by_name || "—"}
-      </td>
+                {/* employee name */}
+                <td className="mm-table__name">
+                  {m.assigned_to_name || m.created_by_name || "—"}
+                </td>
 
-      <td>{m.destination}</td>
-      <td>{m.start_date}</td>
+                <td>{m.destination}</td>
+                <td>{m.start_date}</td>
 
-      {/* status + urgent badge in the SAME cell */}
-      <td>
-        <span className={`mm-badge ${badgeClass(m.status)}`}>
-          {m.status?.charAt(0).toUpperCase() + m.status?.slice(1)}
-        </span>
-        {m.is_urgent == 1 && m.status === "pending" && (
-          <span className="mm-badge mm-badge--urgent-flag">Urgent</span>
-        )}
-      </td>
+                {/* status + urgent badge in the same cell */}
+                <td>
+                  <span className={`mm-badge ${badgeClass(m.status)}`}>
+                    {m.status?.charAt(0).toUpperCase() + m.status?.slice(1)}
+                  </span>
+                  {m.is_urgent == 1 && m.status === "pending" && (
+                    <span className="mm-badge mm-badge--urgent-flag">Urgent</span>
+                  )}
+                </td>
 
-      <td>
-        <button
-          className="mm-action-btn"
-          onClick={() => setSelectedMission(m)}
-        >
-          View ›
-        </button>
-      </td>
-    </tr>
-  ))}
+                <td>
+                  {/* clicking view fetches attachments then opens the modal */}
+                  <button
+                    className="mm-action-btn"
+                    onClick={() => handleViewMission(m)}
+                  >
+                    View ›
+                  </button>
+                </td>
+              </tr>
+            ))}
 
-  {filtered.length === 0 && (
-    <tr>
-      <td colSpan={7} className="mm-empty">No missions found.</td>
-    </tr>
-  )}
-</tbody>
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={7} className="mm-empty">No missions found.</td>
+              </tr>
+            )}
+          </tbody>
         </table>
 
       </div>
@@ -222,21 +232,22 @@ export default function MyMissions({ setActivePage }) {
         <MissionDetailModal
           mission={{
             ...selectedMission,
-            title:       selectedMission.title,
-            secretary:   selectedMission.created_by_name,
-            dateLabel:   selectedMission.start_date,
-            decision:    selectedMission.status,
-            note:        selectedMission.manager_note || "",
-            dept:        selectedMission.department_name  || "N/A",
-            deadline:    selectedMission.end_date         || "N/A",
-            assignedTo:  selectedMission.assigned_to_name || "N/A",
-            location:    selectedMission.destination      || "N/A",
-            desc:        selectedMission.objectives       || "",
-            attachments: [],
-             accommodation: selectedMission.accommodation || '',
-              transport:      selectedMission.transport     || '',
-            needs_driver:   selectedMission.needs_driver  || 0,
-            }}
+            title:         selectedMission.title,
+            secretary:     selectedMission.created_by_name,
+            dateLabel:     selectedMission.start_date,
+            decision:      selectedMission.status,
+            note:          selectedMission.manager_note || "",
+            dept:          selectedMission.department_name  || "N/A",
+            deadline:      selectedMission.end_date         || "N/A",
+            assignedTo:    selectedMission.assigned_to_name || "N/A",
+            location:      selectedMission.destination      || "N/A",
+            desc:          selectedMission.objectives       || "",
+            // use fetched attachments instead of hardcoded empty array
+            attachments:   selectedMission.fetchedAttachments || [],
+            accommodation: selectedMission.accommodation    || "",
+            transport:     selectedMission.transport        || "",
+            needs_driver:  selectedMission.needs_driver     || 0,
+          }}
           onClose={() => setSelectedMission(null)}
           role="employee"
         />
