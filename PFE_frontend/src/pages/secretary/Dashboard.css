@@ -243,6 +243,11 @@
   color: #1a2340 !important;
 }
 
+.db-badge--rejected {
+  background-color: #fdecea;
+  color: #c0392b;
+}
+
 /* ── Badges ─────────────────────────────────────────── */
 .db-badge {
   font-size: 11px;
