@@ -215,3 +215,6 @@ body {
 .action-btn:hover {
   opacity: 0.88;
 }
+.pf-wrap {
+  min-height: unset; /* remove full viewport height */
+}

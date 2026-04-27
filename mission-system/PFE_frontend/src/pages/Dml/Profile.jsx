@@ -59,8 +59,8 @@ function Profile() {
 
       {/* Actions */}
       <div className="pf-actions">
-        <button className="pf-btn-primary" onClick={() => navigate("/EditProfile")}>
-           Edit Profile
+        <button className="pf-btn-primary" onClick={() => navigate("/editprofile")}>
+          Edit Profile
         </button>
         <button className="pf-btn-danger" onClick={handleLogout}>
           ⎋ Logout

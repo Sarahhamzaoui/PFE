@@ -11,31 +11,36 @@ function AttachmentsDropzone({onFilesChange}) {
   const attachmentsRef = useRef(null);
   // to access the hiden file input trigger the file explorer
   const fileInputRef=useRef(null);
-  // stores the list f all dropped/selected files across multiple uploads
+  // stores the list of all dropped/selected files across multiple uploads
   const [droppedFiles, setDroppedFiles]= useState([]);
- // track rejected files
- const [rejectedFiles, setRejectedFiles] = useState([]);
+  // track rejected files
+  const [rejectedFiles, setRejectedFiles] = useState([]);
 
- const filterFiles = (files) => {
-  const accepted= [];
-  const rejected=[];
- 
- files.forEach (file => {
-  if (file.size <= MAX_FILE_SIZE_BYTES) {
-    accepted.push(file);
-  } else {
-    rejected.push(file.name);
-  }
- });
- return {accepted,rejected};
-};
+  // notify parent whenever droppedFiles changes — outside the render cycle to avoid setState warning
+  useEffect(() => {
+    if (onFilesChange) onFilesChange(droppedFiles);
+  }, [droppedFiles]);
+
+  const filterFiles = (files) => {
+    const accepted= [];
+    const rejected=[];
+  
+    files.forEach(file => {
+      if (file.size <= MAX_FILE_SIZE_BYTES) {
+        accepted.push(file);
+      } else {
+        rejected.push(file.name);
+      }
+    });
+    return {accepted, rejected};
+  };
 
   useEffect(() => {
 
     // Get the actual DOM element from the ref
     const attachments = attachmentsRef.current;
 
-    // Safety check:  element doesn't exist yet do nothing
+    // Safety check: element doesn't exist yet do nothing
     if (!attachments) return;
 
     /**
@@ -47,22 +52,18 @@ function AttachmentsDropzone({onFilesChange}) {
       attachments.classList.add('dragover');
     };
 
-    //hndleDragLeave - fires when the dragged file leaves the dropzone area
+    // handleDragLeave - fires when the dragged file leaves the dropzone area
     const handleDragLeave = () => {
       attachments.classList.remove('dragover');
     };
 
-    //* handleDrop - fires when the user releases/drops the file onto the zone
+    // handleDrop - fires when the user releases/drops the file onto the zone
     const handleDrop = (e) => {
       e.preventDefault();
       attachments.classList.remove('dragover');
-      const files = Array.from(e.dataTransfer.files); // convert filelist to an array 
-      const { accepted, rejected } = filterFiles(files); // ← fix: moved outside setDroppedFiles
-      setDroppedFiles(prev => {
-        const updated = [...prev, ...accepted]; // ← fix: define updated before using it
-        if (onFilesChange) onFilesChange(updated);
-        return updated;
-      });
+      const files = Array.from(e.dataTransfer.files); // convert filelist to an array
+      const { accepted, rejected } = filterFiles(files);
+      setDroppedFiles(prev => [...prev, ...accepted]); // useEffect above handles notifying parent
       setRejectedFiles(rejected);
     };
 
@@ -71,7 +72,7 @@ function AttachmentsDropzone({onFilesChange}) {
     attachments.addEventListener('dragleave', handleDragLeave);
     attachments.addEventListener('drop', handleDrop);
 
-   // Cleanup: removes all event listeners when the component unmounts
+    // Cleanup: removes all event listeners when the component unmounts
     // Prevents memory leaks and duplicate listeners on re-renders
     return () => {
       attachments.removeEventListener('dragover', handleDragOver);
@@ -81,48 +82,40 @@ function AttachmentsDropzone({onFilesChange}) {
 
   }, []); // Empty dependency array: runs once on mount, cleans up on unmount
 
- // handleclick - triggers the hidden file input open the file explorer
- const handleClick = () => {
-  fileInputRef.current.click();
- };
+  // handleClick - triggers the hidden file input open the file explorer
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
 
- /**
+  /**
    * handleFileInput - fires when the user selects files from the file explorer
    * - Array.from() converts the FileList to a regular array
    * - appends the new files to the existing list
    */
-   const handleFileInput = (e) => {
+  const handleFileInput = (e) => {
     const files = Array.from(e.target.files); // convert FileList to array
-    const { accepted, rejected } = filterFiles(files); // call it first
-    setDroppedFiles(prev => {
-      const updated = [...prev, ...accepted]; // ← fix: single setDroppedFiles, updated defined first
-      if (onFilesChange) onFilesChange(updated); // notify parent
-      return updated;
-    });
+    const { accepted, rejected } = filterFiles(files);
+    setDroppedFiles(prev => [...prev, ...accepted]); // useEffect above handles notifying parent
     setRejectedFiles(rejected);
     e.target.value = ''; // reset input so the same file can be re-selected later
   };
 
- //  removeFile - removes a specific file from the list by its index
-   //*  filters out the file at the given index, keeping all others
+  // removeFile - removes a specific file from the list by its index
+  // filters out the file at the given index, keeping all others
   const removeFile = (index) => {
-    setDroppedFiles(prev => {
-      const updated = prev.filter((_, i) => i !== index);
-      if (onFilesChange) onFilesChange(updated); // notify parent
-      return updated;
-    });
+    setDroppedFiles(prev => prev.filter((_, i) => i !== index)); // useEffect above handles notifying parent
   };
 
   return (
     <>
-    {/* Hidden file input — no UI, triggered programmatically on dropzone click */}
+      {/* Hidden file input — no UI, triggered programmatically on dropzone click */}
       {/* multiple allows selecting more than one file at once */}
       <input 
-      type='file'
-      ref={fileInputRef}
-      style={{display: 'none'}}
-      multiple
-      onChange={handleFileInput}
+        type='file'
+        ref={fileInputRef}
+        style={{display: 'none'}}
+        multiple
+        onChange={handleFileInput}
       />
       {/* Dropzone area — ref connects this element to the drag event listeners above */}
       <div
@@ -147,11 +140,11 @@ function AttachmentsDropzone({onFilesChange}) {
         </div>
       )}
 
-      {/*File list only renders if at least one file has been dropped */}
+      {/* File list only renders if at least one file has been dropped */}
       {droppedFiles.length > 0 && (
         <div className='file-list'>
-          { droppedFiles.map((file, index) => (
-          // Each file row shows its name, size, and a remove button
+          {droppedFiles.map((file, index) => (
+            // Each file row shows its name, size, and a remove button
             <div key={index} className='file-item'>
               <span className="file-name">📄 {file.name}</span>
               {/* Convert bytes to KB and round to 1 decimal */}

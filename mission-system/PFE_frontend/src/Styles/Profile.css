@@ -2,7 +2,6 @@
 .pf-wrap {
   font-family: 'DM Sans', 'Segoe UI', sans-serif;
   background: #f4f6fb;
-  min-height: 100vh;
   padding-bottom: 2.5rem;
   width: 100%;
   box-sizing: border-box;
@@ -207,4 +206,9 @@
 .pf-btn-danger:hover {
   background: #fadadb;
   transform: translateY(-1px);
+}
+.pf-actions {
+  position: relative;
+  z-index: 10;
+  margin-top: 1rem;
 }

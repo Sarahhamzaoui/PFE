@@ -1,8 +1,8 @@
 <?php
 // RESTful API endpoint for managing missions it handles 3 main operations
 // debugging 
-ini_set('display_errors', 0);
-error_reporting(0);
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // CORS + response type
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS");
@@ -102,53 +102,67 @@ switch ($method) {
 
     // --------------------------- POST : Create new mission ----------------------------------------
     case 'POST':
-        // reads the raw json body sent from the frontend and converts it to a php array
-        $input = json_decode(file_get_contents('php://input'), true);
+    // files come via multipart/form-data so use $_POST not php://input
+    $title         = trim($_POST['title']         ?? '');
+    $destination   = trim($_POST['destination']   ?? '');
+    $start_date    = $_POST['start_date']         ?? '';
+    $end_date      = $_POST['end_date']           ?? '';
+    $objectives    = trim($_POST['objectives']    ?? '');
+    $assigned_to   = $_POST['assigned_to']        ?? null;
+    $created_by    = (int)($_POST['created_by']   ?? 0);
+    $is_urgent     = isset($_POST['is_urgent'])   ? (int)$_POST['is_urgent']   : 0;
+    $accommodation = trim($_POST['accommodation'] ?? '');
+    $transport     = trim($_POST['transport']     ?? '');
+    $needs_driver  = isset($_POST['needs_driver']) ? (int)$_POST['needs_driver'] : 0;
+    $sent_date     = date('Y-m-d');
 
-        // extracts data from the json
-        $title       = trim($input['title']       ?? '');
-        $destination = trim($input['destination'] ?? '');
-        $start_date  = $input['start_date']       ?? '';
-        $end_date    = $input['end_date']         ?? '';
-        $objectives  = trim($input['objectives']  ?? '');
-        $assigned_to = $input['assigned_to']      ?? null;
-        $created_by  = (int)($input['created_by'] ?? 0);
-        $is_urgent   = isset($input['is_urgent']) ? (int)$input['is_urgent'] : 0;
-        $accommodation = trim($input['accommodation'] ?? '');
-        $transport     = trim($input['transport']     ?? '');
-        $needs_driver  = isset($input['needs_driver']) ? (int)$input['needs_driver'] : 0;
-        $sent_date   = date('Y-m-d');
+    if (empty($title) || empty($destination) || empty($start_date) || empty($end_date) || $created_by <= 0) {
+        http_response_code(400);
+        echo json_encode(["message" => "Missing required fields"]);
+        exit();
+    }
 
+    $stmt = $pdo->prepare("
+        INSERT INTO missions 
+            (title, destination, start_date, end_date, sent_date, objectives, created_by, assigned_to, status, accommodation, transport, needs_driver, is_urgent)
+        VALUES 
+            (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)
+    ");
 
-        // basic validation anything missing return 400 bad request and stop
-        if (empty($title) || empty($destination) || empty($start_date) || empty($end_date) || $created_by <= 0) {
-            http_response_code(400);
-            echo json_encode(["message" => "Missing required fields"]);
-            exit();
+    if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to, $accommodation, $transport, $needs_driver, $is_urgent])) {
+        $new_id = $pdo->lastInsertId();
+
+        // save attachments if any files were uploaded
+        if (!empty($_FILES['attachments'])) {
+            $upload_dir = '../../uploads/missions/';
+            if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+
+            $att_stmt = $pdo->prepare("INSERT INTO mission_attachments (mission_id, file_name) VALUES (?, ?)");
+
+            // $_FILES['attachments'] is an array of files when multiple is used
+            $files = $_FILES['attachments'];
+            $count = is_array($files['name']) ? count($files['name']) : 1;
+
+            for ($i = 0; $i < $count; $i++) {
+                $name     = is_array($files['name'])     ? $files['name'][$i]     : $files['name'];
+                $tmp      = is_array($files['tmp_name']) ? $files['tmp_name'][$i] : $files['tmp_name'];
+                $error    = is_array($files['error'])    ? $files['error'][$i]    : $files['error'];
+
+                if ($error === UPLOAD_ERR_OK) {
+                    $safe_name = time() . '_' . basename($name);
+                    move_uploaded_file($tmp, $upload_dir . $safe_name);
+                    $att_stmt->execute([$new_id, $safe_name]);
+                }
+            }
         }
 
-        // prepares the insert query pending is hardcoded as default status
-       $stmt = $pdo->prepare("
-    INSERT INTO missions 
-        (title, destination, start_date, end_date, sent_date, objectives, created_by, assigned_to, status, accommodation, transport, needs_driver, is_urgent)
-    VALUES 
-        (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?,?)
-");
- // success return 201, if fails return 500 internal server error
-if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to, $accommodation, $transport, $needs_driver, $is_urgent])) {
-       
-            $new_id = $pdo->lastInsertId();
-            http_response_code(201);
-            echo json_encode([
-                "message"    => "Mission created successfully",
-                "mission_id" => $new_id
-            ]);
-        } else {
-            http_response_code(500);
-            echo json_encode(["message" => "Failed to create mission"]);
-        }
-        break;
-
+        http_response_code(201);
+        echo json_encode(["message" => "Mission submitted successfully", "mission_id" => $new_id]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["message" => "Failed to create mission"]);
+    }
+    break;
     // ----------------------------- PUT: Approve or Reject mission ------------------------------
     case 'PUT':
         // read json body

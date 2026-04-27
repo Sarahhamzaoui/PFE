@@ -241,3 +241,12 @@
   background: #e4e8f7;
   transform: translateY(-1px);
 }
+.pf-actions {
+  position: relative;
+  z-index: 999;
+}
+
+.pf-btn-primary {
+  pointer-events: all;
+  cursor: pointer;
+}

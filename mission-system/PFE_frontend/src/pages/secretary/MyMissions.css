@@ -249,6 +249,10 @@
   font-weight: 600;
   animation: pulse-urgent 1.5s ease-in-out infinite; /* subtle pulse to grab attention */
 }
+.mm-badge--rejected {
+  background-color: #fdecea;
+  color: #c0392b;
+}
 
 /* animation for urgent pending missions */
 @keyframes pulse-urgent {

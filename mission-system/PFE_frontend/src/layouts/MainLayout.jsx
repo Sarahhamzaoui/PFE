@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Main.css";
 import Sidebar from "../components/Sidebar";
 
@@ -8,6 +8,7 @@ import Mission from "../pages/Missions";
 import Profile from "../pages/Profile";
 import Reports from "../pages/Reports";
 import Settings from "../pages/Settings";
+import EditProfile from "../pages/EditProfile";
 
 // Role-based pages
 import AdminDashboard from "../pages/admin/AdminDashboard";
@@ -20,12 +21,16 @@ import DmlDashboard from "../pages/Dml/DmlDashboard";
 import BookingPage from "../pages/Dml/Booking";
 
 function MainLayout({ activePage: initialPage }) {
-  const [activePage, setActivePage]       = useState(initialPage);
-  const [sidebarOpen, setSidebarOpen]     = useState(false);
-  const [darkMode, setDarkMode]           = useState(false);
+  const [activePage, setActivePage]         = useState(initialPage);
+  const [sidebarOpen, setSidebarOpen]       = useState(false);
+  const [darkMode, setDarkMode]             = useState(false);
   const [bookingMission, setBookingMission] = useState(null);
 
-  // Get logged-in user
+  // ✅ Sync activePage when route changes
+  useEffect(() => {
+    setActivePage(initialPage);
+  }, [initialPage]);
+
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || "employee";
 
@@ -47,6 +52,7 @@ function MainLayout({ activePage: initialPage }) {
 
       // ── Shared ──
       case 'missions':            return <Mission />;
+      case 'editprofile':         return <EditProfile />;
       case 'my-missions':         return <MyMissions setActivePage={setActivePage} />;
       case 'profile':             return <Profile />;
       case 'reports':             return <Reports />;
@@ -73,6 +79,7 @@ function MainLayout({ activePage: initialPage }) {
     'create-mission-page': 'Create Mission',
     'missions':            'Missions',
     'profile':             'Profile',
+    'editprofile':         'Edit Profile',
     'booking':             'Booking',
     'reports':             'Reports',
     'ManagerPage':         'Manager Page',
