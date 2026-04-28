@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Addnewhotel.css";
-import { addAccommodation }  from "../../services/api";
+import { addAccommodation } from "../../services/api";
 
 const TIERS = ["Corporate · Tier 1", "Corporate · Tier 2", "Custom"];
 
@@ -12,7 +12,8 @@ export default function Addnewhotel({ onAdd, onBack }) {
     tier: TIERS[2],
     desc: "",
   });
-  const [errors, setErrors] = useState({});
+  const [isFree, setIsFree]     = useState(false);
+  const [errors, setErrors]     = useState({});
   const [submitted, setSubmitted] = useState(false);
 
   const set = (key, val) => {
@@ -20,12 +21,24 @@ export default function Addnewhotel({ onAdd, onBack }) {
     setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
+  const handleFreeToggle = () => {
+    setIsFree((prev) => {
+      if (!prev) {
+        set("price", "0");
+        setErrors((e) => ({ ...e, price: "" }));
+      } else {
+        set("price", "");
+      }
+      return !prev;
+    });
+  };
+
   const validate = () => {
     const e = {};
     if (!form.name.trim())     e.name     = "Name is required.";
     if (!form.location.trim()) e.location = "Location is required.";
-    if (!form.price || isNaN(form.price) || Number(form.price) <= 0)
-      e.price = "Enter a valid price.";
+    if (!isFree && (!form.price || isNaN(form.price) || Number(form.price) <= 0))
+      e.price = "Enter a valid price or mark as free.";
     return e;
   };
 
@@ -34,18 +47,19 @@ export default function Addnewhotel({ onAdd, onBack }) {
     if (Object.keys(e).length) { setErrors(e); return; }
 
     const newItem = {
-      id: Date.now().toString(),
-      tag: form.tier,
-      name: form.name,
+      id:       Date.now().toString(),
+      tag:      form.tier,
+      name:     form.name,
       location: form.location,
-      desc: form.desc || "User-added accommodation",
-      price: Number(form.price),
-      unit: "/ night",
+      desc:     form.desc || "User-added accommodation",
+      price:    isFree ? 0 : Number(form.price),
+      unit:     "/ night",
     };
-    try{
+
+    try {
       const res = await addAccommodation(newItem);
-      if(res.success){
-       newItem.id = res.id.toString();
+      if (res.success) {
+        newItem.id = res.id.toString();
         setSubmitted(true);
         setTimeout(() => {
           onAdd?.(newItem);
@@ -62,13 +76,11 @@ export default function Addnewhotel({ onAdd, onBack }) {
   return (
     <div className="add-page">
       <header className="add-header">
-        <div className="add-logo">■ CORPORATE TRAVEL SYSTEM</div>
         <h1>Add <em>New Accommodation</em></h1>
         <p>Register a new housing option for business assignments</p>
       </header>
 
       <div className="add-container">
-        {/* Back link */}
         <button className="add-back" onClick={onBack}>← Back to Booking</button>
 
         <div className="add-card">
@@ -82,11 +94,7 @@ export default function Addnewhotel({ onAdd, onBack }) {
           <div className="add-form">
             {/* Row 1 */}
             <div className="form-row">
-              <Field
-                label="Accommodation Name"
-                required
-                error={errors.name}
-              >
+              <Field label="Accommodation Name" required error={errors.name}>
                 <input
                   className={`form-input ${errors.name ? "is-error" : ""}`}
                   placeholder="e.g. Hilton Executive Suite"
@@ -107,15 +115,26 @@ export default function Addnewhotel({ onAdd, onBack }) {
 
             {/* Row 2 */}
             <div className="form-row">
-              <Field label="Price per Night ($)" required error={errors.price}>
+              <Field label="Price per Night (DA)" required error={errors.price}>
                 <input
                   className={`form-input ${errors.price ? "is-error" : ""}`}
                   type="number"
                   min="0"
                   placeholder="e.g. 180"
-                  value={form.price}
+                  value={isFree ? "" : form.price}
+                  disabled={isFree}
                   onChange={(e) => set("price", e.target.value)}
                 />
+                {/* Free checkbox */}
+                <label className="free-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={isFree}
+                    onChange={handleFreeToggle}
+                  />
+                  <span className="free-checkbox__box" />
+                  <span className="free-checkbox__label">Free / Included</span>
+                </label>
               </Field>
 
               <Field label="Tier / Category">
@@ -141,7 +160,6 @@ export default function Addnewhotel({ onAdd, onBack }) {
             </Field>
           </div>
 
-          {/* Footer */}
           <div className="add-footer">
             <button className="btn btn-ghost" onClick={onBack}>Cancel</button>
             <button
@@ -158,7 +176,6 @@ export default function Addnewhotel({ onAdd, onBack }) {
   );
 }
 
-// ── Helper ────────────────────────────────────────────
 function Field({ label, required, error, children }) {
   return (
     <div className="form-field">

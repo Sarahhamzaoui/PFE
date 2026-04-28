@@ -4,33 +4,33 @@ import '../styles/Sidebar.css';
 
 const menuByRole = {
   admin: [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'profile',   label: 'Profile' },
-    { id: 'missions',  label: 'Missions' },
-    { id: 'reports',   label: 'Reports' },
-    { id: 'settings',  label: 'Settings' },
+    { id: 'dashboard', label: 'Dashboard', path: '/admin/dashboard' },
+    { id: 'profile', label: 'Profile', path: '/profile' },
+    { id: 'settings', label: 'Settings', path: '/settings' },
   ],
   dml: [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'profile',   label: 'Profile' },
-    { id: 'booking',   label: 'Booking' },
+    { id: 'dashboard', label: 'Dashboard', path: '/dml/dashboard' },
+    { id: 'profile', label: 'Profile', path: '/profile' },
+    { id: 'booking', label: 'Booking', path: '/dml/booking' },
+    { id: 'settings', label: 'Settings', path: '/settings' },
   ],
   manager: [
-    { id: 'dashboard',   label: 'Dashboard' },
-    { id: 'profile',     label: 'Profile' },
-    { id: 'ManagerPage', label: 'Missions' },
+    { id: 'dashboard', label: 'Dashboard', path: '/manager/dashboard' },
+    { id: 'profile', label: 'Profile', path: '/profile' },
+    { id: 'missions', label: 'Missions', path: '/manager/ManagerPage' },
+    { id: 'settings', label: 'Settings', path: '/settings' },
   ],
   secretary: [
-    { id: 'dashboard',           label: 'Dashboard' },
-    { id: 'profile',             label: 'Profile' },
-    { id: 'create-mission-page', label: 'Create Mission' },
-    { id: 'my-missions',         label: 'My Missions' },
+    { id: 'dashboard', label: 'Dashboard', path: '/secretary/dashboard' },
+    { id: 'profile', label: 'Profile', path: '/profile' },
+    { id: 'create-mission-page', label: 'Create Mission', path: '/secretary/create-mission' },
+    { id: 'my-missions', label: 'My Missions', path: '/secretary/my-missions' },
+    { id: 'settings', label: 'Settings', path: '/settings' },
   ],
   employee: [
-    { id: 'dashboard',   label: 'Dashboard' },
-    { id: 'profile',     label: 'Profile' },
-    { id: 'my-missions', label: 'My Missions' },
-    { id: 'reports',     label: 'Reports' },
+    { id: 'dashboard', label: 'Dashboard', path: '/employee/dashboard' },
+    { id: 'profile', label: 'Profile', path: '/profile' },
+    { id: 'settings', label: 'Settings', path: '/settings' },
   ],
 };
 
@@ -46,6 +46,12 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
     navigate("/");
   };
 
+  const handleClick = (item) => {
+    setActivePage(item.id);
+    setSidebarOpen(false);
+    navigate(item.path);   // ✅ THIS FIXES EVERYTHING
+  };
+
   return (
     <>
       {sidebarOpen && (
@@ -55,16 +61,8 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
 
         <div className="sidebar-header">
-          <div className="logo">
-            <span className="logo-text">Mission System</span>
-          </div>
-          <button className="close-btn" onClick={() => setSidebarOpen(false)}>
-            x
-          </button>
-        </div>
-
-        <div className="sidebar-role-badge">
-          {role.charAt(0).toUpperCase() + role.slice(1)}
+          <span className="logo-text">Mission System</span>
+          <button onClick={() => setSidebarOpen(false)}>x</button>
         </div>
 
         <nav className="sidebar-nav">
@@ -72,19 +70,16 @@ const Sidebar = ({ activePage, setActivePage, sidebarOpen, setSidebarOpen }) => 
             <button
               key={item.id}
               className={"nav-item " + (activePage === item.id ? "active" : "")}
-              onClick={() => {
-                setActivePage(item.id);
-                setSidebarOpen(false);
-              }}
+              onClick={() => handleClick(item)}
             >
-              <span className="nav-label">{item.label}</span>
+              {item.label}
             </button>
           ))}
         </nav>
 
         <div className="sidebar-footer">
-          <button className="nav-item help-item" onClick={handleLogout}>
-            <span className="nav-label">Log out</span>
+          <button className="nav-item" onClick={handleLogout}>
+            Log out
           </button>
         </div>
 

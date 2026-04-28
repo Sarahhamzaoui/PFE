@@ -1,13 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Profile.css";
 
-export default function Profile({ setActivePage }) {
-  const navigate = useNavigate();
-  const user     = JSON.parse(localStorage.getItem("user") || "{}");
-
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwords, setPasswords]                 = useState({ current: "", newPass: "", confirm: "" });
   const [pwMsg, setPwMsg]                         = useState({ text: "", type: "" });
   const [pwLoading, setPwLoading]                 = useState(false);
 
@@ -160,7 +151,6 @@ export default function Profile({ setActivePage }) {
       )}
     </div>
   );
-}
 
 function InfoItem({ label, value }) {
   return (

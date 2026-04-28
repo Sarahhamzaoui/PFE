@@ -6,7 +6,7 @@ import MyMissions from "../pages/secretary/MyMissions";
 import Mission from "../pages/Missions";
 import Profile from "../pages/dml/Profile";
 import Reports from "../pages/Reports";
-import Settings from "../pages/Settings";
+import Settings from "../pages/settings/Settings";
 import EditProfile from "../pages/dml/EditProfile";
 
 import AdminDashboard from "../pages/admin/AdminDashboard";

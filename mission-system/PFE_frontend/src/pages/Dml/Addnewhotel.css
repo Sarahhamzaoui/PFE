@@ -244,3 +244,60 @@
 .btn-ghost:hover {
   background: #e4e8f7;
 }
+/* ── Free Checkbox ──────────────────────────────────── */
+.free-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.free-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.free-checkbox__box {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid #d1d5db;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.free-checkbox input:checked + .free-checkbox__box {
+  background: #0ca678;
+  border-color: #0ca678;
+}
+
+.free-checkbox input:checked + .free-checkbox__box::after {
+  content: '✓';
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.free-checkbox__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+  user-select: none;
+}
+
+.free-checkbox input:checked ~ .free-checkbox__label {
+  color: #0ca678;
+}
+
+.form-input:disabled {
+  background: #f8f9fc;
+  color: #adb5bd;
+  cursor: not-allowed;
+  border-color: #e9ecef;
+}

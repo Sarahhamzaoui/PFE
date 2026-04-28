@@ -343,3 +343,17 @@ body.dark .btn-ghost {
   background: #1a2035;
   color: #4a6cf7;
 }
+.st-select {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  transition: 0.2s;
+}
+
+.st-select:hover {
+  border-color: #4a6cf7;
+}

@@ -1,95 +1,32 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { LanguageProvider } from "./context/LanguageContext";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import MainLayout from "./layouts/MainLayout";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <LanguageProvider>
+      <BrowserRouter>
+        <Routes>
 
-        <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login />} />
 
-        <Route path="/admin/dashboard" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <MainLayout activePage="dashboard" />
-          </ProtectedRoute>
-        }/>
+          {/* SETTINGS */}
+          <Route path="/settings" element={
+            <ProtectedRoute allowedRoles={["admin","employee","manager","secretary","dml"]}>
+              <MainLayout activePage="settings" />
+            </ProtectedRoute>
+          } />
 
-        <Route path="/secretary/dashboard" element={
-          <ProtectedRoute allowedRoles={["secretary"]}>
-            <MainLayout activePage="dashboard" />
-          </ProtectedRoute>
-        }/>
-        <Route path="/secretary/create-mission" element={
-          <ProtectedRoute allowedRoles={["secretary"]}>
-            <MainLayout activePage="create-mission-page" />
-          </ProtectedRoute>
-        }/>
+          {/* fallback */}
+          <Route path="*" element={<Navigate to="/" />} />
 
-        <Route path="/secretary/my-missions" element={
-  <ProtectedRoute allowedRoles={["secretary"]}>
-    <MainLayout activePage="my-missions" />
-  </ProtectedRoute>
-}/>
-
-        <Route path="/manager/dashboard" element={
-          <ProtectedRoute allowedRoles={["manager"]}>
-            <MainLayout activePage="dashboard" />
-          </ProtectedRoute>
-        }/>
-
-         <Route path="/manager/ManagerPage" element={
-          <ProtectedRoute allowedRoles={["manager"]}>
-            <MainLayout activePage="ManagerPage" />
-          </ProtectedRoute>
-        }/>
-
-
-        <Route path="/employee/dashboard" element={
-          <ProtectedRoute allowedRoles={["employee"]}>
-            <MainLayout activePage="dashboard" />
-          </ProtectedRoute>
-        }/>
-        <Route path="/profile" element={
-  <ProtectedRoute allowedRoles={["admin","employee","manager","secretary","dml"]}>
-    <MainLayout activePage="profile" />
-  </ProtectedRoute>
-}/>
-<Route path="/EditProfile" element={
-  <ProtectedRoute allowedRoles={["admin","employee","manager","secretary","dml"]}>
-    <MainLayout activePage="EditProfile" />
-  </ProtectedRoute>
-}/>
-
-        <Route path="/dml/dashboard" element={
-          <ProtectedRoute allowedRoles={["dml"]}>
-            <MainLayout activePage="dashboard" />
-          </ProtectedRoute>
-        }/>
-        <Route path="/dml/booking" element={
-          <ProtectedRoute allowedRoles={["dml"]}>
-            <MainLayout activePage="booking" />
-          </ProtectedRoute>
-        }/>
-
-
-        <Route path="/dml/dashboard" element={
-          <ProtectedRoute allowedRoles={["dml"]}>
-            <MainLayout activePage="dashboard" />
-          </ProtectedRoute>
-        }/>
-
-        <Route path="/dml/booking" element={
-          <ProtectedRoute allowedRoles={["dml"]}>
-            <MainLayout activePage="booking" />
-          </ProtectedRoute>
-        }/>
-
-        <Route path="*" element={<Navigate to="/" />} />
-
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

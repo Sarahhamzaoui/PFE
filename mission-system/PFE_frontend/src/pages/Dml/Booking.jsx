@@ -11,7 +11,6 @@ const MEALS = [
     desc: "All meals included daily.",
     price: 40,
     unit: "/ day",
-    emoji: "🍽️",
   },
   {
     id: "r2",
@@ -20,7 +19,6 @@ const MEALS = [
     desc: "Daily allowance for meals.",
     price: 15,
     unit: "/ day",
-    emoji: "💰",
   },
 ];
 
@@ -32,7 +30,6 @@ const TRANSPORTS = [
     desc: "Company vehicle access.",
     price: 60,
     unit: "/ day",
-    emoji: "🚗",
   },
   {
     id: "t2",
@@ -41,13 +38,12 @@ const TRANSPORTS = [
     desc: "Business class flight.",
     price: 300,
     unit: "/ ticket",
-    emoji: "✈️",
   },
 ];
 
 const STEPS = ["Accommodation", "Meals", "Transport"];
 
-// ── Progress Bar ──────────────────────────────────────────────────────────────
+// Progress Bar
 function ProgressBar({ currentStep }) {
   const fillPct = ((currentStep - 1) / (STEPS.length - 1)) * 100;
   return (
@@ -70,7 +66,7 @@ function ProgressBar({ currentStep }) {
   );
 }
 
-// ── Card ──────────────────────────────────────────────────────────────────────
+// Card
 function Card({ item, selected, onSelect }) {
   return (
     <div className={`card ${selected ? "selected" : ""}`} onClick={() => onSelect(item)}>
@@ -80,15 +76,15 @@ function Card({ item, selected, onSelect }) {
         <div className="card-name">{item.name}</div>
         <div className="card-desc">{item.desc}</div>
         <div className="card-price">
-          <span className="price-val">${item.price}</span>
-          <span className="price-unit">{item.unit}</span>
+          <span className="price-val">{item.price}</span>
+          <span className="price-unit">DA {item.unit}</span>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Step Panel ────────────────────────────────────────────────────────────────
+// Step Panel
 function StepPanel({ title, subtitle, items, selected, onSelect, onNext, onBack, onAddNew }) {
   return (
     <div className="step-panel">
@@ -121,7 +117,7 @@ function StepPanel({ title, subtitle, items, selected, onSelect, onNext, onBack,
   );
 }
 
-// ── Summary ───────────────────────────────────────────────────────────────────
+// Summary
 function Summary({ mission, selections, onConfirm, onBack, saving }) {
   const total = Object.values(selections)
     .filter(Boolean)
@@ -139,11 +135,11 @@ function Summary({ mission, selections, onConfirm, onBack, saving }) {
       {Object.values(selections).filter(Boolean).map((item, i) => (
         <div className="summary-item" key={i}>
           <span>{item.emoji} {item.name}</span>
-          <span>${item.price}</span>
+          <span>{item.price} DA</span>
         </div>
       ))}
 
-      <div className="total">Total: ${total}</div>
+      <div className="total">{total} DA</div>
 
       <div className="btn-row">
         <button className="btn btn-ghost" onClick={onBack}>← Edit</button>
@@ -159,7 +155,7 @@ function Summary({ mission, selections, onConfirm, onBack, saving }) {
   );
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// Main
 export default function BookingPage({ mission }) {
   const [step, setStep]               = useState(1);
   const [showAddPage, setShowAddPage] = useState(false);
@@ -172,7 +168,6 @@ export default function BookingPage({ mission }) {
       desc: "Premium company-approved housing with workspace.",
       price: 220,
       unit: "/ night",
-      emoji: "🏨",
     },
     {
       id: "h2",
@@ -181,7 +176,6 @@ export default function BookingPage({ mission }) {
       desc: "Comfortable apartment for assignments.",
       price: 140,
       unit: "/ night",
-      emoji: "🏠",
     },
   ]);
 
@@ -191,7 +185,6 @@ export default function BookingPage({ mission }) {
     transport: null,
   });
 
-  // Load accommodations from backend
   useEffect(() => {
     const loadAccommodations = async () => {
       try {
@@ -204,7 +197,6 @@ export default function BookingPage({ mission }) {
             desc:  a.description || "",
             price: Number(a.price) || 0,
             unit:  "/ night",
-            emoji: "🏨",
           }));
           setAccommodations(formatted);
         }
@@ -219,25 +211,19 @@ export default function BookingPage({ mission }) {
     setSelections((prev) => ({ ...prev, [key]: item }));
 
   const handleAddAccommodation = (newItem) => {
-    setAccommodations((prev) => [...prev, { ...newItem, emoji: "🏨" }]);
+    setAccommodations((prev) => [...prev, { ...newItem,}]);
   };
 
   const handleConfirm = async () => {
-    // ── DEBUG ──
-    console.log("Full mission object:", mission);
-    console.log("Mission ID:", mission?.id);
-    console.log("Mission ID (mission_id):", mission?.mission_id);
-
     if (!mission) {
       alert("No mission selected.");
       return;
     }
 
-    // Use mission_id if id is undefined
     const missionId = mission.id || mission.mission_id;
 
     if (!missionId) {
-      alert("Could not find mission ID. Check console for details.");
+      alert("Could not find mission ID.");
       return;
     }
 
@@ -250,22 +236,45 @@ export default function BookingPage({ mission }) {
         food:         selections.meals?.name         || "",
       });
 
-      console.log("Save booking response:", data);
-
       if (data.message === "Booking saved successfully") {
-        alert("✅ Booking confirmed successfully!");
+       const handleSaveBooking = async (id, accomodation, transport, food) => {
+  try {
+    const data = await saveBooking({ mission_id: id, accomodation, transport, food });
+
+    if (data.message === "Booking saved successfully") {
+      setMissionList(prev =>
+        prev.map(m =>
+          m.id === id ? { ...m, booked: "1", accomodation, transport, food } : m
+        )
+      );
+
+      setSelectedMission(null);
+
+      // ✅ show success message
+      setMessage("Booking saved successfully ✓");
+
+      // auto hide after 3 seconds
+      setTimeout(() => setMessage(""), 3000);
+
+    } else {
+      setMessage(data.error || "Something went wrong");
+      setTimeout(() => setMessage(""), 3000);
+    }
+  } catch {
+    setMessage("Server error, please try again");
+    setTimeout(() => setMessage(""), 3000);
+  }
+};
       } else {
         alert(data.error || "Failed to save booking");
       }
     } catch (err) {
-      console.error("Booking error:", err);
       alert("Server error: " + err.message);
     } finally {
       setSaving(false);
     }
   };
 
-  // Show add hotel page
   if (showAddPage) {
     return (
       <Addnewhotel
@@ -280,7 +289,7 @@ export default function BookingPage({ mission }) {
       <header className="page-header">
         <h1>Plan <em>Business Mission</em></h1>
         {mission && (
-          <p style={{ color: "#8a93a8" }}>
+          <p>
             Booking for: <strong>{mission.title}</strong> — {mission.assigned_employee}
           </p>
         )}
