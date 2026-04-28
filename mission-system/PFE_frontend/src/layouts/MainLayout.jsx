@@ -2,15 +2,13 @@ import React, { useState, useEffect } from "react";
 import "../styles/Main.css";
 import Sidebar from "../components/Sidebar";
 
-// Old pages
 import MyMissions from "../pages/secretary/MyMissions";
 import Mission from "../pages/Missions";
-import Profile from "../pages/Profile";
+import Profile from "../pages/dml/Profile";
 import Reports from "../pages/Reports";
 import Settings from "../pages/Settings";
-import EditProfile from "../pages/EditProfile";
+import EditProfile from "../pages/dml/EditProfile";
 
-// Role-based pages
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import ManagerPage from "../pages/manager/ManagerPage";
@@ -26,7 +24,6 @@ function MainLayout({ activePage: initialPage }) {
   const [darkMode, setDarkMode]             = useState(false);
   const [bookingMission, setBookingMission] = useState(null);
 
-  // ✅ Sync activePage when route changes
   useEffect(() => {
     setActivePage(initialPage);
   }, [initialPage]);
@@ -39,36 +36,30 @@ function MainLayout({ activePage: initialPage }) {
 
       case 'dashboard':
         if (role === 'admin')     return <AdminDashboard />;
-        if (role === 'dml')       return (
-          <DmlDashboard
-            setActivePage={setActivePage}
-            setBookingMission={setBookingMission}
-          />
-        );
+        if (role === 'dml')       return <DmlDashboard setActivePage={setActivePage} setBookingMission={setBookingMission} />;
         if (role === 'manager')   return <ManagerDashboard />;
         if (role === 'secretary') return <Dashboard />;
         if (role === 'employee')  return <EmployeeDashboard />;
         return <AdminDashboard />;
 
-      // ── Shared ──
       case 'missions':            return <Mission />;
-      case 'editprofile':         return <EditProfile />;
+      case 'editprofile':         return <EditProfile setActivePage={setActivePage} />;
       case 'my-missions':         return <MyMissions setActivePage={setActivePage} />;
-      case 'profile':             return <Profile />;
+      case 'profile':             return <Profile setActivePage={setActivePage} />;
       case 'reports':             return <Reports />;
       case 'settings':            return <Settings darkMode={darkMode} setDarkMode={setDarkMode} />;
-
-      // ── Secretary ──
       case 'create-mission':      return <CreateMissionPage />;
       case 'create-mission-page': return <CreateMissionPage />;
-
-      // ── DML ──
       case 'booking':             return <BookingPage mission={bookingMission} />;
-
-      // ── Manager ──
       case 'ManagerPage':         return <ManagerPage />;
 
-      default:                    return <AdminDashboard />;
+      default:
+        if (role === 'admin')     return <AdminDashboard />;
+        if (role === 'dml')       return <DmlDashboard setActivePage={setActivePage} setBookingMission={setBookingMission} />;
+        if (role === 'manager')   return <ManagerDashboard />;
+        if (role === 'secretary') return <Dashboard />;
+        if (role === 'employee')  return <EmployeeDashboard />;
+        return <AdminDashboard />;
     }
   };
 
@@ -86,13 +77,8 @@ function MainLayout({ activePage: initialPage }) {
     'settings':            'Settings',
   };
 
-  const displayName = user
-    ? `${user.first_name} ${user.last_name}`
-    : "User";
-
-  const initials = user
-    ? `${user.first_name?.[0]}${user.last_name?.[0]}`
-    : "U";
+  const displayName = user ? `${user.first_name} ${user.last_name}` : "User";
+  const initials    = user ? `${user.first_name?.[0]}${user.last_name?.[0]}` : "U";
 
   return (
     <div className="MainLayout">

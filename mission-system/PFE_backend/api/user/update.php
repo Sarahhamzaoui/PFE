@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
-require_once '../config/database.php'; // ✅ correct path
+require_once '../../config/database.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -21,7 +21,7 @@ if (!$user_id) {
 }
 
 try {
-    // Check if email is taken by another user
+    // Check email uniqueness
     $check = $pdo->prepare("SELECT user_id FROM users WHERE email = ? AND user_id != ?");
     $check->execute([$email, $user_id]);
     if ($check->fetch()) {
@@ -29,6 +29,7 @@ try {
         exit;
     }
 
+    // Update user
     if (!empty($password)) {
         $hashed = password_hash($password, PASSWORD_BCRYPT);
         $stmt = $pdo->prepare("
@@ -46,7 +47,15 @@ try {
         $stmt->execute([$first_name, $last_name, $email, $phone, $user_id]);
     }
 
-    echo json_encode(["message" => "Profile updated successfully"]);
+    // 🔥 RETURN UPDATED USER (IMPORTANT FIX)
+    $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, email, phone FROM users WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    echo json_encode([
+        "message" => "Profile updated successfully",
+        "user" => $user
+    ]);
 
 } catch (PDOException $e) {
     echo json_encode(["error" => "Database error: " . $e->getMessage()]);

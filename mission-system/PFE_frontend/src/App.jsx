@@ -56,9 +56,9 @@ function App() {
     <MainLayout activePage="profile" />
   </ProtectedRoute>
 }/>
-<Route path="/editprofile" element={
+<Route path="/EditProfile" element={
   <ProtectedRoute allowedRoles={["admin","employee","manager","secretary","dml"]}>
-    <MainLayout activePage="editprofile" />
+    <MainLayout activePage="EditProfile" />
   </ProtectedRoute>
 }/>
 
