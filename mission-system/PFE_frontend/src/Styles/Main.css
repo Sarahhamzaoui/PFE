@@ -247,3 +247,26 @@ body {
   position: relative;
   z-index: 1;
 }
+[dir="rtl"] .sidebar {
+  left: auto;
+  right: -240px;
+}
+
+[dir="rtl"] .sidebar.open {
+  right: 0;
+  left: auto;
+}
+
+[dir="rtl"] .main-content {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .topbar {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .topbar-right {
+  margin-left: 0;
+  margin-right: auto;
+}

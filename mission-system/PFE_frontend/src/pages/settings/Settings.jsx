@@ -3,11 +3,16 @@ import { useEffect } from "react";
 import "./Settings.css";
 
 export default function Settings({ darkMode, setDarkMode }) {
-  const { lang, changeLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("dir", language === "ar" ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", language);
+  }, [language]);
 
   const handleToggle = () => {
     const next = !darkMode;
@@ -15,53 +20,35 @@ export default function Settings({ darkMode, setDarkMode }) {
     document.body.classList.toggle("dark", next);
   };
 
-  const t = (en, ar) => (lang === "ar" ? ar : en);
-
   return (
     <div className="st-wrap">
 
-      {/* HEADER */}
       <div className="st-header">
-        <h1 className="st-title">
-          {t("Settings", "الإعدادات")}
-        </h1>
+        <h1 className="st-title">{t("settings")}</h1>
         <p className="st-sub">
-          {t("Manage your app preferences", "إدارة إعدادات التطبيق")}
+          {language === "ar" ? "إدارة إعدادات التطبيق" : "Manage your app preferences"}
         </p>
       </div>
 
-      {/* DARK MODE */}
       <div className="st-card">
         <div className="st-card-head">
-          <span className="st-card-title">
-            {t("Appearance", "المظهر")}
-          </span>
+          <span className="st-card-title">{t("appearance")}</span>
         </div>
-
         <div className="st-row">
-          <span>
-            {darkMode
-              ? t("Dark mode ON", "الوضع الداكن مفعل")
-              : t("Light mode ON", "الوضع الفاتح مفعل")}
-          </span>
-
+          <span>{t("darkMode")}</span>
           <button className="st-toggle" onClick={handleToggle}>
-            Toggle
+            {darkMode ? "ON" : "OFF"}
           </button>
         </div>
       </div>
 
-      {/* LANGUAGE */}
       <div className="st-card">
         <div className="st-card-head">
-          <span className="st-card-title">
-            {t("Language", "اللغة")}
-          </span>
+          <span className="st-card-title">{t("language")}</span>
         </div>
-
         <select
-          value={lang}
-          onChange={(e) => changeLanguage(e.target.value)}
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
           className="st-select"
         >
           <option value="en">English</option>
@@ -69,14 +56,10 @@ export default function Settings({ darkMode, setDarkMode }) {
         </select>
       </div>
 
-      {/* INFO */}
       <div className="st-card">
         <div className="st-card-head">
-          <span className="st-card-title">
-            {t("About", "حول")}
-          </span>
+          <span className="st-card-title">{t("about")}</span>
         </div>
-
         <p>Corporate Travel System v1.0.0</p>
       </div>
 

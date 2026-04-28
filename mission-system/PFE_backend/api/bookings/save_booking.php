@@ -18,7 +18,18 @@ if (!$data) {
     echo json_encode(["error" => "No data received"]);
     exit;
 }
+function createNotification($conn, $user_id, $title, $message, $type = 'info') {
+  $title   = $conn->real_escape_string($title);
+  $message = $conn->real_escape_string($message);
+  $type    = $conn->real_escape_string($type);
+  $conn->query("INSERT INTO notifications (user_id, title, message, type) VALUES ('$user_id', '$title', '$message', '$type')");
+}
 
+// Notify all dml users and admins when booking is saved:
+$users = $conn->query("SELECT user_id FROM users WHERE role IN ('admin','dml')");
+while ($u = $users->fetch_assoc()) {
+  createNotification($conn, $u['user_id'], 'New Booking Confirmed', 'A new vehicle booking has been confirmed.', 'success');
+}
 $mission_id   = $data['mission_id']   ?? null;
 $accomodation = $data['accomodation'] ?? '';
 $transport    = $data['transport']    ?? '';
