@@ -2,23 +2,28 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
-include_once("../../config/database.php");
+require_once("../../config/database.php");
 
-$sql    = "SELECT * FROM accommodations";
-$result = $conn->query($sql);
+try {
+    $stmt = $pdo->query("SELECT * FROM accommodations");
+    $rows = $stmt->fetchAll();
 
-$accommodations = [];
-while ($row = $result->fetch_assoc()) {
-    $accommodations[] = [
-        "id"    => (string)$row["id"],
-        "tag"   => $row["tier"],
-        "name"  => $row["name"],
-        "desc"  => $row["description"],
-        "price" => (int)$row["price"],
-        "unit"  => "/ night",
-    ];
+    $accommodations = [];
+    foreach ($rows as $row) {
+        $accommodations[] = [
+            "id"    => (string)$row["id"],
+            "tag"   => $row["tier"],
+            "name"  => $row["name"],
+            "desc"  => $row["description"],
+            "price" => (int)$row["price"],
+            "unit"  => "/ night",
+        ];
+    }
+
+    echo json_encode($accommodations);
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(["error" => $e->getMessage()]);
 }
-
-echo json_encode($accommodations);
-$conn->close();
 ?>
