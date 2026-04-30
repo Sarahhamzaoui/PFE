@@ -11,6 +11,7 @@ const MEALS = [
     desc: "All meals included daily.",
     price: 40,
     unit: "/ day",
+    emoji: "🍽️",
   },
   {
     id: "r2",
@@ -19,6 +20,7 @@ const MEALS = [
     desc: "Daily allowance for meals.",
     price: 15,
     unit: "/ day",
+    emoji: "💳",
   },
 ];
 
@@ -30,6 +32,7 @@ const TRANSPORTS = [
     desc: "Company vehicle access.",
     price: 60,
     unit: "/ day",
+    emoji: "🚗",
   },
   {
     id: "t2",
@@ -38,10 +41,11 @@ const TRANSPORTS = [
     desc: "Business class flight.",
     price: 300,
     unit: "/ ticket",
+    emoji: "✈️",
   },
 ];
 
-const STEPS = ["Accommodation", "Meals", "Transport"];
+const STEPS = ["Accommodation", "Meals", "Transport", "Summary"];
 
 // Progress Bar
 function ProgressBar({ currentStep }) {
@@ -156,7 +160,7 @@ function Summary({ mission, selections, onConfirm, onBack, saving }) {
 }
 
 // Main
-export default function BookingPage({ mission }) {
+export default function BookingPage({ mission, onBookingSuccess }) {
   const [step, setStep]               = useState(1);
   const [showAddPage, setShowAddPage] = useState(false);
   const [saving, setSaving]           = useState(false);
@@ -168,6 +172,7 @@ export default function BookingPage({ mission }) {
       desc: "Premium company-approved housing with workspace.",
       price: 220,
       unit: "/ night",
+      emoji: "🏢",
     },
     {
       id: "h2",
@@ -176,6 +181,7 @@ export default function BookingPage({ mission }) {
       desc: "Comfortable apartment for assignments.",
       price: 140,
       unit: "/ night",
+      emoji: "🏨",
     },
   ]);
 
@@ -197,6 +203,7 @@ export default function BookingPage({ mission }) {
             desc:  a.description || "",
             price: Number(a.price) || 0,
             unit:  "/ night",
+            emoji: "🏨",
           }));
           setAccommodations(formatted);
         }
@@ -211,7 +218,7 @@ export default function BookingPage({ mission }) {
     setSelections((prev) => ({ ...prev, [key]: item }));
 
   const handleAddAccommodation = (newItem) => {
-    setAccommodations((prev) => [...prev, { ...newItem,}]);
+    setAccommodations((prev) => [...prev, { ...newItem, emoji: newItem.emoji || "🏨" }]);
   };
 
   const handleConfirm = async () => {
@@ -237,34 +244,7 @@ export default function BookingPage({ mission }) {
       });
 
       if (data.message === "Booking saved successfully") {
-       const handleSaveBooking = async (id, accomodation, transport, food) => {
-  try {
-    const data = await saveBooking({ mission_id: id, accomodation, transport, food });
-
-    if (data.message === "Booking saved successfully") {
-      setMissionList(prev =>
-        prev.map(m =>
-          m.id === id ? { ...m, booked: "1", accomodation, transport, food } : m
-        )
-      );
-
-      setSelectedMission(null);
-
-      // ✅ show success message
-      setMessage("Booking saved successfully ✓");
-
-      // auto hide after 3 seconds
-      setTimeout(() => setMessage(""), 3000);
-
-    } else {
-      setMessage(data.error || "Something went wrong");
-      setTimeout(() => setMessage(""), 3000);
-    }
-  } catch {
-    setMessage("Server error, please try again");
-    setTimeout(() => setMessage(""), 3000);
-  }
-};
+        if (onBookingSuccess) onBookingSuccess(missionId, selections);
       } else {
         alert(data.error || "Failed to save booking");
       }
