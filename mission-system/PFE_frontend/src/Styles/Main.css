@@ -85,6 +85,15 @@ body {
   color: #5a7a9a;
 }
 
+/* ===== Logo ===== */
+.topba-logo {
+  height: 10px;
+  width: 60px;
+  object-fit: contain;
+  margin-right: 10px;
+}
+
+
 /* ===== USER AVATAR ===== */
 .user-avatar {
   width: 38px;

@@ -41,7 +41,7 @@ const TRANSPORTS = [
   },
 ];
 
-const STEPS = ["Accommodation", "Meals", "Transport"];
+const STEPS = ["Accommodation", "Meals", "Transport", "Summary"];
 
 // Progress Bar
 function ProgressBar({ currentStep }) {
@@ -156,7 +156,7 @@ function Summary({ mission, selections, onConfirm, onBack, saving }) {
 }
 
 // Main
-export default function BookingPage({ mission }) {
+export default function BookingPage({ mission, onBookingSuccess }) {
   const [step, setStep]               = useState(1);
   const [showAddPage, setShowAddPage] = useState(false);
   const [saving, setSaving]           = useState(false);
@@ -211,7 +211,7 @@ export default function BookingPage({ mission }) {
     setSelections((prev) => ({ ...prev, [key]: item }));
 
   const handleAddAccommodation = (newItem) => {
-    setAccommodations((prev) => [...prev, { ...newItem,}]);
+    setAccommodations((prev) => [...prev, { ...newItem, emoji: newItem.emoji || "🏨" }]);
   };
 
   const handleConfirm = async () => {
@@ -237,34 +237,7 @@ export default function BookingPage({ mission }) {
       });
 
       if (data.message === "Booking saved successfully") {
-       const handleSaveBooking = async (id, accomodation, transport, food) => {
-  try {
-    const data = await saveBooking({ mission_id: id, accomodation, transport, food });
-
-    if (data.message === "Booking saved successfully") {
-      setMissionList(prev =>
-        prev.map(m =>
-          m.id === id ? { ...m, booked: "1", accomodation, transport, food } : m
-        )
-      );
-
-      setSelectedMission(null);
-
-      // ✅ show success message
-      setMessage("Booking saved successfully ✓");
-
-      // auto hide after 3 seconds
-      setTimeout(() => setMessage(""), 3000);
-
-    } else {
-      setMessage(data.error || "Something went wrong");
-      setTimeout(() => setMessage(""), 3000);
-    }
-  } catch {
-    setMessage("Server error, please try again");
-    setTimeout(() => setMessage(""), 3000);
-  }
-};
+        if (onBookingSuccess) onBookingSuccess(missionId, selections);
       } else {
         alert(data.error || "Failed to save booking");
       }
