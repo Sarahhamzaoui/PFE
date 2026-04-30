@@ -99,7 +99,7 @@ export default function Profile({ setActivePage }) {
             ✎ Edit Profile
           </button>
           <button className="pf-btn pf-btn--secondary" onClick={() => { setShowPasswordModal(true); setPwMsg({ text: "", type: "" }); }}>
-             Change Password
+            🔒 Change Password
           </button>
           <button className="pf-btn pf-btn--danger" onClick={handleLogout}>
             ⎋ Logout
