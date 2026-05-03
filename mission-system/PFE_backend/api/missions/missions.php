@@ -26,7 +26,10 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 
 require_once '../../config/database.php';
 
-// ── Notification helper ──────────────────────────────────────────────
+// ── Auto-delete notifications older than 10 days ──
+$pdo->query("DELETE FROM notifications WHERE created_at < NOW() - INTERVAL 10 DAY");
+
+// ── Notification helper ──
 function createNotification($pdo, $user_id, $title, $message, $type = 'info') {
     $stmt = $pdo->prepare("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)");
     $stmt->execute([$user_id, $title, $message, $type]);
@@ -122,10 +125,23 @@ switch ($method) {
         if ($stmt->execute([$title, $destination, $start_date, $end_date, $sent_date, $objectives, $created_by, $assigned_to, $accommodation, $transport, $needs_driver, $is_urgent])) {
             $new_id = $pdo->lastInsertId();
 
-            // ── Notify all admins and managers ──
+            // ── Notify all managers ──
             $managers = $pdo->query("SELECT user_id FROM users WHERE role IN ('admin','manager')");
             foreach ($managers->fetchAll() as $u) {
-                createNotification($pdo, $u['user_id'], 'New Mission Created', 'A new mission has been submitted and needs review.', 'info');
+                createNotification($pdo, $u['user_id'],
+                    'New Mission Submitted',
+                    "A new mission \"$title\" has been submitted and needs your review.",
+                    'info'
+                );
+            }
+
+            // ── Notify assigned employee ──
+            if (!empty($assigned_to)) {
+                createNotification($pdo, (int)$assigned_to,
+                    'You Have Been Assigned a Mission',
+                    "You have been assigned to the mission \"$title\".",
+                    'info'
+                );
             }
 
             if (!empty($_FILES['attachments'])) {
@@ -183,13 +199,43 @@ switch ($method) {
         $stmt->execute([$status, $validated_by, $approved_date, $note, $mission_id]);
 
         if ($stmt->rowCount() > 0) {
-            // ── Notify the mission owner ──
-            $mission = $pdo->query("SELECT assigned_to FROM missions WHERE mission_id = $mission_id")->fetch();
-            if ($mission && $mission['assigned_to']) {
-                $title   = $status === 'approved' ? 'Mission Approved' : 'Mission Rejected';
-                $message = $status === 'approved' ? 'Your mission has been approved.' : 'Your mission has been rejected.';
-                $type    = $status === 'approved' ? 'success' : 'error';
-                createNotification($pdo, $mission['assigned_to'], $title, $message, $type);
+            // get mission details
+            $mission = $pdo->query("
+                SELECT m.assigned_to, m.created_by, m.title
+                FROM missions m
+                WHERE m.mission_id = $mission_id
+            ")->fetch();
+
+            $notifTitle   = $status === 'approved' ? 'Mission Approved ✓' : 'Mission Rejected';
+            $notifType    = $status === 'approved' ? 'success' : 'error';
+            $missionTitle = $mission['title'] ?? 'the mission';
+
+            // ── Notify assigned employee ──
+            if (!empty($mission['assigned_to'])) {
+                $msg = $status === 'approved'
+                    ? "Your mission \"$missionTitle\" has been approved by the manager."
+                    : "Your mission \"$missionTitle\" has been rejected. Check the manager's note.";
+                createNotification($pdo, $mission['assigned_to'], $notifTitle, $msg, $notifType);
+            }
+
+            // ── Notify secretary who created the mission ──
+            if (!empty($mission['created_by'])) {
+                $msg = $status === 'approved'
+                    ? "The mission \"$missionTitle\" you submitted has been approved."
+                    : "The mission \"$missionTitle\" you submitted has been rejected.";
+                createNotification($pdo, $mission['created_by'], $notifTitle, $msg, $notifType);
+            }
+
+            // ── Notify all DML users when approved ──
+            if ($status === 'approved') {
+                $dmls = $pdo->query("SELECT user_id FROM users WHERE role = 'dml'");
+                foreach ($dmls->fetchAll() as $u) {
+                    createNotification($pdo, $u['user_id'],
+                        'New Mission Ready for Booking',
+                        "Mission \"$missionTitle\" has been approved and added to your dashboard.",
+                        'info'
+                    );
+                }
             }
 
             http_response_code(200);
