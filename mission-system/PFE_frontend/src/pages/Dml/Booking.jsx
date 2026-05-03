@@ -172,7 +172,6 @@ export default function BookingPage({ mission, onBookingSuccess }) {
       desc: "Premium company-approved housing with workspace.",
       price: 220,
       unit: "/ night",
-      emoji: "🏢",
     },
     {
       id: "h2",
@@ -181,7 +180,6 @@ export default function BookingPage({ mission, onBookingSuccess }) {
       desc: "Comfortable apartment for assignments.",
       price: 140,
       unit: "/ night",
-      emoji: "🏨",
     },
   ]);
 
@@ -203,7 +201,6 @@ export default function BookingPage({ mission, onBookingSuccess }) {
             desc:  a.description || "",
             price: Number(a.price) || 0,
             unit:  "/ night",
-            emoji: "🏨",
           }));
           setAccommodations(formatted);
         }
@@ -218,7 +215,7 @@ export default function BookingPage({ mission, onBookingSuccess }) {
     setSelections((prev) => ({ ...prev, [key]: item }));
 
   const handleAddAccommodation = (newItem) => {
-    setAccommodations((prev) => [...prev, { ...newItem, emoji: newItem.emoji || "🏨" }]);
+    setAccommodations((prev) => [...prev, { ...newItem, }]);
   };
 
   const handleConfirm = async () => {

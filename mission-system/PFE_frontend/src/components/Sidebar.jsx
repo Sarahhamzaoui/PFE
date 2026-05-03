@@ -33,7 +33,6 @@ const menuByRole = {
   employee: [
     { id: 'dashboard',   label: 'Dashboard' },
     { id: 'profile',     label: 'Profile' },
-    { id: 'my-missions', label: 'My Missions' },
     { id: 'reports',     label: 'Reports' },
     { id: 'settings',    label: 'Settings' },
   ],

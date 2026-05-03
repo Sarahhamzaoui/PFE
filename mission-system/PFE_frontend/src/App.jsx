@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { LanguageProvider } from "./context/LanguageContext";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
@@ -8,7 +7,6 @@ import Settings from "./pages/settings/Settings";
 
 function App() {
   return (
-    <LanguageProvider>
       <BrowserRouter>
         <Routes>
 
@@ -53,7 +51,6 @@ function App() {
 
         </Routes>
       </BrowserRouter>
-    </LanguageProvider>
   );
 }
 

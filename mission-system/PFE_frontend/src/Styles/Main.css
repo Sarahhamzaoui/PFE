@@ -279,3 +279,8 @@ body {
   margin-left: 0;
   margin-right: auto;
 }
+.logo img,
+.topbar img,
+.sidebar img {
+  mix-blend-mode: multiply;
+}

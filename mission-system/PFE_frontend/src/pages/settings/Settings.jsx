@@ -1,18 +1,10 @@
-import { useLanguage } from "../../context/LanguageContext";
 import { useEffect } from "react";
 import "./Settings.css";
 
 export default function Settings({ darkMode, setDarkMode }) {
-  const { language, setLanguage, t } = useLanguage();
-
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("dir", language === "ar" ? "rtl" : "ltr");
-    document.documentElement.setAttribute("lang", language);
-  }, [language]);
 
   const handleToggle = () => {
     const next = !darkMode;
@@ -24,18 +16,16 @@ export default function Settings({ darkMode, setDarkMode }) {
     <div className="st-wrap">
 
       <div className="st-header">
-        <h1 className="st-title">{t("settings")}</h1>
-        <p className="st-sub">
-          {language === "ar" ? "إدارة إعدادات التطبيق" : "Manage your app preferences"}
-        </p>
+        <h1 className="st-title">Settings</h1>
+        <p className="st-sub">Manage your app preferences</p>
       </div>
 
       <div className="st-card">
         <div className="st-card-head">
-          <span className="st-card-title">{t("appearance")}</span>
+          <span className="st-card-title">Appearance</span>
         </div>
         <div className="st-row">
-          <span>{t("darkMode")}</span>
+          <span>Dark Mode</span>
           <button className="st-toggle" onClick={handleToggle}>
             {darkMode ? "ON" : "OFF"}
           </button>
@@ -44,21 +34,14 @@ export default function Settings({ darkMode, setDarkMode }) {
 
       <div className="st-card">
         <div className="st-card-head">
-          <span className="st-card-title">{t("language")}</span>
+          <span className="st-card-title">Language</span>
         </div>
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="st-select"
-        >
-          <option value="en">English</option>
-          <option value="ar">العربية</option>
-        </select>
+        <p style={{ fontSize: "13px", color: "#8a93a8" }}>English only</p>
       </div>
 
       <div className="st-card">
         <div className="st-card-head">
-          <span className="st-card-title">{t("about")}</span>
+          <span className="st-card-title">About</span>
         </div>
         <p>Corporate Travel System v1.0.0</p>
       </div>

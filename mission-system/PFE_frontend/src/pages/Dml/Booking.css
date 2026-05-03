@@ -151,7 +151,7 @@
 
 /* ── Booking Container ── */
 .booking-container {
-  max-width: 780px;
+  max-width: 100%;
 }
 
 /* ── Step Panel ── */
@@ -161,6 +161,7 @@
   padding: 2rem 2.25rem;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border);
+  width: 100%;
 }
 
 .step-title {
@@ -180,8 +181,8 @@
 /* ── Cards Grid ── */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
   margin-bottom: 1.75rem;
 }
 

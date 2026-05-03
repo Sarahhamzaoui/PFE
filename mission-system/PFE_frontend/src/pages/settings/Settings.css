@@ -374,3 +374,150 @@ body.dark .btn-ghost {
   background: #1a2035;
   color: #4a6cf7;
 }
+/* ── Global dark mode text fallback ── */
+body.dark * {
+  color: inherit;
+}
+
+body.dark {
+  color: #e8ecf4;
+}
+
+/* ── All common text containers ── */
+body.dark h1, body.dark h2, body.dark h3,
+body.dark h4, body.dark h5, body.dark h6 {
+  color: #e8ecf4;
+}
+
+body.dark p, body.dark span, body.dark label,
+body.dark li, body.dark td, body.dark th,
+body.dark div {
+  color: #c8cdd8;
+}
+
+/* ── Backgrounds ── */
+body.dark .page,
+body.dark .page-header,
+body.dark main,
+body.dark section,
+body.dark .container,
+body.dark .wrap,
+body.dark .content {
+  background: #0f1117;
+  color: #e8ecf4;
+}
+
+/* ── Cards & panels ── */
+body.dark .card,
+body.dark .panel,
+body.dark .box,
+body.dark .modal,
+body.dark .dropdown,
+body.dark .popover,
+body.dark [class*="-card"],
+body.dark [class*="-panel"],
+body.dark [class*="-wrap"],
+body.dark [class*="-box"] {
+  background: #161b27;
+  border-color: #1e2535;
+  color: #e8ecf4;
+}
+
+/* ── Inputs & selects ── */
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background: #1a2035 !important;
+  border-color: #2a3350 !important;
+  color: #e8ecf4 !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #4a5568 !important;
+}
+
+/* ── Buttons ── */
+body.dark button:not(.btn-primary):not(.st-toggle) {
+  color: #c8cdd8;
+}
+
+/* ── Tables ── */
+body.dark table, body.dark tr,
+body.dark thead, body.dark tbody {
+  background: #161b27;
+  color: #c8cdd8;
+}
+
+body.dark th {
+  background: #1a2035;
+  color: #8a93a8;
+}
+
+body.dark tr {
+  border-bottom-color: #1e2535;
+}
+
+/* ── Borders & dividers ── */
+body.dark hr,
+body.dark [class*="-divider"],
+body.dark [class*="-border"] {
+  border-color: #1e2535;
+}
+
+/* ── Badges & tags ── */
+body.dark [class*="-tag"],
+body.dark [class*="-badge"] {
+  background: #1e2545;
+  color: #7b8fd4;
+}
+
+/* ── Notification dropdown ── */
+body.dark .notif-item {
+  background: #161b27 !important;
+  border-bottom-color: #1e2535 !important;
+}
+
+body.dark .notif-item:hover {
+  background: #1a2035 !important;
+}
+
+/* ── Summary total box ── */
+body.dark .total {
+  background: #1e2545;
+  border-color: #2a3a6a;
+  color: #7b9ef7;
+}
+
+body.dark .total::before {
+  color: #4a6cf7;
+}
+
+/* ── Progress bar ── */
+body.dark .progress-line {
+  background: #1e2535;
+}
+
+body.dark .dot-circle {
+  background: #161b27;
+  border-color: #2a3350;
+  color: #5a6478;
+}
+
+body.dark .dot-label {
+  color: #5a6478;
+}
+
+/* ── Scrollbar ── */
+body.dark ::-webkit-scrollbar-track {
+  background: #0f1117;
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+  background: #2a3350;
+}
+body.dark .logo img,
+body.dark .topbar img,
+body.dark .sidebar img {
+  mix-blend-mode: screen;
+}
