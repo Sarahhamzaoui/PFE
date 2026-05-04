@@ -102,7 +102,7 @@ function MainLayout({ activePage: initialPage }) {
           <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
-          <img src="/logo.jpg" alt="Logo" style={{ height: "90px", width: "auto" }} />
+          <img src="/logo.png" alt="Logo" style={{ height: "90px", width: "auto" }} />
 
            <div className="topbar-title" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
 

@@ -60,7 +60,7 @@ function Login() {
 
       
 
-        <img src="/logo.jpg" width="150" alt="logo" />
+        <img src="/logo.png" width="150" alt="logo" />
         <h2>Welcome</h2>
         <p>Sign in to your account</p>
 
